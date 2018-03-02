@@ -1,0 +1,54 @@
+.movies-card{
+	cursor: pointer;
+	border: 2px solid transparent;
+	margin-bottom: 8.5px;	
+}
+.movie-title{
+	word-wrap: normal;
+}
+.movies-card:hover{
+	border: 2px solid #1ea1ff;
+	background-color: rgba(0, 0, 0, 0.9);
+	color: white;
+}
+.mainForm {
+	/*background-color: orange;*/
+	width: 100%;
+	overflow-y: hidden;
+	display: flex;
+	flex-wrap: wrap;
+}
+.panel-thumbnail{
+	background-color: #1e74ff;
+}
+.movie-panel-body{
+	background-color: #1f1f21;
+	color: white;
+	text-align: center;
+	max-height: 80px;
+}
+.movie-panel{
+	flex-grow: 1;
+}
+.movie-title{
+	width: 100%;
+}
+.movie-panel-content:hover{
+	 border: 2px solid #3f3fff;
+}
+
+@media (max-width: 830px) {
+	.movie-title{
+		font-size: 13px;
+	}
+}
+@media (max-width: 550px) {
+	.movie-title{
+		font-size: 20px;
+	}
+}
+@media (max-width: 1250px) {
+	.movie-title{
+		font-size: 14px;
+	}
+}

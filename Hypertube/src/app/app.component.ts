@@ -7,4 +7,17 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  navOpen : boolean = true;
+
+  toggleNavbar(){
+  	if (this.navOpen) {
+  		this.navOpen = false;
+  		console.log(this.navOpen);
+  	}
+  	else{
+  		this.navOpen = true;
+  		console.log(this.navOpen);
+  	}
+  }
 }
