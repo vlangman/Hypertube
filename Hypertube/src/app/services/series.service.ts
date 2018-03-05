@@ -5,7 +5,7 @@ import "rxjs/Rx";
 
 @Injectable()
 export class SeriesService {
-	api = 'https://eztv.ag/api/get-torrents?limit=40&page=';
+	api = 'https://eztv.ag/api/get-torrents';
 
 	constructor(private http: HttpClient) { }
 
@@ -15,7 +15,7 @@ export class SeriesService {
 
 	getNextPage(page: number) {
 		// console.log(this.api + page);
-		return (this.http.get(this.api + page));
+		return (this.http.get(this.api + '?limit=40&page=' + page));
 	}
 
 }

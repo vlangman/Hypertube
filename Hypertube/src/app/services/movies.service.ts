@@ -6,7 +6,7 @@ import "rxjs/Rx";
 
 @Injectable()
 export class MovieService {
-	api = 'https://yts.am/api/v2/list_movies.json?limit=20&page=';
+	api = 'https://yts.am/api/v2/list_movies.json';
 
 	constructor(private http: HttpClient) { }
 
@@ -17,7 +17,7 @@ export class MovieService {
 
 	getNextPage(page: number) {
 		// console.log(this.api + page);
-		return (this.http.get(this.api + page));
+		return (this.http.get(this.api + '?limit=20&page=' + page));
 	}
 
 }
