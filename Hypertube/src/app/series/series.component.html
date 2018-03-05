@@ -1,15 +1,22 @@
 <h1>Featured Series</h1>
-<p><kbd>Click</kbd> on any series to view more details.</p>
+<p>
+	<kbd>Click</kbd> on any series to view more details.</p>
 <p>{{message}}</p>
 <div *ngIf="displayLoad" class="loading-container">
-	<div  class="loading"></div>
+	<div class="loading"></div>
 </div>
 <div *ngIf="!displayLoad" class="mainForm">
 	<div (click)="selectMovie(series.id)" *ngFor="let series of Series" class="col-sm-5 col-lg-3 col-md-4 card series-card" id="{{series.id}}">
 		<h1 *ngIf="selectedSeries == series.id" style="color: white">SELECTED</h1>
 		<img class="card-img-top" src="{{ series.image }}" alt="Card image cap">
 		<div class="card-footer">
-			<h3 class="card-text"><p class="series-title">{{ series.title }}</p></h3>
+			<h3 class="card-text">
+				<p class="series-title">{{ series.title }}</p>
+			</h3>
 		</div>
 	</div>
+</div>
+
+<div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
+ (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
 </div>
