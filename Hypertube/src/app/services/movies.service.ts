@@ -20,28 +20,8 @@ export class MovieService {
 		return (this.http.get(this.api + '?limit=20&page=' + page));
 	}
 
-}
+	onSearch(search: string) {
+		return (this.http.get(this.api + '?query_term=' + search));
+	}
 
-	// genreList : string[] = [
-	// 	"comedy",
-	// 	"sci-fi",
-	// 	"horror",
-	// 	"romance",
-	// 	"action",
-	// 	"thriller",
-	// 	"drama",
-	// 	"mystery",
-	// 	"crime",
-	// 	"animation",
-	// 	"adventure",
-	// 	"fantasy",
-	// 	"comedy-romance",
-	// 	"action-comedy",
-	// 	"superhero",
-	// 	"sport",
-	// 	"Musical",
-	// 	"Biography",
-	// 	"war",
-	// 	"western",
-	// 	"short",
-	// ];
+}

@@ -25,10 +25,15 @@
 	<!-- /#sidebar-wrapper -->
 	<nav class="navbar sticky-top navbar-dark bg-dark">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
-		<form class="form-inline searchbox">
+		<form class="form-inline searchbox" (ngSubmit)="onMovie_Submit(movie_search)" #movie_search="ngForm">
 			<div class="Search">
-				<input class="form-control mr-sm-1" type="text" placeholder="Search">
+				<!-- <form (ngSubmit)="onMovie_Submit(movie_search)" #movie_search="ngForm"> -->
+				<input class="form-control mr-sm-1" type="text" placeholder="Search" id="Search" ngModel name="Search">
 				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+				<!-- </form> -->
+
+				<!-- <input class="form-control mr-sm-1" type="text" placeholder="Search">
+				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button> -->
 			</div>
 		</form>
 	</nav>
@@ -37,25 +42,6 @@
 
 		<div class="container-fluid">
 			<router-outlet></router-outlet>
-			<!-- <nav aria-label="Page navigation example">
-				<ul class="pagination justify-content-center">
-					<li class="page-item disabled">
-						<a class="page-link" tabindex="-1">Previous</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link">1</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link">2</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link">3</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link">Next</a>
-					</li>
-				</ul>
-			</nav> -->
 
 		</div>
 	</div>

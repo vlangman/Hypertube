@@ -28,21 +28,21 @@ export class SeriesComponent implements OnInit {
 
 		// console.log('here1');
 
-		if (!this.imdb_number) {
-			this.seriesService.getSeries().subscribe(
-				(data) => {
-					// console.log(data);
-					data['torrents'].forEach((torrents) => {
-						this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot']))
-					})
-					this.displayLoad = false;
+		// if (!this.imdb_number) {
+		this.seriesService.getSeries().subscribe(
+			(data) => {
+				// console.log(data);
+				data['torrents'].forEach((torrents) => {
+					this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot']))
 				})
-		}
-		else {
-			this.Series = [];
-			this.onImdbRating();
-			// console.log("abcdefg");
-		}
+				this.displayLoad = false;
+			})
+		// }
+		// else {
+		// 	this.Series = [];
+		// 	this.onImdbRating();
+		// 	// console.log("abcdefg");
+		// }
 
 	}
 
@@ -71,10 +71,11 @@ export class SeriesComponent implements OnInit {
 		// console.log(this.imbd_url_string);
 		this.imdb_number = this.imbd_url_string.slice(28, 35);
 		// console.log(this.imdb_number);
-		this.ngOnInit();
+		this.onImdbRating();
 	}
 
 	onImdbRating() {
+		this.Series = [];
 		this.seriesService.getImdb(this.imdb_number).subscribe(
 			(data) => {
 				// console.log(data);
