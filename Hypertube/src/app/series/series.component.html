@@ -1,7 +1,14 @@
 <h1>Featured Series</h1>
+<form (ngSubmit)="onSubmit(imdb)" #imdb="ngForm">
+	<label for="imdb_url">Enter IMDB URL Here:</label>
+	<input type="text" id="imbd_url" ngModel name="imdb_url">
+	<button type="submit">SUBMIT</button>
+	<!-- <p *ngFor="let rating of imbd_url_string">{{rating}}</p> -->
+</form>
 <p>
 	<kbd>Click</kbd> on any series to view more details.</p>
 <p>{{message}}</p>
+
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
@@ -16,6 +23,7 @@
 		</div>
 	</div>
 </div>
+<!-- </div> -->
 
 <div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
  (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
