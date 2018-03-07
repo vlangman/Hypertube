@@ -16,18 +16,32 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
+import { InfiniteScrollModule } from "angular2-infinite-scroll";
+
+
+//pipes
+import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
 
 
 
 @NgModule({
-	declarations: [
-		AppComponent,
-		MoviesComponent,
-		SeriesComponent,
-		ProfileComponent,
-		LoginComponent,
-		RegisterComponent,
+  declarations: [
+	AppComponent,
+	MoviesComponent,
+	SeriesComponent,
+	ProfileComponent,
+	LoginComponent,
+	RegisterComponent,
+	EllipsisPipe
+  ],
+  imports: [
+	BrowserModule,
+	FormsModule,
+	HttpClientModule,
+	AppRoutingModule,
+	InfiniteScrollModule,
+
 	],
 	imports: [
 		BrowserModule,
