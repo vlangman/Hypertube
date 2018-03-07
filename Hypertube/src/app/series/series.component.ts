@@ -26,6 +26,7 @@ export class SeriesComponent implements OnInit {
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
 		this.seriesService.getSeries().subscribe(
+			console.log('waiting for series...');
 			(data) => {
 				console.log(data);
 				data['torrents'].forEach((torrents) => {
@@ -54,18 +55,11 @@ export class SeriesComponent implements OnInit {
 						}
 						this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']))
 					})
-					this.displayLoad = false;
 					this.loadMore = false;
 
 				})
 		}
 	}
-
-	onScrollUp() {
-		// console.log('scrolled up!!')
-		//don't delete it is need VAUGHAN
-	}
-
 
 	//conversion of the series bytes to readable size
 	bytesToSize(bytes: number) {
