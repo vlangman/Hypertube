@@ -1,30 +1,50 @@
-import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { MovieService } from "./services/movies.service";
 
 
 @Component({
-	selector: 'app-root',
-	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css'],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-	Search: string;
-	title = 'app';
+export class AppComponent implements OnInit{
+
+	genres: string[] = [];
+	genreToggle: boolean = false;
+	navOpen : boolean = true;
 
 
-	navOpen: boolean = true;
-
-	constructor() {
+	constructor(private movieservice: MovieService){
+		this.genres = movieservice.genreList;
 	}
 
-	toggleNavbar() {
-		if (this.navOpen) {
-			this.navOpen = false;
-			console.log(this.navOpen);
+	ngOnInit(){
+
+	}
+
+	
+
+	toggleGenreDropdown(){
+		if (this.genreToggle)
+		{
+			this.genreToggle = false;
+			console.log(this.genreToggle);
 		}
-		else {
-			this.navOpen = true;
-			console.log(this.navOpen);
+		else{
+			this.genreToggle = true;
+			console.log(this.genreToggle);
+
 		}
+	}
+
+	toggleNavbar(){
+	if (this.navOpen) {
+		this.navOpen = false;
+		console.log(this.navOpen);
+	}
+	else{
+		this.navOpen = true;
+		console.log(this.navOpen);
+	}
 	}
 }

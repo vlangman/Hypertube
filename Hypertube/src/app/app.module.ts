@@ -3,10 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import  { FormsModule } from '@angular/forms';
+import  { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { InfiniteScrollModule } from 'angular2-infinite-scroll';
 
 // Services
 import { MovieService } from "./services/movies.service";
@@ -16,30 +15,36 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
+import { InfiniteScrollModule } from "angular2-infinite-scroll";
+
+
+//pipes
+import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
 
 
 
 @NgModule({
-	declarations: [
-		AppComponent,
-		MoviesComponent,
-		SeriesComponent,
-		ProfileComponent,
-		LoginComponent,
-		RegisterComponent,
+  declarations: [
+	AppComponent,
+	MoviesComponent,
+	SeriesComponent,
+	ProfileComponent,
+	LoginComponent,
+	RegisterComponent,
+	EllipsisPipe
+  ],
+  imports: [
+	BrowserModule,
+	FormsModule,
+	HttpClientModule,
+	AppRoutingModule,
+	InfiniteScrollModule,
 	],
-	imports: [
-		BrowserModule,
-		FormsModule,
-		HttpClientModule,
-		AppRoutingModule,
-		InfiniteScrollModule
-	],
-	providers: [
-		MovieService,
-		SeriesService,
-	],
-	bootstrap: [AppComponent]
+  providers: [
+  	MovieService,
+  	SeriesService,
+  ],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
