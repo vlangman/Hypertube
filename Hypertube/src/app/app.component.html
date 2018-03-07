@@ -15,34 +15,28 @@
 			<li class="user-login">
 				<button class="btn btn-outline-warning" routerLink="/Login">Login</button>
 				<button class="btn btn-outline-primary" routerLink="/Register">Register</button>
-
 			</li>
 		</ul>
 	</div>
 	<!-- /#sidebar-wrapper -->
 	<nav class="navbar sticky-top navbar-dark bg-dark">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
-		<form class="form-inline searchbox" (ngSubmit)="onMovie_Submit(movie_search)" #movie_search="ngForm">
+		<form class="form-inline searchbox">
 			<div class="Search">
-				<!-- <form (ngSubmit)="onMovie_Submit(movie_search)" #movie_search="ngForm"> -->
-				<input class="form-control mr-sm-1" type="text" placeholder="Search" id="Search" ngModel name="Search">
+				<input class="form-control mr-sm-1" type="text" placeholder="Search">
 				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
-				<!-- </form> -->
-
-				<!-- <input class="form-control mr-sm-1" type="text" placeholder="Search">
-				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button> -->
 			</div>
 		</form>
 	</nav>
 	<!-- Page Content -->
 	<div id="page-content-wrapper">
-
+			
 		<div class="container-fluid">
 			<router-outlet></router-outlet>
-
 		</div>
 	</div>
 	<!-- /#page-content-wrapper -->
 </div>
 <!-- /#wrapper -->
 <!-- /#sidebar-wrapper -->
+

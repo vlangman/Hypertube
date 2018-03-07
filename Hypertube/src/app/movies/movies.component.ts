@@ -3,17 +3,16 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { MovieService } from "../services/movies.service";
 import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
-import { NgForm } from '@angular/forms';
-import { query } from '@angular/core/src/animation/dsl';
 
 
 @Component({
-	selector: 'app-movies',
-	templateUrl: './movies.component.html',
-	styleUrls: ['./movies.component.css']
+  selector: 'app-movies',
+  templateUrl: './movies.component.html',
+  styleUrls: ['./movies.component.css']
 })
 
 export class MoviesComponent implements OnInit {
+	
 	movieType: string = 'Featured Movies';
 	Movies: MOVIES[] = [];
 	message: string = '';
@@ -25,6 +24,7 @@ export class MoviesComponent implements OnInit {
 	constructor(private movieService: MovieService,
 		private route: ActivatedRoute) {
 	}
+
 
 	ngOnInit() {
 		if (this.route.snapshot.params['genre'])
