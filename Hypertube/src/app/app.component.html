@@ -5,9 +5,17 @@
 			<li class="sidebar-brand"><a href="#">WATCH ANYTHING!</a></li>
 			<li><a routerLinkActive="active" routerLink="/Movies">Movies</a></li>
 			<li><a routerLinkActive="active" routerLink="/Series">Series</a></li>
-			<li><a routerLinkActive="active">Genre</a></li>
-			<li><a routerLinkActive="active" routerLink="/Login">Login</a></li>
-			<li><a routerLinkActive="active" routerLink="/Register">Register</a></li>
+			<li>
+				<a class="genreDropdown" (click)="toggleGenreDropdown()" routerLinkActive="active">Genre <i class="fas fa-caret-down"></i></a>
+			    <ul [ngClass]=" genreToggle ? '': 'submenu-closed'"  class="list-unstyled submenu">
+			    	<li routerLinkActive="genreActive" [routerLink]="'Movies/' + genre " class="genre" *ngFor="let genre of genres">{{genre}}</li>
+			    </ul>
+			</li>
+			<hr style="background-color: white; width: 90%">
+			<li class="user-login">
+				<button class="btn btn-outline-warning" routerLink="/Login">Login</button>
+				<button class="btn btn-outline-primary" routerLink="/Register">Register</button>
+			</li>
 		</ul>
 	</div>
 	<!-- /#sidebar-wrapper -->
