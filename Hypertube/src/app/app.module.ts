@@ -3,9 +3,10 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
-import  { FormsModule } from '@angular/forms';
-import  { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
+import { InfiniteScrollModule } from 'angular2-infinite-scroll';
 
 // Services
 import { MovieService } from "./services/movies.service";
@@ -40,11 +41,19 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 	HttpClientModule,
 	AppRoutingModule,
 	InfiniteScrollModule,
+
 	],
-  providers: [
-  	MovieService,
-  	SeriesService,
-  ],
-  bootstrap: [AppComponent]
+	imports: [
+		BrowserModule,
+		FormsModule,
+		HttpClientModule,
+		AppRoutingModule,
+		InfiniteScrollModule
+	],
+	providers: [
+		MovieService,
+		SeriesService,
+	],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }
