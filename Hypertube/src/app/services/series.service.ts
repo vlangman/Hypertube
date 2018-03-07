@@ -12,6 +12,17 @@ export class SeriesService {
 	getSeries() {
 		return (this.http.get(this.api));
 	}
+	
+	getNextPage(page: number) {
+		// console.log(this.api + page);
+		return (this.http.get(this.api + '?limit=40&page=' + page));
+	}
+
+	getImdb(imdb: number) {
+		// console.log(this.api + imdb);
+		return (this.http.get(this.api + '?imdb_id=' + imdb));
+	}
+
 
 }
 

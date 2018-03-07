@@ -15,6 +15,11 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
+import { InfiniteScrollModule } from "angular2-infinite-scroll";
+
+
+//pipes
+import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
 
 
@@ -27,12 +32,14 @@ import { SeriesService } from "./services/series.service";
 	ProfileComponent,
 	LoginComponent,
 	RegisterComponent,
+	EllipsisPipe
   ],
   imports: [
 	BrowserModule,
 	FormsModule,
 	HttpClientModule,
 	AppRoutingModule,
+	InfiniteScrollModule,
 	],
   providers: [
   	MovieService,

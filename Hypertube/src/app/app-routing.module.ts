@@ -11,6 +11,8 @@ import { RegisterComponent } from './register/register.component';
 const appRoutes: Routes = [
 	{path: '' , pathMatch: "full", redirectTo: '/Movies'},
 	{path: 'Movies', pathMatch: "full", component: MoviesComponent},
+	{path: 'Movies/:genre', pathMatch: "full", component: MoviesComponent},
+	{path: 'Movies/Search/:query_term', pathMatch: 'full', component: MoviesComponent},
 	{path: 'Series', pathMatch: "full", component: SeriesComponent},
 	{path: 'Profile', pathMatch: "full", component: ProfileComponent},
 	{path: 'Login', pathMatch: "full", component: LoginComponent},
