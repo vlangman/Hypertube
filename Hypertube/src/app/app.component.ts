@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "./services/movies.service";
+<<<<<<< Updated upstream
 
+=======
+import { FirebaseService } from './services/firebase.service';
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'app-root',

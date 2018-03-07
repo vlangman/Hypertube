@@ -12,6 +12,10 @@ export class SeriesComponent implements OnInit {
 
 	Series: SERIES[] = [];
 	displayLoad: boolean = true;
+<<<<<<< Updated upstream
+=======
+	loadMore: boolean = false;
+>>>>>>> Stashed changes
 	hoverSeries: number;
 	imbdSearch: boolean;
 	page: number = 1;
@@ -45,6 +49,10 @@ export class SeriesComponent implements OnInit {
 	onScrollDown() {
 		if (!this.imbdSearch)
 		{
+<<<<<<< Updated upstream
+=======
+			this.loadMore = true;
+>>>>>>> Stashed changes
 			this.seriesService.getNextPage(this.page += 1).subscribe(
 				(data) => {
 					data['torrents'].forEach((torrents) => {
@@ -55,7 +63,11 @@ export class SeriesComponent implements OnInit {
 					}
 						this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']))
 					})
+<<<<<<< Updated upstream
 					this.displayLoad = false;
+=======
+					this.loadMore = false;
+>>>>>>> Stashed changes
 				})
 		}
 	}

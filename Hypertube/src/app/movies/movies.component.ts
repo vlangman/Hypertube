@@ -17,6 +17,10 @@ export class MoviesComponent implements OnInit {
 	Movies: MOVIES[] = [];
 	message: string = '';
 	displayLoad: boolean = true;
+<<<<<<< Updated upstream
+=======
+	loadMore: boolean = false;
+>>>>>>> Stashed changes
 	hoverMovie: number;
 	selectedGenre: string;
 	page: number = 1;
@@ -60,11 +64,16 @@ export class MoviesComponent implements OnInit {
 	onScrollDown() {
 		if (!this.selectedGenre)
 		{
+<<<<<<< Updated upstream
+=======
+			this.loadMore = true;
+>>>>>>> Stashed changes
 			this.movieService.getNextPage(this.page += 1).subscribe(
 				(data: YTS) => {
 					console.log(this.page);
 					data['data']['movies'].forEach((movie: JSON) =>{
 						this.Movies.push(new MOVIES(movie['id'],movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
+<<<<<<< Updated upstream
 						this.displayLoad = false;
 					})
 					this.displayLoad = false;
@@ -83,6 +92,25 @@ export class MoviesComponent implements OnInit {
 		this.hoverMovie = hoverId;
 	}
 
+=======
+					})
+					this.loadMore = false;
+				})
+		}
+	}
+
+	onScrollUp() {
+		// console.log('scrolled up!!')
+		//don't delete it is need VAUGHAN
+	}
+	
+	
+
+	showContent(hoverId: number){
+		this.hoverMovie = hoverId;
+	}
+
+>>>>>>> Stashed changes
 	//movie search do with at your own will :)
 	// onMovie_Submit(form: NgForm) {
 	// console.log(form.value.Search);

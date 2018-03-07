@@ -4,5 +4,17 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+		apiKey: "AIzaSyDfm-qmawoD37oDSpGbzFtf7Qj1n-PGXsw",
+		authDomain: "hypertube-5b429.firebaseapp.com",
+		databaseURL: "https://hypertube-5b429.firebaseio.com",
+		projectId: "hypertube-5b429",
+		storageBucket: "hypertube-5b429.appspot.com",
+		messagingSenderId: "702362178878"
+	},
+	google: {
+		webClientId: '702362178878-fclssvebisnr7gnb11mushkl978om0e9.apps.googleusercontent.com',
+		webClientSecret: 'ZaSNE6Zwxnd8odCzpF2S8gIz',
+	}
 };

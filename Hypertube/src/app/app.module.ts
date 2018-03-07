@@ -6,6 +6,13 @@ import { AppComponent } from './app.component';
 import  { FormsModule } from '@angular/forms';
 import  { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+
+//nvironment config
+import { environment } from '../environments/environment';
 
 // Services
 import { MovieService } from "./services/movies.service";
@@ -16,7 +23,11 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
+<<<<<<< Updated upstream
 
+=======
+import { AuthService } from "./services/auth.service";
+>>>>>>> Stashed changes
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
@@ -40,10 +51,17 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 	HttpClientModule,
 	AppRoutingModule,
 	InfiniteScrollModule,
+<<<<<<< Updated upstream
+=======
+	AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
+	AngularFireDatabaseModule,
+	AngularFireAuthModule,
+>>>>>>> Stashed changes
 	],
   providers: [
   	MovieService,
   	SeriesService,
+  	AuthService,
   ],
   bootstrap: [AppComponent]
 })
