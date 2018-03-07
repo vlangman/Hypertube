@@ -24,7 +24,11 @@ import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+import { AuthService } from "./services/auth.service";
+>>>>>>> Stashed changes
 =======
 import { AuthService } from "./services/auth.service";
 >>>>>>> Stashed changes
@@ -52,6 +56,12 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 	AppRoutingModule,
 	InfiniteScrollModule,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+	AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
+	AngularFireDatabaseModule,
+	AngularFireAuthModule,
+>>>>>>> Stashed changes
 =======
 	AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
 	AngularFireDatabaseModule,

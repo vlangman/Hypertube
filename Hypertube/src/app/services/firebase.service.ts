@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+import { Http, Response } from '@angular/http';
+import 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable'
+>>>>>>> Stashed changes
 =======
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
@@ -10,8 +16,11 @@ import { Observable } from 'rxjs/Observable'
 export class FirebaseService {
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   constructor() { }
 =======
+=======
+>>>>>>> Stashed changes
   constructor(private http: Http) { }
 
 
@@ -47,6 +56,9 @@ export class FirebaseService {
 	overwriteServers(servers: any[]){
 		return this.http.put('https://hypertube-5b429.firebaseio.com/data.json', servers);
 	}
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 }

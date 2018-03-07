@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "./services/movies.service";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
+=======
+import { FirebaseService } from './services/firebase.service';
+>>>>>>> Stashed changes
 =======
 import { FirebaseService } from './services/firebase.service';
 >>>>>>> Stashed changes

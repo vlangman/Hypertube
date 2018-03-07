@@ -18,6 +18,10 @@ export class MoviesComponent implements OnInit {
 	message: string = '';
 	displayLoad: boolean = true;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+	loadMore: boolean = false;
+>>>>>>> Stashed changes
 =======
 	loadMore: boolean = false;
 >>>>>>> Stashed changes
@@ -65,6 +69,10 @@ export class MoviesComponent implements OnInit {
 		if (!this.selectedGenre)
 		{
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+			this.loadMore = true;
+>>>>>>> Stashed changes
 =======
 			this.loadMore = true;
 >>>>>>> Stashed changes
@@ -74,9 +82,14 @@ export class MoviesComponent implements OnInit {
 					data['data']['movies'].forEach((movie: JSON) =>{
 						this.Movies.push(new MOVIES(movie['id'],movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 						this.displayLoad = false;
 					})
 					this.displayLoad = false;
+=======
+					})
+					this.loadMore = false;
+>>>>>>> Stashed changes
 				})
 		}
 	}
@@ -90,6 +103,7 @@ export class MoviesComponent implements OnInit {
 
 	showContent(hoverId: number){
 		this.hoverMovie = hoverId;
+<<<<<<< Updated upstream
 	}
 
 =======
@@ -108,6 +122,10 @@ export class MoviesComponent implements OnInit {
 
 	showContent(hoverId: number){
 		this.hoverMovie = hoverId;
+	}
+
+>>>>>>> Stashed changes
+=======
 	}
 
 >>>>>>> Stashed changes

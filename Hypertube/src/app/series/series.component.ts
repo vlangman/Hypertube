@@ -13,6 +13,10 @@ export class SeriesComponent implements OnInit {
 	Series: SERIES[] = [];
 	displayLoad: boolean = true;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+	loadMore: boolean = false;
+>>>>>>> Stashed changes
 =======
 	loadMore: boolean = false;
 >>>>>>> Stashed changes
@@ -50,6 +54,10 @@ export class SeriesComponent implements OnInit {
 		if (!this.imbdSearch)
 		{
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+			this.loadMore = true;
+>>>>>>> Stashed changes
 =======
 			this.loadMore = true;
 >>>>>>> Stashed changes
@@ -64,7 +72,11 @@ export class SeriesComponent implements OnInit {
 						this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']))
 					})
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 					this.displayLoad = false;
+=======
+					this.loadMore = false;
+>>>>>>> Stashed changes
 =======
 					this.loadMore = false;
 >>>>>>> Stashed changes
