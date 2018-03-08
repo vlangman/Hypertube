@@ -1,50 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "./services/movies.service";
-
-
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
 
 	genres: string[] = [];
 	genreToggle: boolean = false;
-	navOpen : boolean = true;
+	navOpen: boolean = true;
 
 
-	constructor(private movieservice: MovieService){
+	constructor(private movieservice: MovieService) {
 		this.genres = movieservice.genreList;
 	}
 
-	ngOnInit(){
+	ngOnInit() {
 
 	}
 
-	
 
-	toggleGenreDropdown(){
-		if (this.genreToggle)
-		{
+
+	toggleGenreDropdown() {
+		if (this.genreToggle) {
 			this.genreToggle = false;
 			console.log(this.genreToggle);
 		}
-		else{
+		else {
 			this.genreToggle = true;
 			console.log(this.genreToggle);
 
 		}
 	}
 
-	toggleNavbar(){
-	if (this.navOpen) {
-		this.navOpen = false;
-		console.log(this.navOpen);
-	}
-	else{
-		this.navOpen = true;
-		console.log(this.navOpen);
-	}
+	toggleNavbar() {
+		if (this.navOpen) {
+			this.navOpen = false;
+			console.log(this.navOpen);
+		}
+		else {
+			this.navOpen = true;
+			console.log(this.navOpen);
+		}
 	}
 }
