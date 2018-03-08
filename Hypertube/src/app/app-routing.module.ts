@@ -7,6 +7,7 @@ import { SeriesComponent } from './series/series.component';
 import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { PagenotfoundComponent } from "./pagenotfound/pagenotfound.component";
 
 const appRoutes: Routes = [
 	{ path: '', pathMatch: "full", redirectTo: '/Movies' },
@@ -17,6 +18,7 @@ const appRoutes: Routes = [
 	{ path: 'Profile', pathMatch: "full", component: ProfileComponent },
 	{ path: 'Login', pathMatch: "full", component: LoginComponent },
 	{ path: 'Register', pathMatch: "full", component: RegisterComponent },
+	{ path: '**', component: PagenotfoundComponent }
 ];
 
 @NgModule({

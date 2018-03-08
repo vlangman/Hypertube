@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
 	}
 
 
@@ -31,8 +32,10 @@ export class LoginComponent implements OnInit {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
 			.then((res) => {
-				this.router.navigate(['/'])
+				this.router.navigate(['/Profile']);
 			})
 			.catch((err) => console.log(err));
 	}
+
+
 }

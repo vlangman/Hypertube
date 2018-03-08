@@ -27,6 +27,7 @@ import { AuthService } from "./services/auth.service";
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 
 
 
@@ -39,7 +40,8 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 		ProfileComponent,
 		LoginComponent,
 		RegisterComponent,
-		EllipsisPipe
+		EllipsisPipe,
+		PagenotfoundComponent
 	],
 	imports: [
 		BrowserModule,

@@ -26,7 +26,6 @@ export class SeriesComponent implements OnInit {
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
 		this.seriesService.getSeries().subscribe(
-			console.log('waiting for series...');
 			(data) => {
 				console.log(data);
 				data['torrents'].forEach((torrents) => {
