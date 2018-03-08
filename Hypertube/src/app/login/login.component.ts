@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from "@angular/router";
 
@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
 	constructor(
 		private authService: AuthService,
 		private router: Router,
+		private _ngZone: NgZone
 	) { }
 
 	ngOnInit() {
@@ -32,7 +33,8 @@ export class LoginComponent implements OnInit {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
 			.then((res) => {
-				this.router.navigate(['/Profile']);
+				this._ngZone.run(() => this.router.navigate(['/Profile']));
+
 			})
 			.catch((err) => console.log(err));
 	}

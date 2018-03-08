@@ -46,10 +46,10 @@ export class AuthService {
 	};
 
 	signInWithGoogle() {
-		this._firebaseAuth.auth.signInWithRedirect(
+		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
 		);
-		return this._firebaseAuth.auth.getRedirectResult();
+		// return this._firebaseAuth.auth.getRedirectResult();
 	};
 
 
