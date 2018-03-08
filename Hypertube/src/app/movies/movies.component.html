@@ -1,8 +1,9 @@
 <h1>{{movieType}}</h1>
-<p><kbd>Hover</kbd> on any movie to view more details.</p>
+<p>
+	<kbd>Hover</kbd> on any movie to view more details.</p>
 <p>{{message}}</p>
 <div *ngIf="displayLoad" class="loading-container">
-	<div  class="loading"></div>
+	<div class="loading"></div>
 </div>
 
 <div *ngIf="!displayLoad" class="mainForm">
@@ -11,7 +12,9 @@
 		<div class="overlay">
 			<div class="header movie-headerloc">
 				<span class="author">Director</span>
-				<h1 class="lead movie-title"><a>{{ movie.title }}</a></h1>
+				<h1 class="lead movie-title">
+					<a>{{ movie.title }}</a>
+				</h1>
 				<span class="year">{{movie.year}}</span>
 				<br>
 				<span class="movie-genre" *ngFor="let genre of this.movie.genres">{{genre}}, </span>
@@ -27,7 +30,9 @@
 		</div>
 	</div>
 </div>
-
+<div *ngIf="loadMore" class="loading-container">
+	<div class="loading"></div>
+</div>
 <div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
-		 (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
-		</div>
+ (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
+</div>

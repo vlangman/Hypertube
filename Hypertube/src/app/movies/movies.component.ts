@@ -6,17 +6,18 @@ import { YTS } from "../models/yts.model";
 
 
 @Component({
-  selector: 'app-movies',
-  templateUrl: './movies.component.html',
-  styleUrls: ['./movies.component.css']
+	selector: 'app-movies',
+	templateUrl: './movies.component.html',
+	styleUrls: ['./movies.component.css']
 })
 
 export class MoviesComponent implements OnInit {
-	
+
 	movieType: string = 'Featured Movies';
 	Movies: MOVIES[] = [];
 	message: string = '';
 	displayLoad: boolean = true;
+	loadMore: boolean = false;
 	hoverMovie: number;
 	selectedGenre: string;
 	page: number = 1;
@@ -27,47 +28,43 @@ export class MoviesComponent implements OnInit {
 
 
 	ngOnInit() {
-		if (this.route.snapshot.params['genre'])
-		{
-			this.route.params.subscribe((params: Params) => 
-			{
+		if (this.route.snapshot.params['genre']) {
+			this.route.params.subscribe((params: Params) => {
 				this.selectedGenre = params['genre'];
-				this.movieService.getGenre(this.selectedGenre).subscribe((data: YTS) => 
-				{
+				this.movieService.getGenre(this.selectedGenre).subscribe((data: YTS) => {
 					this.Movies = [];
 					this.movieType = this.route.snapshot.params['genre'] + ' Movies';
 					console.log(data);
-					data['data']['movies'].forEach((movie: JSON) =>{
-						this.Movies.push(new MOVIES(movie['id'],movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
+					data['data']['movies'].forEach((movie: JSON) => {
+						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
 						this.displayLoad = false;
 					})
 				})
 			})
 		} else {
-				this.movieService.getMovies().subscribe(
-					(data: YTS) => {
+			this.movieService.getMovies().subscribe(
+				(data: YTS) => {
 					console.log(data);
-					data['data']['movies'].forEach((movie: JSON) =>{
-						this.Movies.push(new MOVIES(movie['id'],movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
+					data['data']['movies'].forEach((movie: JSON) => {
+						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
 						this.displayLoad = false;
 					});
 				})
 		}
-		
+
 	}
-	
+
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {
-		if (!this.selectedGenre)
-		{
+		if (!this.selectedGenre) {
+			this.loadMore = true;
 			this.movieService.getNextPage(this.page += 1).subscribe(
 				(data: YTS) => {
 					console.log(this.page);
-					data['data']['movies'].forEach((movie: JSON) =>{
-						this.Movies.push(new MOVIES(movie['id'],movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
-						this.displayLoad = false;
+					data['data']['movies'].forEach((movie: JSON) => {
+						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
 					})
-					this.displayLoad = false;
+					this.loadMore = false;
 				})
 		}
 	}
@@ -76,10 +73,10 @@ export class MoviesComponent implements OnInit {
 		// console.log('scrolled up!!')
 		//don't delete it is need VAUGHAN
 	}
-	
-	
 
-	showContent(hoverId: number){
+
+
+	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}
 
