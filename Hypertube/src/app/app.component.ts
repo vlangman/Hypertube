@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "./services/movies.service";
+import { AuthService } from './services/auth.service';
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
@@ -12,7 +13,7 @@ export class AppComponent implements OnInit {
 	navOpen: boolean = true;
 
 
-	constructor(private movieservice: MovieService) {
+	constructor(private movieservice: MovieService, private authService: AuthService) {
 		this.genres = movieservice.genreList;
 	}
 
@@ -43,5 +44,9 @@ export class AppComponent implements OnInit {
 			this.navOpen = true;
 			console.log(this.navOpen);
 		}
+	}
+
+	onLogout() {
+		this.authService.logout();
 	}
 }

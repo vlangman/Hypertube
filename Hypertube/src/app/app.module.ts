@@ -21,15 +21,14 @@ import { SeriesComponent } from './series/series.component';
 import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { SeriesService } from "./services/series.service";
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
 import { AuthService } from "./services/auth.service";
+import { AuthGuard, isLoggedIn } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
-import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
-
-
 
 
 @NgModule({
@@ -57,6 +56,8 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 		MovieService,
 		SeriesService,
 		AuthService,
+		AuthGuard,
+		isLoggedIn,
 	],
 	bootstrap: [AppComponent]
 })

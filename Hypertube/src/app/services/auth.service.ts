@@ -23,16 +23,17 @@ export class AuthService {
 		private _firebaseAuth: AngularFireAuth,
 		private router: Router
 		) {
-		// this.user = _firebaseAuth.authState;
-		// this.user.subscribe(
-		// 	(user) => {
-		// 		if (user) {
-		// 			this.userDetails = user;
-		// 			console.log(this.userDetails);
-		// 		} else {
-		// 			this.userDetails = null;
-		// 		}
-		// 	});
+		this.user = _firebaseAuth.authState;
+		this.user.subscribe(
+			(user) => {
+				if (user) {
+					this.userDetails = user;
+					console.log('constructor WHEN CREATING AUTH SERVICE');
+					console.log(this.userDetails);
+				} else {
+					this.userDetails = null;
+				}
+			});
 		this.username = this._firebaseAuth.authState.map(data => data.displayName);
 		this.email = this._firebaseAuth.authState.map(data => data.email);
 		this.isVerified = this._firebaseAuth.authState.map(data => data.emailVerified);
@@ -49,24 +50,7 @@ export class AuthService {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
 		);
-		// return this._firebaseAuth.auth.getRedirectResult();
 	};
-
-
-	isUserData() {
-		// this.user = this._firebaseAuth.authState;
-		// this.user.subscribe(
-		// 	(user) => {
-		// 		if (user) {
-		// this.userDetails = user;
-		// console.log(this.userDetails.displayName);
-
-
-		// } else {
-		// 	this.userDetails = null;
-		// }
-		// });
-	}
 	isLoggedIn() {
 		if (this.userDetails == null) {
 			return false;
