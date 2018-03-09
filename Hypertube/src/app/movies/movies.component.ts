@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { MovieService } from "../services/movies.service";
 import { MOVIES } from "../models/movies.model";
@@ -11,7 +11,7 @@ import { YTS } from "../models/yts.model";
 	styleUrls: ['./movies.component.css']
 })
 
-export class MoviesComponent implements OnInit {
+export class MoviesComponent implements OnInit, OnDestroy {
 
 	movieType: string = 'Featured Movies';
 	Movies: MOVIES[] = [];
@@ -28,7 +28,8 @@ export class MoviesComponent implements OnInit {
 
 
 	ngOnInit() {
-		if (this.route.snapshot.params['genre']) {
+		console.log('Movie component created');
+			if (this.route.snapshot.params['genre']) {
 			this.route.params.subscribe((params: Params) => {
 				this.selectedGenre = params['genre'];
 				this.movieService.getGenre(this.selectedGenre).subscribe((data: YTS) => {
@@ -51,8 +52,12 @@ export class MoviesComponent implements OnInit {
 					});
 				})
 		}
-
 	}
+
+
+	ngOnDestroy() {
+		console.log('Movie component destroyed');
+	  }
 
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {

@@ -24,6 +24,7 @@ export class AuthService {
 		(user) => {
 			if (user) {
 				this.userDetails = user;
+				console.log('constructor WHEN CREATING AUTH SERVICE');
 				console.log(this.userDetails);
 			} else {
 				this.userDetails = null;
@@ -43,15 +44,22 @@ export class AuthService {
 
 
 	isLoggedIn() {
+		console.log('checking if user is logged in within AUTH SERVICE');
 		if (this.userDetails == null ) {
+			console.log('AUTH SERVICE returns FALSE!');
 			return false;
 		} else {
+			console.log('AUTH SERVICE returns TRUE!');
 			return true;
 		}
 	}
 
 	logout() {
 		this._firebaseAuth.auth.signOut()
-		.then((res) => this.router.navigate(['/']));
+		.then(
+			(res) => {
+				console.log('LOGGING OUT!!');
+				this.router.navigate(['/']);
+			})
 	}
 }

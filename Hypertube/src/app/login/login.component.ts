@@ -10,6 +10,13 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
 
+	user = {
+		username: '',
+		password: '',
+		email: '',
+	};
+	
+
 	constructor(
 		private authService: AuthService,
 		private router: Router,
@@ -31,7 +38,7 @@ export class LoginComponent implements OnInit {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
 			.then((res) => {
-				this.router.navigate(['/'])
+				this.router.navigateByUrl('Movies');
 			})
 			.catch((err) => console.log(err));
 	}

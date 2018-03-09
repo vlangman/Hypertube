@@ -24,7 +24,7 @@ import { RegisterComponent } from './register/register.component';
 import { SeriesService } from "./services/series.service";
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
 import { AuthService } from "./services/auth.service";
-
+import { AuthGuard, isLoggedIn } from "./services/auth-guard.service";
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
@@ -55,6 +55,8 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 		MovieService,
 		SeriesService,
 		AuthService,
+		AuthGuard,
+		isLoggedIn,
 	],
 	bootstrap: [AppComponent]
 })
