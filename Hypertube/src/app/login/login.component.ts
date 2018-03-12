@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from "@angular/router";
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -38,6 +39,12 @@ export class LoginComponent implements OnInit {
 			})
 			.catch((err) => console.log(err));
 	}
-
+	emailAndPasswordLogin(f: NgForm) {
+		const value = f.value;
+		this.authService.signInWithEmailAndPassword(value.email, value.password).then((res) => {
+			this.router.navigate(['/Movies']);
+		})
+			.catch((err) => console.log(err));
+	}
 
 }

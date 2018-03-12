@@ -12,3 +12,7 @@
 	max-width: 600px;
 	/*background-color: orange;*/
 }
+
+input.ng-invalid.ng-touched {
+	border: 3px solid red;
+}

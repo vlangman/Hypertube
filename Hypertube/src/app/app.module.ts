@@ -29,6 +29,7 @@ import { AuthGuard, isLoggedIn } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
+import { EqualValidator } from './services/password-validator';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 		LoginComponent,
 		RegisterComponent,
 		EllipsisPipe,
-		PagenotfoundComponent
+		PagenotfoundComponent,
+		EqualValidator
 	],
 	imports: [
 		BrowserModule,

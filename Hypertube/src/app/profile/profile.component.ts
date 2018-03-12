@@ -8,10 +8,10 @@ import { promise } from 'protractor';
 	styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-	username;
-	email;
-	verified;
-	photo;
+	username: string;
+	email: string;
+	verified: boolean;
+	photo: string;
 	displayLoad: boolean = true;
 	constructor(private authService: AuthService) { }
 

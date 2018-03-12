@@ -9,12 +9,14 @@ export class AuthGuard implements CanActivate {
 
 	canActivate() {
 		console.log('checking login status from AUTH GUARD service')
+		this.authService.isLoggedIn();
+		console.log(this.authService.isLoggedIn());
 		if (this.authService.isLoggedIn()) {
 			console.log('user is logged in');
 			return true;
 		}
 		else {
-			window.alert('Please Login to view this page');
+			// window.alert('Please Login to view this page');
 			this.router.navigate(['/Login']);
 			return false;
 		}
@@ -30,7 +32,8 @@ export class isLoggedIn implements CanActivate {
 	canActivate() {
 		console.log('checking login status of auth service from isLoggedIn()');
 		if (this.authService.isLoggedIn()) {
-			this.router.navigate(['/Movies']);
+			console.log("hi");
+			this.router.navigate(['/Profile']);
 			return false;
 		}
 		else {

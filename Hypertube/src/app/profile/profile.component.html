@@ -1,21 +1,22 @@
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
-<div class="container" *ngIf="!displayLoad && username | async">
+<div class="container" *ngIf="!displayLoad">
 	<div class="row my-2">
 		<div class="col-lg-8 order-lg-2">
 			<div class="tab-content py-4">
 				<div class="tab-pane active" id="profile">
-					<h5 class="mb-3">{{username | async}}</h5>
+					<h5 class="mb-3" *ngIf="username else ">{{username}}</h5>
+					<h5 class="mb-3" *ngIf="!username else ">{{email}}</h5>
 					<div class="row">
 						<div class="col-md-6">
 							<h6>About</h6>
 							<p>
-								{{email | async}}
+								{{email}}
 							</p>
 							<h3>Are you verified</h3>
 							<p>
-								{{verified | async}}
+								{{verified}}
 							</p>
 						</div>
 					</div>
@@ -23,7 +24,8 @@
 			</div>
 		</div>
 		<div class="col-lg-4 order-lg-1 text-center">
-			<img src="{{photo | async}}" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+			<img *ngIf="photo" src="{{photo}}" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+			<img *ngIf="!photo" src="../../assets/no-thumbnail.png" class="mx-auto img-fluid img-circle d-block" alt="avatar">
 			<!-- <h6 class="mt-2">Upload a different photo</h6>
 			<label class="custom-file">
 				<input type="file" id="file" class="custom-file-input">

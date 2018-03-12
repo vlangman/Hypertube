@@ -38,11 +38,9 @@ export class AppComponent implements OnInit {
 	toggleNavbar() {
 		if (this.navOpen) {
 			this.navOpen = false;
-			console.log(this.navOpen);
 		}
 		else {
 			this.navOpen = true;
-			console.log(this.navOpen);
 		}
 	}
 

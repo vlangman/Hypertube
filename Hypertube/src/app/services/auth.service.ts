@@ -12,10 +12,12 @@ export class AuthService {
 
 	private user: Observable<firebase.User>;
 	private userDetails: firebase.User = null;
-	username;
-	email;
-	isVerified;
-	profilePhoto;
+	username: string;
+	email: string;
+	isVerified: boolean;
+	profilePhoto: string;
+	displayName: string;
+	photoURL: string;
 
 
 	constructor
@@ -28,16 +30,17 @@ export class AuthService {
 			(user) => {
 				if (user) {
 					this.userDetails = user;
+					this.username = user.displayName;
+					this.email = user.email;
+					this.isVerified = user.emailVerified;
+					this.profilePhoto = user.photoURL;
+					console.log(user.email);
 					console.log('constructor WHEN CREATING AUTH SERVICE');
 					console.log(this.userDetails);
 				} else {
 					this.userDetails = null;
 				}
 			});
-		this.username = this._firebaseAuth.authState.map(data => data.displayName);
-		this.email = this._firebaseAuth.authState.map(data => data.email);
-		this.isVerified = this._firebaseAuth.authState.map(data => data.emailVerified);
-		this.profilePhoto = this._firebaseAuth.authState.map(data => data.photoURL);
 	}
 
 	signInWithFacebook() {
@@ -47,16 +50,43 @@ export class AuthService {
 	};
 
 	signInWithGoogle() {
+
+
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
 		);
 	};
+
+	createUserWithEmailAndPassword(email, password) {
+		return this._firebaseAuth.auth.createUserWithEmailAndPassword(email, password);
+	}
+	signInWithEmailAndPassword(email, password) {
+		// this.username = this._firebaseAuth.authState.map(data => data.displayName);
+
+		console.log(this.email);
+		// this.isVerified = this._firebaseAuth.authState.map(data => data.emailVerified);
+		// this.profilePhoto = this._firebaseAuth.authState.map(data => data.photoURL);
+		return this._firebaseAuth.auth.signInWithEmailAndPassword(email, password);
+	}
 	isLoggedIn() {
 		if (this.userDetails == null) {
 			return false;
 		} else {
 			return true;
 		}
+	}
+
+	updateProfile(usernameUpdate: string, photoUpdate: string) {
+		const userUpdate = this._firebaseAuth.auth.currentUser;
+		userUpdate.updateProfile({
+			displayName: usernameUpdate,
+			photoURL: photoUpdate
+		}).then((res) => {
+			this.username = usernameUpdate;
+			this.profilePhoto = photoUpdate;
+			this.router.navigate(['/Profile']);
+		})
+			.catch((err) => console.log(err));
 	}
 
 	logout() {
