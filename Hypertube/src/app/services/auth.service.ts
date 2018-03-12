@@ -41,6 +41,7 @@ export class AuthService {
 					this.userDetails = null;
 				}
 			});
+
 	}
 
 	signInWithFacebook() {
@@ -78,11 +79,16 @@ export class AuthService {
 
 	updateProfile(usernameUpdate: string, photoUpdate: string) {
 		const userUpdate = this._firebaseAuth.auth.currentUser;
+		// if (photoUpdate == null) {
+		// 	photoUpdate = this.photoUpload.downloadURL
+		// }
+		// console.log(this.photoUpload.downloadURL.value);'
 		userUpdate.updateProfile({
 			displayName: usernameUpdate,
 			photoURL: photoUpdate
 		}).then((res) => {
 			this.username = usernameUpdate;
+
 			this.profilePhoto = photoUpdate;
 			this.router.navigate(['/Profile']);
 		})

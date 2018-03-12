@@ -9,7 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 //nvironment config
 import { environment } from '../environments/environment';
@@ -30,6 +31,9 @@ import { AuthGuard, isLoggedIn } from './services/auth-guard.service';
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
 import { EqualValidator } from './services/password-validator';
+import { DropZoneDirective } from './services/drop-zone.directive';
+import { FileSizePipe } from './pipes/file-size.pipe';
+import { FileuploadService } from './services/fileupload.service';
 
 
 @NgModule({
@@ -42,7 +46,9 @@ import { EqualValidator } from './services/password-validator';
 		RegisterComponent,
 		EllipsisPipe,
 		PagenotfoundComponent,
-		EqualValidator
+		EqualValidator,
+		DropZoneDirective,
+		FileSizePipe,
 	],
 	imports: [
 		BrowserModule,
@@ -53,6 +59,8 @@ import { EqualValidator } from './services/password-validator';
 		AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
+		AngularFirestoreModule,
+		AngularFireStorageModule
 	],
 	providers: [
 		MovieService,
@@ -60,6 +68,7 @@ import { EqualValidator } from './services/password-validator';
 		AuthService,
 		AuthGuard,
 		isLoggedIn,
+		FileuploadService
 	],
 	bootstrap: [AppComponent]
 })
