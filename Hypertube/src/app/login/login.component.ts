@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
 	emailAndPasswordLogin(f: NgForm) {
 		const value = f.value;
 		this.authService.signInWithEmailAndPassword(value.email, value.password).then((res) => {
-			this.router.navigate(['/Movies']);
+			this.router.navigate(['/Profile']);
 		})
 			.catch((err) => console.log(err));
 	}

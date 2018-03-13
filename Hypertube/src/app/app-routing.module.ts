@@ -18,6 +18,7 @@ const appRoutes: Routes = [
 	{ path: 'Movies/Search/:query_term', pathMatch: 'full', component: MoviesComponent, canActivate: [AuthGuard] },
 	{ path: 'Series', pathMatch: "full", component: SeriesComponent, canActivate: [AuthGuard] },
 	{ path: 'Profile', pathMatch: "full", component: ProfileComponent, canActivate: [AuthGuard] },
+	{ path: 'Profile/refresh', redirectTo: '/Profile', canActivate: [AuthGuard] },
 	{ path: 'Login', pathMatch: "full", component: LoginComponent, canActivate: [isLoggedIn] },
 	{ path: 'Register', pathMatch: "full", component: RegisterComponent },
 	{ path: '**', component: PagenotfoundComponent }

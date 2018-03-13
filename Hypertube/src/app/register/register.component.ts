@@ -40,9 +40,13 @@ export class RegisterComponent implements OnInit {
 		this.authService.createUserWithEmailAndPassword(value.email, value.password).then((res) => {
 			if (value.photo) {
 				this.authService.updateProfile(value.username, value.photo)
-			} else {
+			} else if (!value.photo && this.downloadURL) {
 				value.photo = this.downloadURL;
-				this.authService.updateProfile(value.username, value.photo.value)
+				this.authService.updateProfile(value.username, value.photo.value);
+				// window.location.reload();
+			} else {
+				value.photo = '';
+				this.authService.updateProfile(value.username, value.photo.value);
 			}
 
 		}).catch((err) => console.log(err));
@@ -63,7 +67,8 @@ export class RegisterComponent implements OnInit {
 
 		// Client-side validation example
 		if (file.type.split('/')[0] !== 'image') {
-			console.error('unsupported file type :( ')
+			console.error('unsupported file type :( ');
+			window.alert('unsupported file type :( ');
 			return;
 		}
 
@@ -104,6 +109,6 @@ export class RegisterComponent implements OnInit {
 	}
 
 	isActive(snapshot) {
-		this.photoUpload.isActive(snapshot);
+		return snapshot.state === 'running' && snapshot.bytesTransferred < snapshot.totalBytes
 	}
 }

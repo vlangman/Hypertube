@@ -90,7 +90,30 @@ export class AuthService {
 			this.username = usernameUpdate;
 
 			this.profilePhoto = photoUpdate;
-			this.router.navigate(['/Profile']);
+			const userVerify = this._firebaseAuth.auth.currentUser;
+			userVerify.sendEmailVerification().then((res) => {
+				window.alert('email sent');
+				this.router.navigate(['/Profile']);
+			})
+
+		})
+			.catch((err) => console.log(err));
+	}
+
+	updateProfile_user(usernameUpdate: string, photoUpdate: string) {
+		const userUpdate = this._firebaseAuth.auth.currentUser;
+		// if (photoUpdate == null) {
+		// 	photoUpdate = this.photoUpload.downloadURL
+		// }
+		// console.log(this.photoUpload.downloadURL.value);'
+		userUpdate.updateProfile({
+			displayName: usernameUpdate,
+			photoURL: photoUpdate
+		}).then((res) => {
+			this.username = usernameUpdate;
+
+			this.profilePhoto = photoUpdate;
+			window.location.reload();
 		})
 			.catch((err) => console.log(err));
 	}

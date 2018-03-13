@@ -21,6 +21,7 @@
 	transition: height 0.6s;
 	display: block;
 	cursor: pointer;
+	color: white;
 }
 .navbar-button:hover{
 	color: white;
