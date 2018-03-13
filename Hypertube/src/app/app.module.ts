@@ -25,6 +25,7 @@ import { SeriesService } from "./services/series.service";
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
 import { AuthService } from "./services/auth.service";
 import { AuthGuard, isLoggedIn } from "./services/auth-guard.service";
+import { TorrentService } from './services/torrent.service';
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
 
@@ -55,6 +56,7 @@ import { EllipsisPipe } from './pipes/ellipsis.pipe';
 		MovieService,
 		SeriesService,
 		AuthService,
+		TorrentService,
 		AuthGuard,
 		isLoggedIn,
 	],
