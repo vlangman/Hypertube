@@ -22,3 +22,20 @@
 progress::-webkit-progress-value {
     transition: width 0.1s ease;
 }
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    // margin: auto;
+    text-align: center;
+}
+
+.title {
+    color: grey;
+    font-size: 18px;
+}
+.profile-wrap {
+	display: flex; 
+	flex-direction: row; 
+	flex-wrap: wrap;
+}

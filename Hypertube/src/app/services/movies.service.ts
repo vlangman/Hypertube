@@ -10,7 +10,7 @@ export class MovieService {
 	search: string = '';
 	selectedGenre: string;
 
-	genreList : string[] = [
+	genreList: string[] = [
 		"Comedy",
 		"Sci-fi",
 		"Horror",
@@ -34,11 +34,11 @@ export class MovieService {
 
 	constructor(private http: HttpClient) { }
 
-	getMovies (){
-		return(this.http.get<YTS>(this.api));
+	getMovies() {
+		return (this.http.get<YTS>(this.api));
 	}
 
-	getGenre(genre: string){
+	getGenre(genre: string) {
 		this.selectedGenre = genre;
 		return this.http.get(this.api + '?genre=' + this.selectedGenre);
 

@@ -4,7 +4,12 @@ import { Router } from "@angular/router";
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
+import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/firestore';
 
+export interface User {
+	username: string;
+
+}
 
 @Injectable()
 
@@ -18,12 +23,17 @@ export class AuthService {
 	profilePhoto: string;
 	displayName: string;
 	photoURL: string;
+	usersdb: Observable<User[]>;
+	usersCollection: AngularFirestoreCollection<User>;
+	userfound: boolean = false;
+	errormsg: string;
+	// msg: string;
 
 
 	constructor
 		(
 		private _firebaseAuth: AngularFireAuth,
-		private router: Router
+		private router: Router, private db: AngularFirestore
 		) {
 		this.user = _firebaseAuth.authState;
 		this.user.subscribe(
@@ -113,9 +123,39 @@ export class AuthService {
 			this.username = usernameUpdate;
 
 			this.profilePhoto = photoUpdate;
-			window.location.reload();
+			this.db.collection("Users").doc(this.username).set({
+				username: this.username
+			}).then((res) => {
+				console.log("added");
+				window.location.reload();
+			}).catch((err) => {
+				// this.errormsg = err;
+				console.log(err);
+			});
+			// window.location.reload();
 		})
 			.catch((err) => console.log(err));
+	}
+
+	updateWithOldUsername(usernameUpdate: string, photoUpdate: string) {
+		const userUpdate = this._firebaseAuth.auth.currentUser;
+		// if (photoUpdate == null) {
+		// 	photoUpdate = this.photoUpload.downloadURL
+		// }
+		// console.log(this.photoUpload.downloadURL.value);'
+		userUpdate.updateProfile({
+			displayName: usernameUpdate,
+			photoURL: photoUpdate
+		}).then((res) => {
+			this.username = usernameUpdate;
+
+			this.profilePhoto = photoUpdate;
+			window.location.reload();
+		}).catch((err) => {
+			// this.errormsg = err;
+			console.log(err);
+		});
+
 	}
 
 	logout() {

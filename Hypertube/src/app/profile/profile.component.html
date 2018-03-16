@@ -1,48 +1,43 @@
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
-<div class="container" *ngIf="!displayLoad">
-	<div class="row my-2" style="background-color: #333; border-color: #333;">
-		<div class="col-lg-4 order-lg-1 text-center">
-			<img *ngIf="photo" src="{{photo}}" class="mx-auto img-fluid img-circle d-block" alt="avatar">
-			<img *ngIf="!photo" src="../../assets/no-thumbnail.png" class="mx-auto img-fluid img-circle d-block" alt="avatar">
+<div style="display: flex; 
+	flex-direction: row; ">
+	<button class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
+</div>
+<div class="profile-wrap" *ngIf="!displayLoad">
+
+	<div>
+		<div class="card">
+			<img *ngIf="photo" src="{{photo}}" style="width:100%" alt="avatar">
+			<img *ngIf="!photo" src="../../assets/no-thumbnail.png" alt="avatar">
 			<!-- <h6 class="mt-2">Upload a different photo</h6>
-					<label class="custom-file">
-						<input type="file" id="file" class="custom-file-input">
-						<span class="custom-file-control">Choose file</span>
-					</label> -->
-		</div>
-		<div class="col-lg-8 order-lg-2">
-			<div class="card card-inverse" style="background-color: #333; border-color: #333; color: white;">
-				<div class="tab-pane active" id="profile">
-					<h5 class="mb-3" *ngIf="username else ">UserName: {{username}}</h5>
-					<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
-					<div class="row">
-						<div class="col-md-6">
-							<h6>About</h6>
-							<p>
-								{{email}}
-							</p>
-							<h3>Are you verified</h3>
-							<p *ngIf="!verified">
-								NO
-							</p>
-							<p *ngIf="verified">
-								YES
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
+								<label class="custom-file">
+									<input type="file" id="file" class="custom-file-input">
+									<span class="custom-file-control">Choose file</span>
+								</label> -->
+			<h5 class="mb-3" *ngIf="username">UserName: {{username}}</h5>
+			<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
+			<h6>About</h6>
+			<p>
+				{{email}}
+			</p>
+			<h3 class="title">Are you verified</h3>
+			<p *ngIf="!verified" class="title">
+				NO
+			</p>
+			<p *ngIf="verified" class="title">
+				YES
+			</p>
 		</div>
 
 	</div>
-	<button class="btn btn-outline-success api-button" (click)="editProfile()">Edit profile</button>
-	<div *ngIf="editButton">
+
+	<div style="overflow: hidden" *ngIf="editButton">
 		<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
 			<div class="form-group">
 				<h3>Username:</h3>
-				<input type="text" class="form-control" ngModel name="username" required minlength="5" #username="ngModel">
+				<input type="text" class="form-control" ngModel name="username" minlength="5" #username="ngModel">
 				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
 			</div>
 			<div class="form-group">
@@ -54,7 +49,7 @@
 			<div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)" [class.hovering]="isHovering">
 				<h3>AngularFire Drop Zone</h3>
 				<div class="file">
-					<label class="file-label">
+					<label class="row" style="margin-left: 50px;">
 						<input class="file-input" type="file" (change)="startUpload($event.target.files)">
 						<span class="file-cta">
 							<span class="file-icon">
@@ -74,21 +69,24 @@
 			</div>
 			<div *ngIf="snapshot | async as snap">
 				{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-				<div *ngIf="downloadURL | async as url">
+				<!-- <div *ngIf="downloadURL | async as url">
 					<h3>Results!</h3>
 					<img [src]="url" class="mx-auto img-fluid img-circle d-block">
 					<br>
 					<a [href]="url" target="_blank" rel="noopener">Download Me!</a>
-				</div>
+				</div> -->
 				<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
 				<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
 				<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
 			</div>
 			<!-- <app-file-upload></app-file-upload> -->
 			<div class="register-buttons form-group">
-				<button class="btn btn-outline-success" type="Sumbit" [disabled]="!form.valid">Register</button>
-				<button class="btn btn-outline-default">Cancel</button>
+				<button class="btn btn-outline-success" type="Submit" [disabled]="!form.valid">Update</button>
+				<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
 			</div>
 		</form>
+		<div class="alert alert-warning" *ngIf="errormsg">
+			<strong>Error!</strong> {{errormsg}}
+		</div>
 	</div>
 </div>
