@@ -34,6 +34,8 @@ import { EqualValidator } from './services/password-validator';
 import { DropZoneDirective } from './services/drop-zone.directive';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { FileuploadService } from './services/fileupload.service';
+// import { SocialAuthService } from './services/social-auth.service';
+// import * as admin from 'firebase-admin';
 
 
 @NgModule({
@@ -60,7 +62,7 @@ import { FileuploadService } from './services/fileupload.service';
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
 		AngularFirestoreModule,
-		AngularFireStorageModule
+		AngularFireStorageModule,
 	],
 	providers: [
 		MovieService,
@@ -68,7 +70,7 @@ import { FileuploadService } from './services/fileupload.service';
 		AuthService,
 		AuthGuard,
 		isLoggedIn,
-		FileuploadService
+		FileuploadService,
 	],
 	bootstrap: [AppComponent]
 })

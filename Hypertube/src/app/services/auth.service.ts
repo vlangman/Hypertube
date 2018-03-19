@@ -5,6 +5,9 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/firestore';
+import { HttpClient } from '@angular/common/http';
+import * as admin from 'firebase-admin';
+import { environment } from "../../environments/environment";
 
 export interface User {
 	username: string;
@@ -33,7 +36,7 @@ export class AuthService {
 	constructor
 		(
 		private _firebaseAuth: AngularFireAuth,
-		private router: Router, private db: AngularFirestore
+		private router: Router, private db: AngularFirestore, private http: HttpClient
 		) {
 		this.user = _firebaseAuth.authState;
 		this.user.subscribe(
@@ -53,7 +56,28 @@ export class AuthService {
 			});
 
 	}
+	resetPass(email) {
+		const auth = this._firebaseAuth.auth;
+		return auth.sendPasswordResetEmail(email);
 
+	}
+	login(provider: string, params: any) {
+		switch (provider) {
+			// case 'facebook':
+			//     return this.facebook(params.code);
+
+			case '42':
+				console.log(params.code);
+		}
+	}
+	login42(token: string) {
+		console.log('here is the token');
+
+		// this._firebaseAuth.auth.signInWithCustomToken(token);
+	}
+	signInWith42() {
+		return window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=b654f310dbf2bada79b1ed5cb10d6b19ece7fc5649ad79ca9e4dbfc349fd082c&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2FLogin&response_type=code'
+	}
 	signInWithFacebook() {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.FacebookAuthProvider()
