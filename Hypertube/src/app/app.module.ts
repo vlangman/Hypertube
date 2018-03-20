@@ -8,6 +8,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFirestoreModule } from "angularfire2/firestore";
+import { AngularFireStorageModule } from "angularfire2/storage";
 
 
 //environment config -> (firebase config)
@@ -17,6 +19,8 @@ import { environment } from '../environments/environment';
 import { SeriesService } from "./services/series.service";
 import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
+
+import { FileuploadService } from './services/fileupload.service'
 //components
 import { MoviesComponent } from './movies/movies.component';
 import { MoviedetailsComponent } from './movies/moviedetails/moviedetails.component';
@@ -33,15 +37,19 @@ import { AuthGuard } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
-import { EqualValidator } from './services/password-validator';
+
 import { WatchComponent } from './watch/watch.component';
+
+import { FileSizePipe } from './pipes/file-size.pipe';
+
 
 //video player imports
 import {VgCoreModule} from 'videogular2/core';
 import {VgControlsModule} from 'videogular2/controls';
 import {VgOverlayPlayModule} from 'videogular2/overlay-play';
 import {VgBufferingModule} from 'videogular2/buffering';
-
+//directives
+import { DropZoneDirective } from './services/drop-zone.directive';
 
 @NgModule({
 	declarations: [
@@ -53,9 +61,10 @@ import {VgBufferingModule} from 'videogular2/buffering';
 		RegisterComponent,
 		EllipsisPipe,
 		PagenotfoundComponent,
-		EqualValidator,
 		WatchComponent,
-		MoviedetailsComponent
+		MoviedetailsComponent,
+		DropZoneDirective,
+		FileSizePipe
 	],
 	imports: [
 		BrowserModule,
@@ -70,13 +79,17 @@ import {VgBufferingModule} from 'videogular2/buffering';
         VgControlsModule,
         VgOverlayPlayModule,
         VgBufferingModule,
+        AngularFirestoreModule,
+		AngularFireStorageModule,	
 	],
 	providers: [
 		MovieService,
 		SeriesService,
 		AuthService,
 		AuthGuard,
+		FileuploadService,
 	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }
+

@@ -1,0 +1,41 @@
+.dropzone { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+    height: 300px;
+    border: 2px dashed #f16624;
+    border-radius: 5px;
+    background: white;
+    margin: 10px 0;
+
+    &.hovering {
+        border: 2px solid #f16624;
+        color: #dadada !important;
+	}
+	
+	.file-label {
+		font-size: 1.2em
+	}
+}
+
+progress::-webkit-progress-value {
+    transition: width 0.1s ease;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    // margin: auto;
+    text-align: center;
+}
+
+.title {
+    color: grey;
+    font-size: 18px;
+}
+.profile-wrap {
+	display: flex; 
+	flex-direction: row; 
+	flex-wrap: wrap;
+}
