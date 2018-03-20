@@ -71,6 +71,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 							console.log(ret['error']['message']);
 						}
 						else{
+							this.searchError = null;
 							console.log('Bottom')
 							console.log(ret);
 							this.Movies = ret;
@@ -95,6 +96,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					(res) => {
 						this.Movies = res;
 						this.movieType = params['genreId'];
+							this.searchError = null;
 						this.displayLoad = false;
 					}
 				)

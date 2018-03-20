@@ -2,18 +2,22 @@
 <p>
 	<kbd>Hover</kbd> on any movie to view more details.</p>
 <p>{{message}}</p>
-<div *ngIf="displayLoad" class="loading-container">
-	<div class="loading"></div>
-</div>
 <div *ngIf="searchError" class="Error Display">
 	<h3>
 		{{searchError}}
 	</h3>
 </div>
+<div *ngIf="displayLoad" class="loading-container">
+	<div class="loading"></div>
+</div>
+
 
 <div *ngIf="!displayLoad" class="mainForm">
 	<div *ngFor="let movie of Movies" class="movies-card" id="{{movie.id}}" (mouseover)="showContent(movie.id)" (mouseleave)="showContent()">
-		<img class="movie-image" src="{{ movie.image }}">
+		<div>
+			<img class="movie-image" src="{{ movie.image }}">
+		</div>
+		
 		<div class="overlay">
 			<div class="header movie-headerloc">
 				<span class="author">Director</span>
@@ -39,5 +43,5 @@
 	<div class="loading"></div>
 </div>
 <div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
- (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
+		(scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
 </div>

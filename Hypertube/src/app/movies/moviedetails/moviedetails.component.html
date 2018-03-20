@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="movie-player">
-				<vg-player (onPlayerReady)="onPlayerReady($event)">
+				<vg-player class="videogular" (onPlayerReady)="onPlayerReady($event)">
 					<vg-overlay-play></vg-overlay-play>
 					<vg-buffering></vg-buffering>
 
@@ -52,35 +52,3 @@
 			</div>
 	</div>
 </div>
-
-<!--
-<div *ngIf="!displayLoad" class="mainForm">
-	<div *ngFor="let movie of Movies" class="movies-card" id="{{movie.id}}" (mouseover)="showContent(movie.id)" (mouseleave)="showContent()">
-		<img class="movie-image" src="{{ movie.image }}">
-		<div class="overlay">
-			<div class="header movie-headerloc">
-				<span class="author">Director</span>
-				<h1 class="lead movie-title">
-					<a>{{ movie.title }}</a>
-				</h1>
-				<span class="year">{{movie.year}}</span>
-				<br>
-				<span class="movie-genre" *ngFor="let genre of this.movie.genres">{{genre}}, </span>
-				<hr style="background: white;" />
-			</div>
-			<div class="movie-content">
-				<p [ngClass]=" (hoverMovie == movie.id) ? 'summary-show': 'summary-hide'" class="movie-summary">{{ movie.summary | ellipsis:350 }}</p>
-			</div>
-			<div class="movie-footer">
-				<button *ngIf=" movie.torrent720 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent720)">Watch 720p</button>
-				<button *ngIf=" movie.torrent1080 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent1080)">Watch 1080p</button>
-			</div>
-		</div>
-	</div>
-</div>
-<div *ngIf="loadMore" class="loading-container">
-	<div class="loading"></div>
-</div>
-<div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
- (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
-</div> -->

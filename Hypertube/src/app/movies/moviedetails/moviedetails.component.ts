@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "../../services/movies.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MOVIES } from "../../models/movies.model";
 
 
@@ -18,6 +18,7 @@ export class MoviedetailsComponent implements OnInit {
 	constructor (
 		private movieservice: MovieService,
 		private route: ActivatedRoute,
+		private router: Router,
 	)
 	{}
 
@@ -40,15 +41,26 @@ export class MoviedetailsComponent implements OnInit {
 				this.displayLoad = true;
 				this.movieservice.findMovieId(id).subscribe(
 					(ret) => {
-						console.log('WHAT THE FUUUUUCK');
 						this.movieservice.Movies.forEach((movie) =>{
 							if (movie['id'] == id)
 							{
 								this.Movie = movie;
 							}
 						})
+						if (!this.Movie)
+						{
+								this.router.navigate(['/pagenotfound']);
+						}
 						this.displayLoad = false;
 				})
+			}
+
+			if (watch == 'true')
+			{
+				console.log('Start playing')
+			}
+			else {
+				console.log('dont play');
 			}
 		})
 	}
