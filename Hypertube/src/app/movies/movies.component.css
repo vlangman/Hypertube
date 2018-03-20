@@ -58,7 +58,9 @@
 	height: 10%;
 	transition: .87s ease;
 }
-
+.movie-footer{
+	display: flex;
+}
 .movies-card:hover .overlay{
   height: 100%;
   background-color: rgba(3, 18, 43, 0.8);

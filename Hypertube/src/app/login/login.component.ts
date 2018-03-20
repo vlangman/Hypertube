@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from "@angular/router";
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -10,19 +11,14 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
 
-	user = {
-		username: '',
-		password: '',
-		email: '',
-	};
-	
-
 	constructor(
 		private authService: AuthService,
 		private router: Router,
+		private _ngZone: NgZone
 	) { }
 
 	ngOnInit() {
+		console.log('LOGIN COMPONENT THINKS ' + this.authService.isLoggedIn());
 	}
 
 
@@ -38,8 +34,17 @@ export class LoginComponent implements OnInit {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
 			.then((res) => {
-				this.router.navigateByUrl('Movies');
+				this._ngZone.run(() => this.router.navigate(['/Profile']));
+
 			})
 			.catch((err) => console.log(err));
 	}
+	emailAndPasswordLogin(f: NgForm) {
+		const value = f.value;
+		this.authService.signInWithEmailAndPassword(value.email, value.password).then((res) => {
+			this.router.navigate(['/Movies']);
+		})
+			.catch((err) => console.log(err));
+	}
+
 }

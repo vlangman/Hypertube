@@ -16,5 +16,5 @@ export const environment = {
 	google: {
 		webClientId: '702362178878-fclssvebisnr7gnb11mushkl978om0e9.apps.googleusercontent.com',
 		webClientSecret: 'ZaSNE6Zwxnd8odCzpF2S8gIz',
-	}
+	},
 };

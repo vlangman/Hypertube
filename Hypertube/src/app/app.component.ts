@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MovieService } from "./services/movies.service";
 import { AuthService } from './services/auth.service';
-import { Router } from "@angular/router";
+import { NgForm } from '@angular/forms';
 
 
 
@@ -15,23 +16,29 @@ export class AppComponent implements OnInit {
 	genres: string[] = [];
 	genreToggle: boolean = false;
 	navOpen: boolean = true;
+	private searchQuery: string = '';
 
-
-	constructor(private movieservice: MovieService,
+	constructor(
+		private movieservice: MovieService,
 		private authService: AuthService,
-		private router: Router) {
+		private router: Router,
+	) {
 		this.genres = movieservice.genreList;
 	}
 
 	ngOnInit() {
-		console.log(this.authService.isLoggedIn());
 	}
 
-	logout(){
-		console.log('logged out fired');
-		this.authService.logout();
-		this.router.navigate(['']);
+	search(){
+		if (this.searchQuery == '')
+		{
+			console.log('Nah Fam..');
+		} else {
+			console.log()
+			this.router.navigate(["Movies/" , { Search: true, query_term :this.searchQuery }]);
+		}
 	}
+
 
 	toggleGenreDropdown() {
 		if (this.genreToggle) {
@@ -48,11 +55,13 @@ export class AppComponent implements OnInit {
 	toggleNavbar() {
 		if (this.navOpen) {
 			this.navOpen = false;
-			console.log(this.navOpen);
 		}
 		else {
 			this.navOpen = true;
-			console.log(this.navOpen);
 		}
+	}
+
+	onLogout() {
+		this.authService.logout();
 	}
 }
