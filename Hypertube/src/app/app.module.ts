@@ -2,41 +2,54 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
-import { AngularFireStorageModule } from 'angularfire2/storage';
-import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFirestoreModule } from "angularfire2/firestore";
+import { AngularFireStorageModule } from "angularfire2/storage";
 
-//nvironment config
+
+//environment config -> (firebase config)
 import { environment } from '../environments/environment';
 
 // Services
+import { SeriesService } from "./services/series.service";
+import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
+
+import { FileuploadService } from './services/fileupload.service'
+//components
 import { MoviesComponent } from './movies/movies.component';
+import { MoviedetailsComponent } from './movies/moviedetails/moviedetails.component';
 import { SeriesComponent } from './series/series.component';
 import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
-import { SeriesService } from "./services/series.service";
+
+//Util/Dom
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
-import { AuthService } from "./services/auth.service";
-import { AuthGuard, isLoggedIn } from './services/auth-guard.service';
+//Guards
+import { AuthGuard } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
-import { EqualValidator } from './services/password-validator';
-import { DropZoneDirective } from './services/drop-zone.directive';
-import { FileSizePipe } from './pipes/file-size.pipe';
-import { FileuploadService } from './services/fileupload.service';
-// import { SocialAuthService } from './services/social-auth.service';
-// import * as admin from 'firebase-admin';
 
+import { WatchComponent } from './watch/watch.component';
+
+import { FileSizePipe } from './pipes/file-size.pipe';
+
+
+//video player imports
+import {VgCoreModule} from 'videogular2/core';
+import {VgControlsModule} from 'videogular2/controls';
+import {VgOverlayPlayModule} from 'videogular2/overlay-play';
+import {VgBufferingModule} from 'videogular2/buffering';
+//directives
+import { DropZoneDirective } from './services/drop-zone.directive';
 
 @NgModule({
 	declarations: [
@@ -48,9 +61,10 @@ import { FileuploadService } from './services/fileupload.service';
 		RegisterComponent,
 		EllipsisPipe,
 		PagenotfoundComponent,
-		EqualValidator,
+		WatchComponent,
+		MoviedetailsComponent,
 		DropZoneDirective,
-		FileSizePipe,
+		FileSizePipe
 	],
 	imports: [
 		BrowserModule,
@@ -61,17 +75,21 @@ import { FileuploadService } from './services/fileupload.service';
 		AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
-		AngularFirestoreModule,
-		AngularFireStorageModule,
+        VgCoreModule,
+        VgControlsModule,
+        VgOverlayPlayModule,
+        VgBufferingModule,
+        AngularFirestoreModule,
+		AngularFireStorageModule,	
 	],
 	providers: [
 		MovieService,
 		SeriesService,
 		AuthService,
 		AuthGuard,
-		isLoggedIn,
 		FileuploadService,
 	],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }
+

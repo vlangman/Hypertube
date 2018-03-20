@@ -1,8 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { ActivatedRoute, Params, Router, NavigationStart } from '@angular/router';
 import { MovieService } from "../services/movies.service";
 import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
+import { Subscription } from "rxjs/Subscription";
+import 'rxjs/add/operator/map';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 
 @Component({
@@ -11,9 +14,9 @@ import { YTS } from "../models/yts.model";
 	styleUrls: ['./movies.component.css']
 })
 
-export class MoviesComponent implements OnInit {
+export class MoviesComponent implements OnInit, OnDestroy {
 
-	movieType: string = 'Featured Movies';
+	movieType: string;
 	Movies: MOVIES[] = [];
 	message: string = '';
 	displayLoad: boolean = true;
@@ -21,51 +24,118 @@ export class MoviesComponent implements OnInit {
 	hoverMovie: number;
 	selectedGenre: string;
 	page: number = 1;
+	searchMode: boolean = false;
+	searchError: string = null;
+	genreMode: boolean = false;
 
-	constructor(private movieService: MovieService,
-		private route: ActivatedRoute) {
+	//subscriptions to services that will be destroyed onDestroy
+	routerParamsSub: Subscription;
+	getNextPageSub : Subscription;
+	movieGenreSub: Subscription;
+	searchMovieSub: Subscription;
+	getMovieSub: Subscription;
+	getNextMoviePageSub: Subscription;
+	routerSub: Subscription;
+
+
+	constructor(
+		private movieService: MovieService,
+		private route: ActivatedRoute,
+		private router: Router,
+	)
+	{
+		
 	}
-
 
 	ngOnInit() {
-		if (this.route.snapshot.params['genre']) {
-			this.route.params.subscribe((params: Params) => {
-				this.selectedGenre = params['genre'];
-				this.movieService.getGenre(this.selectedGenre).subscribe((data: YTS) => {
-					this.Movies = [];
-					this.movieType = this.route.snapshot.params['genre'] + ' Movies';
-					console.log(data);
-					data['data']['movies'].forEach((movie: JSON) => {
-						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
-						this.displayLoad = false;
-					})
-				})
-			})
-		} else {
-			this.movieService.getMovies().subscribe(
-				(data: YTS) => {
-					console.log(data);
-					data['data']['movies'].forEach((movie: JSON) => {
-						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
-						this.displayLoad = false;
-					});
-				})
-		}
+		this.page = 1;
+		this.searchMode = false;
+		console.log('creating Movies component');
 
+		this.routerParamsSub = this.route.params.subscribe((params) => {
+			if (params['Search'] && params['query_term'])
+			{
+				console.log('loading Search Movies');
+				this.displayLoad = true;
+				this.Movies = [];
+				this.searchMode = true;
+				this.searchMovieSub = this.movieService.searchMovies(params['query_term']).subscribe(
+					(ret) => {
+						if (ret instanceof ErrorObservable ) {
+							console.log('top');
+							this.Movies = [];
+							this.movieType = 'No';
+							this.displayLoad = false;
+							this.searchError = ret['error']['message'];
+							console.log('------------------------------------------------------------------------------------------');
+							console.log(ret['error']['message']);
+						}
+						else{
+							console.log('Bottom')
+							console.log(ret);
+							this.Movies = ret;
+							this.movieType = params['query_term'];
+							this.displayLoad = false;	
+						}
+						
+					}, (err) => {
+						
+					}, () => {
+						this.searchMovieSub.unsubscribe();
+					}
+				)
+			} else if (params['genreId'])
+			{
+				console.log('loading Movies by Genre');
+				this.displayLoad = true;
+				this.Movies = [];
+				this.genreMode = true;
+				console.log(params)
+				this.movieGenreSub = this.movieService.getGenre(params['genreId']).subscribe(
+					(res) => {
+						this.Movies = res;
+						this.movieType = params['genreId'];
+						this.displayLoad = false;
+					}
+				)
+			}
+		})
+
+		if (!this.searchMode && !this.genreMode)
+		{
+			console.log('searching for FEATURED');
+			this.Movies = [];
+			this.getMovieSub = this.movieService.getMovies().subscribe(
+				(res) => {
+					console.log(res);
+					this.Movies = res;
+					this.movieType = 'Featured'
+					this.displayLoad = false;
+				}
+			)
+		}
 	}
+		
 
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {
-		if (!this.selectedGenre) {
+		console.log('scrolled down')
+		if (!this.selectedGenre && !this.searchMode) {
 			this.loadMore = true;
-			this.movieService.getNextPage(this.page += 1).subscribe(
-				(data: YTS) => {
-					console.log(this.page);
-					data['data']['movies'].forEach((movie: JSON) => {
-						this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating'], movie['year'], movie['genres']))
-					})
-					this.loadMore = false;
-				})
+			this.getNextPageSub = this.movieService.getNextPage(this.page += 1).subscribe(
+			(data: MOVIES[]) => {
+				console.log(this.page);
+				this.Movies = data;
+				this.loadMore = false;
+			})
+		}
+		else if (this.selectedGenre && !this.searchMode) {
+			this.loadMore = true;
+			this.getNextMoviePageSub = this.movieService.getGenreNext(this.page += 1)
+			.subscribe((data: MOVIES[]) => {
+				this.Movies = data;
+				this.loadMore = false;
+			})
 		}
 	}
 
@@ -75,33 +145,34 @@ export class MoviesComponent implements OnInit {
 	}
 
 
+	viewMovie(id: number, torrentData: {}){
+		console.log(torrentData);
+		const quality = torrentData['quality'];
+		if  (quality == "720p")
+		{
+			this.router.navigate(["Movies/Details", id , torrentData['hash'], 720,{watch: true}]);
+		} else if (quality == "1080p")
+		{
+
+			this.router.navigate(["Movies/Details", id , torrentData['hash'], 1080, {watch: true}]);
+		}
+	}
+
 
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}
 
-	//movie search do with at your own will :)
-	// onMovie_Submit(form: NgForm) {
-	// console.log(form.value.Search);
-	// this.search = form.value.Search;
-	// this.onMovieSearch(this.search);
-	// }
-	// onMovieSearch(query: string) {
-	// 	this.Movies = [];
-	// 	console.log('clearing movie array');
-	// 	console.log(this.Movies);
-	// 	this.movieService.onSearch(query).subscribe(
-	// 		(data: YTS) => {
-	// 			console.log("Recieved DATA for : " + query);
-	// 			console.log(data);
-	// 			data['data']['movies'].forEach((movie) => {
-	// 				this.Movies.push(new MOVIES(movie['id'], movie['title'], movie['description'], movie['summary'], movie['large_cover_image'], movie['rating']))
-	// 				this.displayLoad = false;
-	// 				console.log(this.Movies);
-	// 			});
-	// 		});
-	// 	// this.displayLoad = true;
-	// 	// console.log(this.displayLoad);
-	// 	}
-	// }
+	ngOnDestroy(){
+		console.log('Destroy movies Component');
+		if (this.routerSub)
+			this.routerSub.unsubscribe();
+		if(this.routerParamsSub)
+			this.routerParamsSub.unsubscribe();
+		if (this.getNextMoviePageSub)
+			this.getNextMoviePageSub.unsubscribe();
+		if (this.getNextPageSub)
+			this.getNextPageSub.unsubscribe();
+	}
+
 }

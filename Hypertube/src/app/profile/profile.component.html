@@ -1,3 +1,4 @@
+
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
@@ -69,12 +70,7 @@
 			</div>
 			<div *ngIf="snapshot | async as snap">
 				{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-				<!-- <div *ngIf="downloadURL | async as url">
-					<h3>Results!</h3>
-					<img [src]="url" class="mx-auto img-fluid img-circle d-block">
-					<br>
-					<a [href]="url" target="_blank" rel="noopener">Download Me!</a>
-				</div> -->
+		
 				<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
 				<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
 				<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
@@ -89,4 +85,5 @@
 			<strong>Error!</strong> {{errormsg}}
 		</div>
 	</div>
+
 </div>

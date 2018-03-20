@@ -36,24 +36,6 @@ export class LoginComponent implements OnInit {
 		console.log(this.route.snapshot.queryParams);
 		console.log(provider);
 		this.fourtytwo(this.route.snapshot.queryParams['code']);
-		// this.this42test(test)
-		// this.loading = true;
-		// this.authService.login(provider, this.route.snapshot.queryParams)
-		// .then((success) => {
-		// 	if (success === true) {
-		// 		// this.loading = false;
-		// 		window.alert("Success");
-		// 		this.router.navigate([this.returnUrl]);
-		// 	} else {
-		// 		// this.loading = false;
-		// 		window.alert("Error");
-		// 	}
-		// })
-		// .catch((error) => {
-		// 	// this.loading = false;
-		// 	window.alert("Error");
-		// });
-
 	}
 	this42test(test) {
 		console.log("wyetwyetwyetwyetwy");

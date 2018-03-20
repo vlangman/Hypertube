@@ -1,9 +1,14 @@
-<h1>{{movieType}}</h1>
+<h1>{{movieType}} Movies</h1>
 <p>
 	<kbd>Hover</kbd> on any movie to view more details.</p>
 <p>{{message}}</p>
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
+</div>
+<div *ngIf="searchError" class="Error Display">
+	<h3>
+		{{searchError}}
+	</h3>
 </div>
 
 <div *ngIf="!displayLoad" class="mainForm">
@@ -24,8 +29,8 @@
 				<p [ngClass]=" (hoverMovie == movie.id) ? 'summary-show': 'summary-hide'" class="movie-summary">{{ movie.summary | ellipsis:350 }}</p>
 			</div>
 			<div class="movie-footer">
-				<button class="btn btn-outline-primary">Watch Now</button>
-				<button class="btn btn-success">Download</button>
+				<button *ngIf=" movie.torrent720 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent720)">Watch 720p</button>
+				<button *ngIf=" movie.torrent1080 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent1080)">Watch 1080p</button>
 			</div>
 		</div>
 	</div>
