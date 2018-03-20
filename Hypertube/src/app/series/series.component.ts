@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SERIES } from "../models/series.model";
 import { SeriesService } from "../services/series.service";
+import { Subscription } from "rxjs/Subscription";
 
 
 @Component({
@@ -8,7 +9,7 @@ import { SeriesService } from "../services/series.service";
 	templateUrl: './series.component.html',
 	styleUrls: ['./series.component.css']
 })
-export class SeriesComponent implements OnInit {
+export class SeriesComponent implements OnInit, OnDestroy {
 
 	Series: SERIES[] = [];
 	displayLoad: boolean = true;
@@ -17,27 +18,27 @@ export class SeriesComponent implements OnInit {
 	imbdSearch: boolean;
 	page: number = 1;
 
+	//subscriptions
+	getSeriesSub: Subscription;
+	NextPageSub: Subscription;
+	getImdbSub: Subscription;
+
 	constructor(private seriesService: SeriesService) {
 	}
 
 
 
 	ngOnInit() {
+		console.log('Create Series Component');
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
-		this.seriesService.getSeries().subscribe(
+		this.getSeriesSub = this.seriesService.getSeries().subscribe(
 			(data) => {
-				console.log(data);
-				data['torrents'].forEach((torrents) => {
-
-					if (!torrents['large_screenshot']) {
-						torrents['large_screenshot'] = "../../assets/no-thumbnail.png";
-						console.log('no image');
-					}
-					this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']));
-				})
+				this.Series = [];
+				this.Series = data;
 				this.displayLoad = false;
-			})
+			}
+		)
 
 	}
 
@@ -45,17 +46,10 @@ export class SeriesComponent implements OnInit {
 	onScrollDown() {
 		if (!this.imbdSearch) {
 			this.loadMore = true;
-			this.seriesService.getNextPage(this.page += 1).subscribe(
+			this.NextPageSub = this.seriesService.getNextPage(this.page += 1).subscribe(
 				(data) => {
-					data['torrents'].forEach((torrents) => {
-						if (!torrents['large_screenshot']) {
-							torrents['large_screenshot'] = "../../assets/no-thumbnail.png";
-							console.log('no image');
-						}
-						this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']))
-					})
+					this.Series = data;
 					this.loadMore = false;
-
 				})
 		}
 	}
@@ -80,18 +74,22 @@ export class SeriesComponent implements OnInit {
 	getRating(code: number) {
 		this.imbdSearch = true;
 		this.displayLoad = true;
-		this.seriesService.getImdb(code).subscribe(
-			(data) => {
-				this.Series = [];
-				data['torrents'].forEach((torrents) => {
-					if (!torrents['large_screenshot']) {
-						torrents['large_screenshot'] = "../../assets/no-thumbnail.png";
-						console.log('no image');
-					}
-					this.Series.push(new SERIES(torrents['id'], torrents['title'], torrents['season'], torrents['large_screenshot'], torrents['size_bytes'], torrents['peers'], torrents['seeds'], torrents['imdb_id']))
-				})
-				this.displayLoad = false;
-			});
+		this.getImdbSub = this.seriesService.getImdb(code).subscribe(
+		(data) => {
+			this.Series = [];
+			this.Series = data;
+			this.displayLoad = false
+		})
 	}
-
+	
+	ngOnDestroy(){
+		console.log('Destroy Series Component');
+		if (this.getSeriesSub)
+			this.getSeriesSub.unsubscribe();
+		else if (this.NextPageSub)
+			this.NextPageSub.unsubscribe();
+		else if (this.getImdbSub)
+			this.getImdbSub.unsubscribe();
+	
+	}
 }

@@ -1,3 +1,89 @@
-<p>
-  profile works!
-</p>
+
+<div *ngIf="displayLoad" class="loading-container">
+	<div class="loading"></div>
+</div>
+<div style="display: flex; 
+	flex-direction: row; ">
+	<button class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
+</div>
+<div class="profile-wrap" *ngIf="!displayLoad">
+
+	<div>
+		<div class="card">
+			<img *ngIf="photo" src="{{photo}}" style="width:100%" alt="avatar">
+			<img *ngIf="!photo" src="../../assets/no-thumbnail.png" style="width:100%" alt="avatar">
+			<!-- <h6 class="mt-2">Upload a different photo</h6>
+								<label class="custom-file">
+									<input type="file" id="file" class="custom-file-input">
+									<span class="custom-file-control">Choose file</span>
+								</label> -->
+			<h5 class="mb-3" *ngIf="username">UserName: {{username}}</h5>
+			<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
+			<h6>About</h6>
+			<p>
+				{{email}}
+			</p>
+			<h3 class="title">Are you verified</h3>
+			<p *ngIf="!verified" class="title">
+				NO
+			</p>
+			<p *ngIf="verified" class="title">
+				YES
+			</p>
+		</div>
+
+	</div>
+
+	<div style="overflow: hidden" *ngIf="editButton">
+		<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
+			<div class="form-group">
+				<h3>Username:</h3>
+				<input type="text" class="form-control" ngModel name="username" minlength="5" #username="ngModel">
+				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
+			</div>
+			<div class="form-group">
+				<h3>Photo:</h3>
+				<input type="text" class="form-control" ngModel name="photo" #photo="ngModel">
+				<!-- <span class="help-block" *ngIf="!password.valid && password.touched">Please enter the same password</span> -->
+			</div>
+			<p>OR</p>
+			<div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)" [class.hovering]="isHovering">
+				<h3>AngularFire Drop Zone</h3>
+				<div class="file">
+					<label class="row" style="margin-left: 50px;">
+						<input class="file-input" type="file" (change)="startUpload($event.target.files)">
+						<span class="file-cta">
+							<span class="file-icon">
+								<i class="fa fa-upload"></i>
+							</span>
+							<span class="file-label">
+								or choose a file…
+							</span>
+						</span>
+					</label>
+				</div>
+			</div>
+			<div *ngIf="percentage | async as pct">
+				<progress class="progress is-info" [value]="pct" max="100">
+				</progress>
+				{{ pct | number }}%
+			</div>
+			<div *ngIf="snapshot | async as snap">
+				{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
+		
+				<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
+				<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
+				<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
+			</div>
+			<!-- <app-file-upload></app-file-upload> -->
+			<div class="register-buttons form-group">
+				<button class="btn btn-outline-success" type="Submit" [disabled]="!form.valid">Update</button>
+				<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
+			</div>
+		</form>
+		<div class="alert alert-warning" *ngIf="errormsg">
+			<strong>Error!</strong> {{errormsg}}
+		</div>
+	</div>
+
+</div>
