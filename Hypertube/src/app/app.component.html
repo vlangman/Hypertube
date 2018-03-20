@@ -1,20 +1,56 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div [ngClass]=" navOpen ? 'toggled': ''" id="wrapper">
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper">
+		<ul class="sidebar-nav">
+			<li class="sidebar-brand">
+				<a href="#">WATCH ANYTHING!</a>
+			</li>
+			<li>
+				<a routerLinkActive="active" routerLink="/Movies">Movies</a>
+			</li>
+			<li>
+				<a routerLinkActive="active" routerLink="/Series">Series</a>
+			</li>
+			<li>
+				<a class="genreDropdown" (click)="toggleGenreDropdown()" routerLinkActive="active">Genre
+					<i class="fas fa-caret-down"></i>
+				</a>
+				<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
+					<li routerLinkActive="genreActive" [routerLink]="'Movies/' + genre " class="genre" *ngFor="let genre of genres">{{genre}}</li>
+				</ul>
+			</li>
+			<hr style="background-color: white; width: 90%">
+			<ng-template [ngIf]="!authService.isLoggedIn()">
+				<li class="user-login">
+					<button class="btn btn-outline-warning" routerLink="/Login">Login</button>
+					<button class="btn btn-outline-primary" routerLink="/Register">Register</button>
+				</li>
+			</ng-template>
+			<li class="user-login" *ngIf="authService.isLoggedIn()">
+				<button class="btn btn-outline-warning" routerLink="/Profile">Profile</button>
+				<button class="btn btn-outline-primary" (click)="onLogout()">Logout</button>
+			</li>
 
+		</ul>
+	</div>
+	<!-- /#sidebar-wrapper -->
+	<nav class="navbar sticky-top navbar-dark bg-dark">
+		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
+		<form class="form-inline searchbox">
+			<div class="Search">
+				<input class="form-control mr-sm-1" type="text" placeholder="Search">
+				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+			</div>
+		</form>
+	</nav>
+	<!-- Page Content -->
+	<div id="page-content-wrapper">
+
+		<div class="container-fluid">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+	<!-- /#page-content-wrapper -->
+</div>
+<!-- /#wrapper -->
+<!-- /#sidebar-wrapper -->
