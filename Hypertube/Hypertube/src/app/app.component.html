@@ -1,0 +1,60 @@
+<!-- navbar -->
+
+
+<!-- /#sidebar-wrapper -->
+<div [ngClass]=" navOpen ? 'toggled': ''" id="wrapper">
+
+	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top navbar-dark bg-dark">
+		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
+			<div class="Search">
+				<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text" placeholder="Search">
+				<button class=" searchbutton btn btn-outline-warning my-2 my-sm-0" (click)=" search();">Search</button>
+			</div>
+	</nav>
+	<!-- Sidebar -->
+	<div id="sidebar-wrapper">
+		<ul class="sidebar-nav">
+			<li class="sidebar-brand">
+				<a href="#">WATCH ANYTHING!</a>
+			</li>
+			<li>
+				<a routerLinkActive="active" routerLink="/Movies">Movies</a>
+			</li>
+			<li>
+				<a routerLinkActive="active" routerLink="/Series">Series</a>
+			</li>
+			<li>
+				<a class="genreDropdown" (click)="toggleGenreDropdown()" routerLinkActive="active">Genre
+					<i class="fas fa-caret-down"></i>
+				</a>
+				<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
+					<li routerLinkActive="genreActive" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
+				</ul>
+			</li>
+			<hr style="background-color: white; width: 90%">
+			<ng-template [ngIf]="!authService.isLoggedIn()">
+				<li class="user-login">
+					<button class="btn btn-outline-warning" routerLink="/Login">Login</button>
+					<button class="btn btn-outline-primary" routerLink="/Register">Register</button>
+				</li>
+			</ng-template>
+			<li class="user-login" *ngIf="authService.isLoggedIn()">
+				<button class="btn btn-outline-warning" routerLink="/Profile">Profile</button>
+				<button class="btn btn-outline-primary" (click)="onLogout()">Logout</button>
+			</li>
+
+		</ul>
+	</div>
+
+
+	<!-- Page Content -->
+	<div id="page-content-wrapper">
+
+		<div>
+			<router-outlet></router-outlet>
+		</div>
+	</div>
+	<!-- /#page-content-wrapper -->
+</div>
+<!-- /#wrapper -->
+<!-- /#sidebar-wrapper -->

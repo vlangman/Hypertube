@@ -1,0 +1,108 @@
+.mainForm{
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	/*background-color: purple;*/
+	justify-content: center;
+}
+.series-title{
+	font-size: 1.5em;
+}
+.series-card{
+	height: 400px;
+	width: 360px;
+	/*background-color: cornflowerblue;*/
+	/*border: 3px solid yellow;*/
+	margin: 15px;
+	position: relative;
+}
+.series-card:hover{
+	background-color: rgba(11, 34, 71, 0.5);
+}
+.hoverblue{
+	background-color: green;
+}
+.series-image{
+	height: 100%;
+	width: 100%;
+}
+
+
+
+.series-summary {
+	max-height: 250px;
+	margin-top: 5px;
+	width: 0;
+	color: white;
+	font-size: 1.2em;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	text-align: center;
+	max-height: 60%;
+}
+
+.overlay {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 2%;
+	color: white;
+	position: absolute;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.9);
+	overflow: hidden;
+	width: 100%;
+	height: 13%;
+	transition: .87s ease;
+}
+
+.series-card:hover .overlay{
+  height: 100%;
+  background-color: rgba(3, 18, 43, 0.8);
+}
+.summary-show{
+	display: inherit;
+	width: 90%;
+}
+.summary-hide{
+	display: none;
+	width: 0%;
+}
+.series-genre{
+	font-size: 1em;
+}
+
+
+@media (max-width: 790px) {
+	.series-card{
+		width: 300px;
+		height: 500px;
+	}
+	.series-summary{
+		font-size: 1.1em;
+		max-height: 60%;
+	}
+	.overlay{
+		height: 11%;
+	}
+}
+@media (max-width: 440px) {
+	.series-card{
+		width: 290px;
+		height: 380px;
+	}
+	.series-summary{
+		font-size: 0.8em;
+		max-height: 50%;
+		top: 60%;
+	}
+	.overlay{
+		height: 14%;
+	}
+	.series-genre{
+	font-size: 0.7em;
+}
+}

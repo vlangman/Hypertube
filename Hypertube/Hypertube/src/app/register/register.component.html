@@ -1,0 +1,46 @@
+<h1>Register</h1>
+<p>
+	<kbd>Register</kbd> to download content!</p>
+<div class="row">
+	<div class="flex">
+		<!-- <form #f="ngForm" (ngSubmit)="onAdd(f)" class="register-form">
+			<input name="username" ngModel required>
+			<input name="last" ngModel>
+			<button>Submit</button>
+		</form> -->
+		<form #f="ngForm" (ngSubmit)="onRegister(f)" class="register-form">
+			<div class="form-group">
+				<h3>Username:</h3>
+				<input type="text" class="form-control" ngModel name="username" required minlength="5" #username="ngModel">
+				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
+			</div>
+			<div class="form-group">
+				<h3>Email:</h3>
+				<input type="Email" id="email" class="form-control" ngModel name="email" required email #email="ngModel">
+				<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email for example: user@example.com</span>
+				<!-- pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" -->
+			</div>
+			<div class="form-group">
+				<h3>Password:</h3>
+				<input type="password" class="form-control" ngModel name="password" required minlength="8" validateEqual="cPassword" reverse="true"
+				 #confirmpassword="ngModel">
+				<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Password min length must be greater than 8</span>
+			</div>
+			<div class="form-group">
+				<h3>Confirm password:</h3>
+				<input type="password" class="form-control" ngModel name="cPassword" required validateEqual="password" #password="ngModel">
+				<span class="help-block" *ngIf="!password.valid && password.touched">Please enter the same password</span>
+			</div>
+			<div class="form-group">
+					<h3>Photo:</h3>
+					<input type="text" class="form-control" ngModel name="photo" required #photo="ngModel">
+					<!-- <span class="help-block" *ngIf="!password.valid && password.touched">Please enter the same password</span> -->
+				</div>
+
+			<div class="register-buttons form-group">
+				<button class="btn btn-outline-success api-button" type="Submit" [disabled]="!f.valid">Register</button>
+				<button class="btn btn-outline-default api-button">Cancel</button>
+			</div>
+		</form>
+	</div>
+</div>

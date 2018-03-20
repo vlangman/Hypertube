@@ -1,0 +1,40 @@
+<h1>Featured Series</h1>
+<p>
+	<kbd>Hover</kbd> on any series to view more details.</p>
+<div *ngIf="displayLoad" class="loading-container">
+	<div class="loading"></div>
+</div>
+
+<div *ngIf="!displayLoad" class="mainForm">
+	<div *ngFor="let series of Series" class="series-card" id="{{series.id}}" (mouseover)="showContent(series.id)" (mouseleave)="showContent()">
+		<img class="series-image" src="{{ series.image }}">
+		<div class="overlay">
+			<div class="header series-header">
+				<span class="author">Season: {{ series.season }}</span>
+				<h1 class="lead series-title">
+					<a>{{ series.title }}</a>
+				</h1>
+				<p>File-Size: {{ bytesToSize(series.size_bytes) }}</p>
+				<hr style="background: white;" />
+			</div>
+			<div class="series-content">
+				<p [ngClass]=" (hoverSeries == series.id) ? 'summary-show': 'summary-hide'" class="series-summary"> Seeders:
+					<em>{{ series.seeds }}</em>
+					<br> Peers:
+					<em>{{series.peers}}</em>
+				</p>
+			</div>
+			<div class="series-footer">
+				<button class="btn btn-outline-primary">Watch Now</button>
+				<button class="btn btn-success">Download</button>
+				<button (click)="getRating(series.imdb)" class="btn btn-success">More</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div *ngIf="loadMore" class="loading-container">
+	<div class="loading"></div>
+</div>
+<div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
+ (scrolled)="onScrollDown()">
+</div>
