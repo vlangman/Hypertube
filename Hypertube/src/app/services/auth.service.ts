@@ -81,12 +81,20 @@ export class AuthService {
 	signInWithFacebook() {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.FacebookAuthProvider()
-		)
+		).then((res) => {
+			const userVerify = this._firebaseAuth.auth.currentUser;
+			if (userVerify.emailVerified == true) {
+				this.router.navigate(['/Profile']);
+			} else {
+				userVerify.sendEmailVerification().then((res) => {
+					window.alert('email sent');
+					this.router.navigate(['/Profile']);
+				})
+			}
+		})
 	};
 
 	signInWithGoogle() {
-
-
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
 		);

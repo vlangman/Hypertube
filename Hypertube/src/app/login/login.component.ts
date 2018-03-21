@@ -116,10 +116,12 @@ export class LoginComponent implements OnInit {
 	}
 	facebookLogin() {
 		this.authService.signInWithFacebook()
-			.then((res) => {
-				this.router.navigate(['/'])
-			})
-			.catch((err) => console.log(err));
+			.catch((err) => {
+				if (err.code === 'auth/account-exists-with-different-credential') {
+					window.alert(err)
+				}
+				// console.log(err);
+			});
 	}
 
 	googleLogin() {
