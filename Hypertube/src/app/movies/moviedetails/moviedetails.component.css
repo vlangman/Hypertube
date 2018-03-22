@@ -2,6 +2,8 @@
 	background-color: red;
 	height: 100%;
 	width: 100%;
+}body{
+	background-color: #2e2e2e;
 }
 .videoWrapper{
 	background-color: transparent;
@@ -17,11 +19,9 @@
 	background-color: orange;
 }
 
-.movie-player{
+.videogular{
 	width: 100%;
 	border: 1px solid yellow;
-	display: flex;
-	justify-content: center;
 }
 
 .movie-details{

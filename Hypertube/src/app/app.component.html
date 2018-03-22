@@ -1,6 +1,6 @@
 <div [ngClass]=" navOpen ? 'toggled': ''" id="wrapper">
 
-	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top navbar-dark bg-dark">
+	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
 			<div class="Search">
 				<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text" placeholder="Search">

@@ -2,9 +2,9 @@
 <p>
 	<kbd>Hover</kbd> on any movie to view more details.</p>
 <p>{{message}}</p>
-<div *ngIf="searchError" class="Error Display">
+<div *ngIf="movieError" class="Error Display">
 	<h3>
-		{{searchError}}
+		{{movieError}}
 	</h3>
 </div>
 <div *ngIf="displayLoad" class="loading-container">
@@ -19,7 +19,7 @@
 		</div>
 		
 		<div class="overlay">
-			<div class="header movie-headerloc">
+			<div class="header movie-header">
 				<span class="author">Director</span>
 				<h1 class="lead movie-title">
 					<a>{{ movie.title }}</a>
@@ -33,8 +33,7 @@
 				<p [ngClass]=" (hoverMovie == movie.id) ? 'summary-show': 'summary-hide'" class="movie-summary">{{ movie.summary | ellipsis:350 }}</p>
 			</div>
 			<div class="movie-footer">
-				<button *ngIf=" movie.torrent720 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent720)">Watch 720p</button>
-				<button *ngIf=" movie.torrent1080 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent1080)">Watch 1080p</button>
+				<button class="btn btn-outline-primary" (click)="viewMovie(movie.id)">Watch Now!</button>
 			</div>
 		</div>
 	</div>

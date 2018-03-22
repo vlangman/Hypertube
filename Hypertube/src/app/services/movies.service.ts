@@ -113,7 +113,7 @@ export class MovieService {
 		._catch(
 			(err) =>{
 				return Observable.throw(err);
-			})
+		})
 	}
 
 	findMovieId(id: number): Observable<MOVIES> {

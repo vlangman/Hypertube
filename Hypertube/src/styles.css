@@ -3,7 +3,10 @@ html, body {
 	height: 100%;
 	width: 100%;
 }
-
+body{
+  background-color: #2e2e2e;
+  color: white;
+}
 @font-face {
     font-family: primeRegular;
     src: url('app/fonts/PrimeRegular.otf');
