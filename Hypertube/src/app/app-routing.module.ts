@@ -19,7 +19,7 @@ const appRoutes: Routes = [
 	{ path: '', pathMatch: "full", redirectTo: '/Login'},
 	{ path: 'Movies', pathMatch: "full", component: MoviesComponent, canActivate: [AuthGuard] , runGuardsAndResolvers: 'always'},
 	{ path: 'Movies/Genre/:genreId', pathMatch: "full", component: MoviesComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always' },
-	{ path: 'Movies/Details/:movie_id/:hash/:quality', pathMatch: 'full', component: MoviedetailsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+	{ path: 'Movies/Details/:movie_id', pathMatch: 'full', component: MoviedetailsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Series', pathMatch: "full", component: SeriesComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Profile', pathMatch: "full", component: ProfileComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Login', pathMatch: "full", component: LoginComponent },

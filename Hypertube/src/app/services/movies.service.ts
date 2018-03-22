@@ -113,7 +113,7 @@ export class MovieService {
 		._catch(
 			(err) =>{
 				return Observable.throw(err);
-			})
+		})
 	}
 
 	findMovieId(id: number): Observable<MOVIES> {
@@ -169,8 +169,8 @@ export class MovieService {
 			else
 				image = '../../assets/no-thumbnail.png';
 
-			if (data['backround_image'])
-				backround_image = data['backround_image'];
+			if (data['background_image'])
+				backround_image = data['background_image'];
 			else
 				backround_image = '../../assets/blue.jpg';
 

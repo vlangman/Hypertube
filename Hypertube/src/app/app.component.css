@@ -1,3 +1,4 @@
+
 .genreDropdown{
 	cursor: pointer;
 }
@@ -20,6 +21,9 @@
 .navbar-button:hover{
 	color: white;
 	background-color: #ffa223;
+}
+.navbar{
+  background-color: black;
 }
 .Search{
   display: flex;

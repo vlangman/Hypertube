@@ -2,9 +2,13 @@
 	background-color: red;
 	height: 100%;
 	width: 100%;
+}body{
+	background-color: #2e2e2e;
 }
 .videoWrapper{
-	
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-size: cover;
 	width: 100%;
 	height: 60%;
 }
@@ -15,37 +19,39 @@
 	background-color: orange;
 }
 
-.movie-player{
+.videogular{
 	width: 100%;
+	border: 1px solid yellow;
 }
 
 .movie-details{
 	display: flex;
 	flex-direction: row;
 	/*flex-wrap: wrap;*/
-	background-color: rgba(0, 10, 28, 0.85);
+	background-color: transparent;
 	/*justify-content: center;*/
 	width: 100%;
 	height: 100%;
 }
 .movie-info{
 	display: flex;
-	flex-grow: 1;
+	flex-shrink: 1;
 	flex-direction: column;
-	background-color: rgba(0, 10, 28, 0.85);
+	background-color: rgba(0,0,0,0.52);
 	color: white;
 	padding: 10px;
 	min-width: 260px;
+	width: 100%;
 }
-
 .movie-image{
 	max-width: 100%;
 	max-height: 600px;
 	object-fit: scale-down;
 }
-@media (max-width: 960px) {
+@media (max-width: 950px) {
 	.movie-details{
 		justify-content: center;
 		flex-wrap: wrap;
 	}
 }
+

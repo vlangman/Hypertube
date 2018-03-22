@@ -9,7 +9,7 @@
 	font-size: 1.5em;
 }
 .movies-card{
-	height: 600px;
+	height: fit-content;
 	width: 400px;
 	/*background-color: cornflowerblue;*/
 	/*border: 3px solid yellow;*/
@@ -23,11 +23,9 @@
 	background-color: green;
 }
 .movie-image{
-	height: 100%;
-	width: 100%;
+	max-width: 100%;
+	height: auto;
 }
-
-
 
 .movie-summary {
 	max-height: 250px;
@@ -79,32 +77,45 @@
 
 
 @media (max-width: 790px) {
-	.movies-card{
-		width: 300px;
-		height: 500px;
-	}
+
 	.movie-summary{
 		font-size: 1.1em;
 		max-height: 60%;
 	}
 	.overlay{
+		height: 9%;
+	}
+}
+@media (max-width: 500px) {
+
+	.overlay{
+		height: 10%;
+	}
+}
+@media (max-width: 400px) {
+
+	.overlay{
+		height: 11%;
+	}
+}
+@media (max-width: 350px) {
+	.overlay{
 		height: 12%;
 	}
+	.movie-header{
+		font-size: 1.1em;
+	}	
+	.movie-summary{
+		font-size: 1em;
+		max-height: 60%;
+	}
 }
-@media (max-width: 440px) {
-	.movies-card{
-		width: 290px;
-		height: 380px;
+@media (max-width: 326px) {
+	.movie-header{
+		font-size: 0.8em;
 	}
 	.movie-summary{
-		font-size: 0.8em;
-		max-height: 50%;
-		top: 60%;
+		font-size: 0.7em;
+		max-height: 60%;
 	}
-	.overlay{
-		height: 15%;
-	}
-	.movie-genre{
-	font-size: 0.7em;
-}
 }

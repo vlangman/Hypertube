@@ -10,7 +10,7 @@
 }
 .series-card{
 	height: 400px;
-	width: 360px;
+	width: 600px;
 	/*background-color: cornflowerblue;*/
 	/*border: 3px solid yellow;*/
 	margin: 15px;
@@ -55,7 +55,7 @@
 	background-color: rgba(0,0,0,0.9);
 	overflow: hidden;
 	width: 100%;
-	height: 13%;
+	height: 15%;
 	transition: .87s ease;
 }
 
@@ -64,11 +64,15 @@
   background-color: rgba(3, 18, 43, 0.8);
 }
 .summary-show{
-	display: inherit;
+	-webkit-transition: all 0.7s ease;
+	-moz-transition: all 0.7s ease;
+	-o-transition: all 0.7s ease;
+	transition: all 0.7s ease;
+	color: white;
 	width: 90%;
 }
 .summary-hide{
-	display: none;
+	color: transparent;
 	width: 0%;
 }
 .series-genre{
@@ -78,21 +82,21 @@
 
 @media (max-width: 790px) {
 	.series-card{
-		width: 300px;
-		height: 500px;
+		width: 500px;
+		height: 300px;
 	}
 	.series-summary{
 		font-size: 1.1em;
 		max-height: 60%;
 	}
 	.overlay{
-		height: 11%;
+		height: 20%;
 	}
 }
 @media (max-width: 440px) {
 	.series-card{
-		width: 290px;
-		height: 380px;
+		width: 400px;
+		height: 200px;
 	}
 	.series-summary{
 		font-size: 0.8em;
@@ -100,9 +104,15 @@
 		top: 60%;
 	}
 	.overlay{
-		height: 14%;
+		height: 21%;
 	}
 	.series-genre{
-	font-size: 0.7em;
-}
+		font-size: 0.7em;
+	}
+	.series-title{
+		font-size: 0.9em;
+	}
+	.author{
+		font-size: 0.7em;
+	}
 }

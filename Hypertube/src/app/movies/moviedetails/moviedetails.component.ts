@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from "../../services/movies.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MOVIES } from "../../models/movies.model";
 
 
@@ -13,11 +13,12 @@ export class MoviedetailsComponent implements OnInit {
 
 	Movie: MOVIES;
 	displayLoad = true;
-
+	watch = false;
 
 	constructor (
 		private movieservice: MovieService,
 		private route: ActivatedRoute,
+		private router: Router,
 	)
 	{}
 
@@ -25,9 +26,6 @@ export class MoviedetailsComponent implements OnInit {
 		this.route.params.subscribe(
 		(params) => {
 			const id = params['movie_id'];
-			const quality = params['quality'];
-			const hash = params['hash'];
-			const watch = params['watch'];
 
 			if (this.movieservice.Movies[id])
 			{
@@ -40,17 +38,31 @@ export class MoviedetailsComponent implements OnInit {
 				this.displayLoad = true;
 				this.movieservice.findMovieId(id).subscribe(
 					(ret) => {
-						console.log('WHAT THE FUUUUUCK');
 						this.movieservice.Movies.forEach((movie) =>{
 							if (movie['id'] == id)
 							{
 								this.Movie = movie;
+								console.log(this.Movie);
 							}
 						})
+						if (!this.Movie)
+						{
+							this.router.navigate(['/pagenotfound']);
+						}
 						this.displayLoad = false;
-				})
+					}, (err) => {
+						console.log(err);
+						this.router.navigate(['/RETURNED.an.ERROR']);
+					}
+				)
 			}
 		})
+
+	}
+
+	watchMovie(torrent: MOVIES){
+		console.log(torrent);
+		this.watch = true;
 	}
 
 	onPlayerReady(event){
