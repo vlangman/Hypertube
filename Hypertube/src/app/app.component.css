@@ -3,7 +3,9 @@
 	cursor: pointer;
 }
 .genreActive{
-	background-color: rgba(50, 115, 219, 0.8);
+  background-color: rgba(50, 115, 219, 0.8); /* For browsers that do not support gradients */
+  background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
+	
 	color: white;
 }
 .submenu{
@@ -97,13 +99,15 @@
 .sidebar-nav li {
   text-indent: 20px;
   line-height: 40px;
+  color: white;
 }
 
-
+.sidebar-navbutton{
+  color: white;
+}
 .sidebar-nav li a {
   display: block;
   text-decoration: none;
-  color: #999999;
 }
 
 .sidebar-nav li a:hover {
@@ -112,7 +116,8 @@
   background: rgb(255, 163, 5);
 }
 .active{
-  background: #2e2e2e;
+  background-color: rgba(50, 115, 219, 0.8); /* For browsers that do not support gradients */
+  background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
   border-bottom: 1px solid cornflowerblue;
 }
 .sidebar-nav li a:active, .sidebar-nav li a:focus {

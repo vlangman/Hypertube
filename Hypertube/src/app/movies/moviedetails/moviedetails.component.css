@@ -6,9 +6,6 @@
 	background-color: #2e2e2e;
 }
 .videoWrapper{
-	background-color: transparent;
-	background-repeat: no-repeat;
-	background-size: cover;
 	width: 100%;
 	height: 60%;
 }
@@ -19,20 +16,73 @@
 	background-color: orange;
 }
 
+
 .videogular{
 	width: 100%;
 	border: 1px solid yellow;
 }
 
 .movie-details{
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-size: cover;
 	display: flex;
 	flex-direction: row;
-	/*flex-wrap: wrap;*/
 	background-color: transparent;
-	/*justify-content: center;*/
+	justify-content: center;
 	width: 100%;
 	height: 100%;
 }
+.watch-control{
+	flex-grow: 1;
+	width: 100%;
+	border-radius: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	background-color: rgba(0,0,0,0.62);
+}
+.movie-buttons{
+	flex-grow: 1;
+	min-width: 250px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	
+	padding: 10px;
+}
+.youtube{
+	object-fit: scale-down;
+	width: 100%;
+	max-width: 600px;
+	/*border: 2px solid yellow;*/
+}
+.FHD{
+	width: 100%;
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+}
+.HD{
+	width: 100%;
+	color: #ffa223;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	border: 1px solid  #ffa223;
+}
+
+.FHD:hover{
+	-moz-box-shadow:    inset 0 0 10px #000000;
+	-webkit-box-shadow: inset 0 0 10px #000000;
+	box-shadow: inset 0 0 10px #000000;
+}
+.HD:hover{
+	  -moz-box-shadow:    inset 0 0 10px #000000;
+   -webkit-box-shadow: inset 0 0 10px #000000;
+   box-shadow:         inset 0 0 10px #000000;
+	color: white;
+	background-color: #ffa223;
+}
+
 .movie-info{
 	display: flex;
 	flex-shrink: 1;
@@ -47,6 +97,7 @@
 	max-width: 100%;
 	max-height: 600px;
 	object-fit: scale-down;
+	background-color: rgba(0,0,0,0.52);
 }
 @media (max-width: 950px) {
 	.movie-details{
