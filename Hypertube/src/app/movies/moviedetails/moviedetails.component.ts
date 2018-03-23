@@ -20,7 +20,8 @@ export class MoviedetailsComponent implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 	)
-	{}
+	{
+	}
 
 	ngOnInit() {
 		this.route.params.subscribe(
@@ -49,6 +50,7 @@ export class MoviedetailsComponent implements OnInit {
 						{
 							this.router.navigate(['/pagenotfound']);
 						}
+
 						this.displayLoad = false;
 					}, (err) => {
 						console.log(err);

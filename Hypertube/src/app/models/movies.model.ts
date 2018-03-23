@@ -1,3 +1,5 @@
+import { SafeResourceUrl  } from '@angular/platform-browser';
+
 export class MOVIES {
 
 	public id: number;
@@ -10,9 +12,10 @@ export class MOVIES {
 	public year: number;
 	public torrent720: {};
 	public torrent1080: {};
+	public trailer: SafeResourceUrl;
 
 
-	constructor(movieId: number, movieTitle: string, movieSummary: string, movieImage: string, movieBackroundImage: string, movieRating: number, movieYear: number, movieGenres: string[], movieTorrents: string[]) {
+	constructor(movieId: number, movieTitle: string, movieSummary: string, movieImage: string, movieBackroundImage: string, movieRating: number, movieYear: number, movieGenres: string[], movieTorrents: string[], movieYoutube: SafeResourceUrl) {
 		this.id = movieId;
 		this.title = movieTitle;
 		this.summary = movieSummary;
@@ -23,5 +26,6 @@ export class MOVIES {
 		this.genres = movieGenres;
 		this.torrent720 = movieTorrents[0];
 		this.torrent1080 = movieTorrents[1];
+		this.trailer = movieYoutube;
 	}
 }

@@ -3,9 +3,10 @@ import { Router } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
 import { YTS } from "../models/yts.model";
 import { MOVIES } from '../models/movies.model';
+import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
+
 import { Observable } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
-
 import "rxjs/Rx";
 
 @Injectable()
@@ -34,6 +35,7 @@ export class MovieService {
 		"Biography",
 		"War",
 		"Western",
+
 	];
 
 	api = 'https://yts.am/api/v2/list_movies.json';
@@ -42,6 +44,7 @@ export class MovieService {
 	constructor(
 		private http: HttpClient,
 		private router: Router,
+		private sanitizer: DomSanitizer,
 	)
 	{
 
@@ -144,6 +147,7 @@ export class MovieService {
 			var year: number;
 			var genres: string[];
 			var torrents: string[];
+			var ytTrailer: SafeResourceUrl;
 
 			if (data['id'])
 				id = data['id']
@@ -194,7 +198,13 @@ export class MovieService {
 			else
 				torrents = [];
 
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents));
+			if (data['yt_trailer_code'])
+				ytTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
+			else
+				ytTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
+
+
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, ytTrailer));
 
 
 		})
