@@ -2,54 +2,107 @@
 	<div class="loading"></div>
 </div>
 
-<div *ngIf="!displayLoad"  class="mainForm">
+<div *ngIf="!displayLoad" class="mainForm">
 
 	<div class="videoWrapper" [ngStyle]="{'background-image': 'url(' + Movie.backround_image + ')'}">
-			<div class="movie-details">
-				
-					<img class="movie-image" src="{{ Movie.image }}">
-			
-				<div class="movie-info">
-					<h1>{{ Movie.title }}</h1>
-					<h3>{{ Movie.year }}</h3>
-					<h3>Imbd Rating: {{ Movie.rating }} / 10</h3>
-					<div class="movie-summary">
-						<p >{{ Movie.summary }}</p>
+		<div class="movie-details">
+
+			<img class="movie-image" src="{{ Movie.image }}">
+
+			<div class="movie-info">
+				<h1>{{ Movie.title }}</h1>
+				<h3>{{ Movie.year }}</h3>
+				<h3>Imbd Rating: {{ Movie.rating }} / 10</h3>
+				<div class="movie-summary">
+					<p>{{ Movie.summary }}</p>
+				</div>
+				<div>
+					<h2>Comments</h2>
+					<!-- <div *ngif="">
+
+					</div> -->
+					<button (click)="loadComments()" class="btn btn-success">Load Comments</button>
+					<div *ngIf="!commentsFound">
+						<h3>Be the first to comment on this movie</h3>
 					</div>
-					
+
+					<div *ngFor="let comments of loadedCommentsdb | async" style="border: 2px solid rgb(78, 71, 71);">
+						<!-- <span>{{comments.userName}}</span>
+						<span>{{comments.Comments}}</span> -->
+						<br>
+						<ul style="list-style-type: none;">
+							<li>
+								<div class="l-media">
+									<div class="l-media__figure">
+										<div class="comment-profile-pic">
+											<img src='{{comments.Photo}}' style="width: 48px;
+											height: 48px;" align="left">
+											<h1 class="comment-user-name">
+												{{comments.userName}}
+											</h1>
+
+										</div>
+									</div>
+									<div class="l-media__body">
+
+										<!-- <h5>{{comments.Dateadded}}</h5> -->
+										<div class="vjs-comment-list">
+											{{comments.Comments}}
+										</div>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<button (click)="addCommentButton()" class="btn btn-dark">Add A Comment</button>
+					<div *ngIf="editButton">
+						<form #commentform="ngForm" (ngSubmit)="addComments(commentform)" class="login-form">
+							<div class="form-group">
+								<h3>Add A Comment:</h3>
+								<input type="text" id="comment" class="form-control" ngModel name="comment" required minlength="3" maxlength="300" comment
+								 #comment="ngModel">
+								<span class="help-block" *ngIf="!comment.valid && comment.touched">Please enter a comment to submit between 3 and 300 characters</span>
+								<!-- pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" -->
+							</div>
+							<!-- <div class="alert alert-danger alert-dismissible fade show" *ngIf="errormsg.length">
+								{{errormsg}}</div> -->
+							<button class="btn btn-outline-success" [disabled]="!commentform.valid">Submit Comment</button>
+						</form>
+					</div>
 				</div>
 			</div>
-			<div class="movie-player">
-				<vg-player (onPlayerReady)="onPlayerReady($event)">
-					<vg-overlay-play></vg-overlay-play>
-					<vg-buffering></vg-buffering>
+		</div>
+		<div class="movie-player">
+			<vg-player (onPlayerReady)="onPlayerReady($event)">
+				<vg-overlay-play></vg-overlay-play>
+				<vg-buffering></vg-buffering>
 
-					<vg-controls>
-						<vg-play-pause></vg-play-pause>
-						<vg-playback-button></vg-playback-button>
+				<vg-controls>
+					<vg-play-pause></vg-play-pause>
+					<vg-playback-button></vg-playback-button>
 
-						<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+					<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
 
-						<vg-scrub-bar>
-							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-							<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-						</vg-scrub-bar>
+					<vg-scrub-bar>
+						<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+						<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+					</vg-scrub-bar>
 
-						<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-						<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+					<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
 
-						<vg-track-selector></vg-track-selector>
-						<vg-mute></vg-mute>
-						<vg-volume></vg-volume>
+					<vg-track-selector></vg-track-selector>
+					<vg-mute></vg-mute>
+					<vg-volume></vg-volume>
 
-						<vg-fullscreen></vg-fullscreen>
-					</vg-controls>
+					<vg-fullscreen></vg-fullscreen>
+				</vg-controls>
 
-					<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
-						<source src="http://static.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
-					</video>
-				</vg-player>
-			</div>
+				<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
+					<source src="http://static.videogular.com/assets/videos/videogular.mp4" type="video/mp4">
+				</video>
+			</vg-player>
+		</div>
 	</div>
 </div>
 

@@ -60,6 +60,9 @@ export class ProfileComponent implements OnInit {
 	}
 
 	onEditProfile(form: NgForm) {
+		if (form.value.length < 5) {
+			window.alert("Please enter a valid username");
+		}
 		const value = form.value;
 		// console.log(value);
 		this.checkUser(value);
@@ -85,15 +88,7 @@ export class ProfileComponent implements OnInit {
 				// console.log(snapshot);
 				this.errormsg = 'user exists';
 			}
-			if (this.userfound) {
-				// console.log("r u the one" + this.userfound);
-				// console.log("yebogogo");
-
-				// this.userfound = true;
-				// console.log("askhdgaisfgasohfalshgalsghaslghaslg");
-				// console.log(this.userfound);
-			}
-			else {
+			if (!this.userfound) {
 				if (!value.username) {
 					value.username = this.username;
 					if (value.photo && !this.downloadURL) {
@@ -123,6 +118,9 @@ export class ProfileComponent implements OnInit {
 					}
 				}
 			}
+			// else {
+
+			// }
 		});
 	}
 

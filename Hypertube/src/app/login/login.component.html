@@ -26,13 +26,16 @@
 				<button class="btn btn-outline-default">Cancel</button>
 
 			</div>
-			<h3>Alternate Login</h3>
-			<div class="api-login form-group">
-				<button class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
-				<button class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
-				<button class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()">Google</button>
-			</div>
+
 		</form>
+
+		<div style="display: flex; 
+		flex-direction: column; width: 100%">
+			<h3>Alternate Login</h3>
+			<button class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
+			<button class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
+			<button class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()">Google</button>
+		</div>
 		<!-- <div class="alert alert-danger alert-dismissible fade show" *ngIf="errormsg">
 				{{errormsg}}</div> -->
 

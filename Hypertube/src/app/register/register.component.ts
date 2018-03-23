@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { FileuploadService } from '../services/fileupload.service';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 // import { QuerySnapshot, FirebaseFirestore } from '@firebase/firestore-types';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs';
 
 export interface User {
 	username: string;
@@ -18,7 +19,7 @@ export interface User {
 	templateUrl: './register.component.html',
 	styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
 	isHovering: boolean;
 	percentage = this.photoUpload.percentage;
@@ -30,6 +31,7 @@ export class RegisterComponent implements OnInit {
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
 	userfound: boolean = false;
+	userdbsub: Subscription;
 
 	constructor(public authService: AuthService, private router: Router, private photoUpload: FileuploadService, private db: AngularFirestore) {
 
@@ -39,8 +41,16 @@ export class RegisterComponent implements OnInit {
 	}
 
 	onRegister(f: NgForm) {
-		const value = f.value;
-		this.checkUserExist(value);
+		if (f.value.password.length < 8) {
+			window.alert("this password is to short")
+		} else if (f.value.username.length < 5) {
+			window.alert("this username is to short")
+			this.errormsg = "this username is to short"
+		} else {
+			const value = f.value;
+			this.checkUserExist(value);
+		}
+
 	}
 
 	checkUserExist(value) {
@@ -54,19 +64,19 @@ export class RegisterComponent implements OnInit {
 				}
 			});
 		});
-		this.usersdb.subscribe(snapshot => {
+		this.userdbsub = this.usersdb.subscribe(snapshot => {
 			if (snapshot.length == 0) {
-				
+
 				this.userfound = false;
 			} else {
 				this.userfound = true;
-				
+
 				this.errormsg = 'user exists';
 			}
 			if (this.userfound) {
-			
+
 			} else {
-				
+
 				this.authService.createUserWithEmailAndPassword(value.email, value.password).then((res) => {
 					if (value.photo) {
 						this.authService.updateProfile(value.username, value.photo)
@@ -96,6 +106,10 @@ export class RegisterComponent implements OnInit {
 			}
 			// console.log(value);
 		})
+	}
+	ngOnDestroy() {
+		if (this.userdbsub)
+			this.userdbsub.unsubscribe()
 	}
 
 }

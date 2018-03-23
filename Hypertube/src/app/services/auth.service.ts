@@ -36,7 +36,7 @@ export class AuthService {
 
 	constructor
 		(
-		private _firebaseAuth: AngularFireAuth,
+		public _firebaseAuth: AngularFireAuth,
 		private router: Router, private db: AngularFirestore, private http: HttpClient
 		) {
 		this.user = _firebaseAuth.authState;
@@ -48,9 +48,9 @@ export class AuthService {
 					this.email = user.email;
 					this.isVerified = user.emailVerified;
 					this.profilePhoto = user.photoURL;
-					console.log(user.email);
+					// console.log(user.email);
 					console.log('constructor WHEN CREATING AUTH SERVICE');
-					console.log(this.userDetails);
+					// console.log(this.userDetails);
 				} else {
 					this.userDetails = null;
 				}
@@ -62,19 +62,19 @@ export class AuthService {
 		return auth.sendPasswordResetEmail(email);
 
 	}
-	login(provider: string, params: any) {
-		switch (provider) {
-			// case 'facebook':
-			//     return this.facebook(params.code);
+	// login(provider: string, params: any) {
+	// 	switch (provider) {
+	// 		// case 'facebook':
+	// 		//     return this.facebook(params.code);
 
-			case '42':
-				console.log(params.code);
-		}
-	}
-	login42(token: string) {
-		console.log('here is the token');
-		this._firebaseAuth.auth.signInWithCustomToken(token);
-	}
+	// 		case '42':
+	// 			console.log(params.code);
+	// 	}
+	// }
+	// login42(token: string) {
+	// 	console.log('here is the token');
+	// 	this._firebaseAuth.auth.signInWithCustomToken(token);
+	// }
 	signInWith42() {
 		return window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=b654f310dbf2bada79b1ed5cb10d6b19ece7fc5649ad79ca9e4dbfc349fd082c&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2FLogin&response_type=code'
 	}
@@ -106,7 +106,7 @@ export class AuthService {
 	signInWithEmailAndPassword(email, password) {
 		// this.username = this._firebaseAuth.authState.map(data => data.displayName);
 
-		console.log(this.email);
+		// console.log(this.email);
 		// this.isVerified = this._firebaseAuth.authState.map(data => data.emailVerified);
 		// this.profilePhoto = this._firebaseAuth.authState.map(data => data.photoURL);
 		return this._firebaseAuth.auth.signInWithEmailAndPassword(email, password);

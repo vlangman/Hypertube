@@ -5,7 +5,7 @@ import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/map';
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+import { ErrorObservable  } from 'rxjs/observable/ErrorObservable';
 
 
 @Component({
@@ -30,7 +30,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
 	//subscriptions to services that will be destroyed onDestroy
 	routerParamsSub: Subscription;
-	getNextPageSub : Subscription;
+	getNextPageSub: Subscription;
 	movieGenreSub: Subscription;
 	searchMovieSub: Subscription;
 	getMovieSub: Subscription;
@@ -42,9 +42,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
-	)
-	{
-		
+	) {
+
 	}
 
 	ngOnInit() {
@@ -53,8 +52,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		console.log('creating Movies component');
 
 		this.routerParamsSub = this.route.params.subscribe((params) => {
-			if (params['Search'] && params['query_term'])
-			{
+			if (params['Search'] && params['query_term']) {
 				console.log('loading Search Movies');
 				this.displayLoad = true;
 				this.Movies = [];
@@ -70,22 +68,21 @@ export class MoviesComponent implements OnInit, OnDestroy {
 							console.log('------------------------------------------------------------------------------------------');
 							console.log(ret['error']['message']);
 						}
-						else{
+						else {
 							console.log('Bottom')
 							console.log(ret);
 							this.Movies = ret;
 							this.movieType = params['query_term'];
-							this.displayLoad = false;	
+							this.displayLoad = false;
 						}
-						
+
 					}, (err) => {
-						
+
 					}, () => {
 						this.searchMovieSub.unsubscribe();
 					}
 				)
-			} else if (params['genreId'])
-			{
+			} else if (params['genreId']) {
 				console.log('loading Movies by Genre');
 				this.displayLoad = true;
 				this.Movies = [];
@@ -101,8 +98,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			}
 		})
 
-		if (!this.searchMode && !this.genreMode)
-		{
+		if (!this.searchMode && !this.genreMode) {
 			console.log('searching for FEATURED');
 			this.Movies = [];
 			this.getMovieSub = this.movieService.getMovies().subscribe(
@@ -115,7 +111,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			)
 		}
 	}
-		
+
 
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {
@@ -123,19 +119,19 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		if (!this.selectedGenre && !this.searchMode) {
 			this.loadMore = true;
 			this.getNextPageSub = this.movieService.getNextPage(this.page += 1).subscribe(
-			(data: MOVIES[]) => {
-				console.log(this.page);
-				this.Movies = data;
-				this.loadMore = false;
-			})
+				(data: MOVIES[]) => {
+					console.log(this.page);
+					this.Movies = data;
+					this.loadMore = false;
+				})
 		}
 		else if (this.selectedGenre && !this.searchMode) {
 			this.loadMore = true;
 			this.getNextMoviePageSub = this.movieService.getGenreNext(this.page += 1)
-			.subscribe((data: MOVIES[]) => {
-				this.Movies = data;
-				this.loadMore = false;
-			})
+				.subscribe((data: MOVIES[]) => {
+					this.Movies = data;
+					this.loadMore = false;
+				})
 		}
 	}
 
@@ -145,16 +141,14 @@ export class MoviesComponent implements OnInit, OnDestroy {
 	}
 
 
-	viewMovie(id: number, torrentData: {}){
+	viewMovie(id: number, torrentData: {}) {
 		console.log(torrentData);
 		const quality = torrentData['quality'];
-		if  (quality == "720p")
-		{
-			this.router.navigate(["Movies/Details", id , torrentData['hash'], 720,{watch: true}]);
-		} else if (quality == "1080p")
-		{
+		if (quality == "720p") {
+			this.router.navigate(["Movies/Details", id, torrentData['hash'], 720, { watch: true }]);
+		} else if (quality == "1080p") {
 
-			this.router.navigate(["Movies/Details", id , torrentData['hash'], 1080, {watch: true}]);
+			this.router.navigate(["Movies/Details", id, torrentData['hash'], 1080, { watch: true }]);
 		}
 	}
 
@@ -163,11 +157,11 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		this.hoverMovie = hoverId;
 	}
 
-	ngOnDestroy(){
+	ngOnDestroy() {
 		console.log('Destroy movies Component');
 		if (this.routerSub)
 			this.routerSub.unsubscribe();
-		if(this.routerParamsSub)
+		if (this.routerParamsSub)
 			this.routerParamsSub.unsubscribe();
 		if (this.getNextMoviePageSub)
 			this.getNextMoviePageSub.unsubscribe();

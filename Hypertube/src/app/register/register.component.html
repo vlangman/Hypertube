@@ -1,5 +1,5 @@
-
-<h1>Register</h1>
+<h1>
+	Register</h1>
 <p>
 	<kbd>Register</kbd> to download content!</p>
 <div class="row">
@@ -8,9 +8,9 @@
 			<div class="form-group">
 				<h3>Username:</h3>
 				<input type="text" class="form-control" ngModel name="username" required minlength="5" #username="ngModel">
-				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
+				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid username minimum characters is 5</span>
 				<span class="help-block" *ngIf="errormsg || userfound && username.touched">This username is already in use</span>
-				<span *ngFor="let user of usersdb | async">{{user | json}}</span>
+				<span *ngFor="let user of usersdb | async">{{user.username}}</span>
 			</div>
 			<div class="form-group">
 				<h3>Email:</h3>
