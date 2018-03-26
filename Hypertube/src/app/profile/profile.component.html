@@ -1,4 +1,3 @@
-
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
@@ -21,7 +20,7 @@
 			<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
 			<h6>About</h6>
 			<p>
-				{{email}}
+				Firstname: {{Firstname}} Lastname: {{Lastname}}
 			</p>
 			<h3 class="title">Are you verified</h3>
 			<p *ngIf="!verified" class="title">
@@ -33,13 +32,13 @@
 		</div>
 
 	</div>
-
 	<div style="overflow: hidden" *ngIf="editButton">
 		<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
 			<div class="form-group">
 				<h3>Username:</h3>
 				<input type="text" class="form-control" ngModel name="username" minlength="5" #username="ngModel">
 				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
+				<span class="help-block" *ngFor="let username of usersdb | async">This username @{{username.username}} is already in use.</span>
 			</div>
 			<div class="form-group">
 				<h3>Photo:</h3>
@@ -70,7 +69,7 @@
 			</div>
 			<div *ngIf="snapshot | async as snap">
 				{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-		
+
 				<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
 				<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
 				<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>

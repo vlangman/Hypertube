@@ -12,6 +12,9 @@ import { environment } from "../../environments/environment";
 
 export interface User {
 	username: string;
+	Firstname: string;
+	Lastname: string;
+	email: string;
 
 }
 
@@ -27,6 +30,8 @@ export class AuthService {
 	profilePhoto: string;
 	displayName: string;
 	photoURL: string;
+	Firstname: string;
+	Lastname: string;
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
 	userfound: boolean = false;
@@ -48,7 +53,7 @@ export class AuthService {
 					this.email = user.email;
 					this.isVerified = user.emailVerified;
 					this.profilePhoto = user.photoURL;
-					// console.log(user.email);
+					// console.log(user);
 					console.log('constructor WHEN CREATING AUTH SERVICE');
 					// console.log(this.userDetails);
 				} else {
@@ -103,13 +108,37 @@ export class AuthService {
 	createUserWithEmailAndPassword(email, password) {
 		return this._firebaseAuth.auth.createUserWithEmailAndPassword(email, password);
 	}
-	signInWithEmailAndPassword(email, password) {
+	signInWithEmailAndPassword(username, password) {
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((users) => {
+			console.log(users)
+			this.email = users['0']['email'];
+			console.log(this.email);
+			this.Firstname = users['0']['Firstname'];
+			this.Lastname = users['0']['Lastname'];
+			// console.log(users.length)
+			// this.usertest = users.length;
+		}, err => {
+			console.log(err)
+		}, () => {
+			console.log('completed')
+			console.log(this.email);
+			this._firebaseAuth.auth.signInWithEmailAndPassword(this.email, password).then((res) => {
+				this.router.navigate(['/Profile']);
+			}).catch((err) => {
+				if (err.code === 'auth/user-not-found') {
+					this.errormsg = 'No user account found with the email and password entered'
+				}
+				console.log(err);
+			});
+		})
 		// this.username = this._firebaseAuth.authState.map(data => data.displayName);
 
 		// console.log(this.email);
 		// this.isVerified = this._firebaseAuth.authState.map(data => data.emailVerified);
 		// this.profilePhoto = this._firebaseAuth.authState.map(data => data.photoURL);
-		return this._firebaseAuth.auth.signInWithEmailAndPassword(email, password);
+
 	}
 	isLoggedIn() {
 		if (this.userDetails == null) {
@@ -159,7 +188,7 @@ export class AuthService {
 				username: this.username
 			}).then((res) => {
 				console.log("added");
-				window.location.reload();
+				// window.location.reload();
 			}).catch((err) => {
 				// this.errormsg = err;
 				console.log(err);

@@ -85,9 +85,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 					// console.log(this.pass42);
 					this.authService._firebaseAuth.auth.fetchProvidersForEmail(this.email42).then((providers) => {
 						if (providers.length > 0) {
-							this.authService.signInWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-								this.router.navigate(['/Profile']);
-							})
+							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
 						} else {
 							this.authService.createUserWithEmailAndPassword(this.email42, this.pass42).then((res) => {
 								this.authService.updateProfile(this.username42, this.photo42)
@@ -159,17 +157,22 @@ export class LoginComponent implements OnInit, OnDestroy {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
 			.then((res) => {
+				this.db.collection("Users").add({
+					username: res['additionalUserInfo']['profile']['name'],
+					Firstname: res['additionalUserInfo']['profile']['given_name'],
+					Lastname: res['additionalUserInfo']['profile']['family_name'],
+					email: res['additionalUserInfo']['profile']['email']
+				})
+				console.log(res)
 				this._ngZone.run(() => this.router.navigate(['/Profile']));
 
 			})
 			.catch((err) => console.log(err));
 	}
 	emailAndPasswordLogin(f: NgForm) {
+		this.errormsg = '';
 		const value = f.value;
-		this.authService.signInWithEmailAndPassword(value.email, value.password).then((res) => {
-			this.router.navigate(['/Profile']);
-		})
-			.catch((err) => console.log(err));
+		this.authService.signInWithEmailAndPassword(value.username, value.password)
 	}
 	emailReset(emailform: NgForm) {
 		const value = emailform.value

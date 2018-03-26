@@ -30,8 +30,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	errormsg: string;
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
-	userfound: boolean = false;
+	// userfound: boolean = false;
 	userdbsub: Subscription;
+	usertest: number;
 
 	constructor(public authService: AuthService, private router: Router, private photoUpload: FileuploadService, private db: AngularFirestore) {
 
@@ -54,29 +55,20 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	}
 
 	checkUserExist(value) {
-		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username))
-		// this.usersdb = this.usersCollection.valueChanges()
-		this.usersdb = this.usersCollection.snapshotChanges().map(actions => {
-			return actions.map(action => {
-				const data = action.payload.doc.data() as User;
-				return {
-					username: data.username
-				}
-			});
-		});
-		this.userdbsub = this.usersdb.subscribe(snapshot => {
-			if (snapshot.length == 0) {
-
-				this.userfound = false;
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((users) => {
+			console.log('user found')
+			console.log(users.length)
+			this.usertest = users.length;
+		}, err => {
+			console.log(err)
+		}, () => {
+			console.log('completed')
+			if (this.usertest > 0) {
+				this.errormsg = 'this username is already in use'
 			} else {
-				this.userfound = true;
-
-				this.errormsg = 'user exists';
-			}
-			if (this.userfound) {
-
-			} else {
-
+				console.log('hopefullnessssss')
 				this.authService.createUserWithEmailAndPassword(value.email, value.password).then((res) => {
 					if (value.photo) {
 						this.authService.updateProfile(value.username, value.photo)
@@ -89,7 +81,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
 						this.authService.updateProfile(value.username, value.photo.value);
 					}
 					this.db.collection("Users").doc(value.username).set({
-						username: value.username
+						username: value.username,
+						Firstname: value.firstname,
+						Lastname: value.lastname,
+						email: value.email
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {
@@ -102,9 +97,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 					this.errormsg = err;
 					console.log(err);
 				});
-
 			}
-			// console.log(value);
+
+
 		})
 	}
 	ngOnDestroy() {

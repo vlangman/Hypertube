@@ -22,6 +22,8 @@ export class ProfileComponent implements OnInit {
 	email: string;
 	verified: boolean;
 	photo: string;
+	Firstname: string;
+	Lastname: string;
 	displayLoad: boolean = true;
 	editButton: boolean = false;
 	//edit profile
@@ -35,6 +37,7 @@ export class ProfileComponent implements OnInit {
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
 	userfound: boolean = false;
+	usertest: number;
 
 	constructor(private authService: AuthService, private photoUpload: FileuploadService, private storage: AngularFireStorage, private db: AngularFirestore) { }
 
@@ -44,6 +47,9 @@ export class ProfileComponent implements OnInit {
 		this.email = this.authService.email;
 		this.verified = this.authService.isVerified;
 		this.photo = this.authService.profilePhoto;
+		// this.Firstname = this.authService.Firstname;
+		// this.Lastname = this.authService.Lastname;
+		this.getUserInfo(this.username);
 		this.displayLoad = false;
 		// this.authService.isUserData()
 		// console.log("hi" + this.authService.username.value);
@@ -57,8 +63,21 @@ export class ProfileComponent implements OnInit {
 			this.editButton = false;
 		}
 		// console.log(this.editButton);
+		this.errormsg = '';
 	}
-
+	getUserInfo(username) {
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((users) => {
+			console.log(users)
+			this.email = users['0']['email'];
+			console.log(this.email);
+			this.Firstname = users['0']['Firstname'];
+			this.Lastname = users['0']['Lastname'];
+			// console.log(users.length)
+			// this.usertest = users.length;
+		})
+	}
 	onEditProfile(form: NgForm) {
 		if (form.value.length < 5) {
 			window.alert("Please enter a valid username");
@@ -68,60 +87,106 @@ export class ProfileComponent implements OnInit {
 		this.checkUser(value);
 	}
 	checkUser(value) {
-		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username))
-		// this.usersdb = this.usersCollection.valueChanges()
-		this.usersdb = this.usersCollection.snapshotChanges().map(actions => {
-			return actions.map(action => {
-				const data = action.payload.doc.data() as User;
-				return {
-					username: data.username
-				}
-			});
-		});
-		this.usersdb.subscribe(snapshot => {
-			if (snapshot.length == 0) {
-				// console.log('User not found');
-				this.userfound = false;
-			} else {
-				this.userfound = true;
-				// console.log('User found');
-				// console.log(snapshot);
-				this.errormsg = 'user exists';
-			}
-			if (!this.userfound) {
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((users) => {
+			this.usertest = users.length;
+			// console.log(this.usertest)
+		}, err => {
+			console.log(err)
+		}, () => {
+			if (this.usertest == 0) {
 				if (!value.username) {
 					value.username = this.username;
 					if (value.photo && !this.downloadURL) {
+						this.photo = value.photo;
 						this.authService.updateProfile_user(value.username, value.photo);
 						// window.location.reload();
 					} else if (!value.photo && this.downloadURL) {
 						value.photo = this.downloadURL;
+						this.photo = value.photo;
 						this.authService.updateProfile_user(value.username, value.photo.value);
 						// window.location.reload();
+					} else if (value.photo && this.downloadURL) {
+						this.errormsg = "please choose one photo either the URL or the upload"
 					} else {
 						value.photo = this.authService.profilePhoto;
 						this.authService.updateProfile_user(value.username, value.photo.value);
 					}
 				} else {
+					this.username = value.username;
 					// console.log("or ar you the one" + this.userfound);
 					// console.log("handidi");
 					if (value.photo && !this.downloadURL) {
+						this.photo = value.photo;
 						this.authService.updateProfile_user(value.username, value.photo);
 						// window.location.reload();
 					} else if (!value.photo && this.downloadURL) {
 						value.photo = this.downloadURL;
+						this.photo = value.photo;
 						this.authService.updateProfile_user(value.username, value.photo.value);
 						// window.location.reload();
+					} else if (value.photo && this.downloadURL) {
+						this.errormsg = "please choose one photo either the URL or the upload"
 					} else {
 						value.photo = this.authService.profilePhoto;
 						this.authService.updateProfile_user(value.username, value.photo.value);
 					}
 				}
+
 			}
 			// else {
-
+			// 	// 
 			// }
-		});
+		})
+		// this.usersdb = this.usersCollection.snapshotChanges().map(actions => {
+		// 	if (!actions || !actions.length) {
+		// 		this.userfound = false;
+		// 		if (!this.userfound) {
+		// 			if (!value.username) {
+		// 				value.username = this.username;
+		// 				if (value.photo && !this.downloadURL) {
+		// 					this.authService.updateProfile_user(value.username, value.photo);
+		// 					// window.location.reload();
+		// 				} else if (!value.photo && this.downloadURL) {
+		// 					value.photo = this.downloadURL;
+		// 					this.authService.updateProfile_user(value.username, value.photo.value);
+		// 					// window.location.reload();
+		// 				} else {
+		// 					value.photo = this.authService.profilePhoto;
+		// 					this.authService.updateProfile_user(value.username, value.photo.value);
+		// 				}
+		// 			} else {
+		// 				// console.log("or ar you the one" + this.userfound);
+		// 				// console.log("handidi");
+		// 				if (value.photo && !this.downloadURL) {
+		// 					this.authService.updateProfile_user(value.username, value.photo);
+		// 					// window.location.reload();
+		// 				} else if (!value.photo && this.downloadURL) {
+		// 					value.photo = this.downloadURL;
+		// 					this.authService.updateProfile_user(value.username, value.photo.value);
+		// 					// window.location.reload();
+		// 				} else {
+		// 					value.photo = this.authService.profilePhoto;
+		// 					this.authService.updateProfile_user(value.username, value.photo.value);
+		// 				}
+		// 			}
+		// 		}
+		// 	} else {
+		// 		return actions.map(action => {
+		// 			console.log("tetststs");
+		// 			console.log(action)
+		// 			const data = action.payload.doc.data() as User;
+		// 			console.log(data);
+		// 			return {
+		// 				username: data.username
+
+		// 				// MovieId: data.MovieId
+		// 			}
+		// 		});
+		// 	}
+
+		// });
 	}
 
 	toggleHover(event: boolean) {
