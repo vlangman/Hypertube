@@ -147,6 +147,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 	facebookLogin() {
 		this.authService.signInWithFacebook()
+		.then(res => {console.log(res)})
 			.catch((err) => {
 				if (err.code === 'auth/account-exists-with-different-credential') {
 					window.alert(err)

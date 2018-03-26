@@ -27,8 +27,8 @@
 					</div>
 
 					<div *ngFor="let comments of loadedCommentsdb | async" style="border: 2px solid rgb(78, 71, 71);">
-						<!-- <span>{{comments.userName}}</span>
-						<span>{{comments.Comments}}</span> -->
+						<span>{{comments.userName}}</span>
+						<span>{{comments.Comments}}</span>
 						<br>
 						<ul style="list-style-type: none;">
 							<li>
@@ -69,32 +69,29 @@
 							<button class="btn btn-outline-success" [disabled]="!commentform.valid">Submit Comment</button>
 						</form>
 					</div>
-<<<<<<< HEAD
-					<div class="movie-summary">
-						<span class="movie-genre" *ngFor="let genre of Movie.genres">{{genre}}. </span>
-					</div>
-					
-					<hr style="background: white; width: 100%;"/>
-					<div class="movie-buttons">
-						<button *ngIf=" Movie.torrent1080 " class="btn btn-outline-primary" (click)="watchMovie(Movie.torrent1080)">Watch 1080p</button>
-						<button *ngIf=" Movie.torrent720 " class="btn btn-outline-primary" (click)="watchMovie(Movie.torrent720)">Watch 720p</button>
-					</div>
-					
+
 				</div>
-			</div>
-				<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
-					<vg-overlay-play></vg-overlay-play>
-					<vg-buffering></vg-buffering>
-=======
+
+
+				<div class="cast-wrap">
+					<div *ngFor="let cast of Movie.cast" class="card cast-card">
+						<div class="cast">
+							<img class="cast-image" *ngIf="cast.url_small_image" src="{{cast.url_small_image}}">
+							<img class="cast-image" *ngIf="!cast.url_small_image" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png">
+							<p class="cast-name"> {{ cast.name }} </p>
+						</div>
+					</div>
+				
 				</div>
+
+				
+
 			</div>
 		</div>
 		<div class="movie-player">
 			<vg-player (onPlayerReady)="onPlayerReady($event)">
 				<vg-overlay-play></vg-overlay-play>
 				<vg-buffering></vg-buffering>
->>>>>>> origin/Lance
-
 				<vg-controls>
 					<vg-play-pause></vg-play-pause>
 					<vg-playback-button></vg-playback-button>
@@ -109,17 +106,7 @@
 					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
 					<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
 
-<<<<<<< HEAD
-						<vg-track-selector></vg-track-selector>
-						<vg-mute></vg-mute>
-						<vg-volume></vg-volume>
-						<!-- <vg-fullscreen></vg-fullscreen> -->
-					</vg-controls>
-					<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
-						<!-- <source src="http://static.videogular.com/assets/videos/vr-demo.mp4" type="video/mp4"> -->
-					</video>
-				</vg-player>
-=======
+
 					<vg-track-selector></vg-track-selector>
 					<vg-mute></vg-mute>
 					<vg-volume></vg-volume>
@@ -132,6 +119,5 @@
 				</video>
 			</vg-player>
 		</div>
->>>>>>> origin/Lance
 	</div>
 </div>

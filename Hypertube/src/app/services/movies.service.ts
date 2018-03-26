@@ -36,6 +36,7 @@ export class MovieService {
 		"Western",
 	];
 
+	apiDetail = "https://yts.am/api/v2/movie_details.json"
 	api = 'https://yts.am/api/v2/list_movies.json';
 	apiComments = 'https://yts.am/api/v2/movie_comments.json'
 
@@ -107,7 +108,6 @@ export class MovieService {
 
 	getNextPage(page: number): Observable<MOVIES[]> {
 		return this.http.get<YTS>(this.api + '?limit=20&page=' + page)
-<<<<<<< HEAD
 		.map((res) => {
 			this.loadMovies(res);
 			return this.Movies;
@@ -116,16 +116,6 @@ export class MovieService {
 			(err) =>{
 				return Observable.throw(err);
 		})
-=======
-			.map((res) => {
-				this.loadMovies(res);
-				return this.Movies;
-			})
-			._catch(
-				(err) => {
-					return Observable.throw(err);
-				})
->>>>>>> origin/Lance
 	}
 	// getMovieComments(id): Observable<any> {
 	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
@@ -134,13 +124,16 @@ export class MovieService {
 	// }
 
 	findMovieId(id: number): Observable<MOVIES> {
-		var ret: MOVIES = this.Movies[id];
-		console.log('Searching By Id');
-		console.log(id);
-		return this.http.get<YTS>(this.api + '?movie_id=' + id).map(
+		return this.http.get<YTS>(this.apiDetail + '?movie_id=' + id + '&with_images=true&with_cast=true').map(
 			(res) => {
-				this.loadMovies(res);
-				return (res);
+				console.log(res);
+				if (res['data']['movie']){
+					return (res['data']['movie']);
+				}
+				else {
+					return Observable.throw('Movie Details cannot be found');
+				}
+				
 			})
 			._catch(
 				(err) => {
@@ -160,6 +153,7 @@ export class MovieService {
 			var year: number;
 			var genres: string[];
 			var torrents: string[];
+			var cast = [];
 
 			if (data['id'])
 				id = data['id']
@@ -209,10 +203,9 @@ export class MovieService {
 				torrents = data['torrents'];
 			else
 				torrents = [];
+			var cast = [];
 
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents));
-
-
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, cast));
 		})
 	}
 

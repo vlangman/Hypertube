@@ -68,12 +68,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 							this.displayLoad = false;
 							this.movieError = ret['error']['message'];
 						}
-<<<<<<< HEAD
 						else{
 							this.movieError = null;
-=======
-						else {
->>>>>>> origin/Lance
 							console.log('Bottom')
 							console.log(ret);
 							this.Movies = ret;
@@ -82,13 +78,9 @@ export class MoviesComponent implements OnInit, OnDestroy {
 						}
 
 					}, (err) => {
-<<<<<<< HEAD
 						console.log(err);
 						this.movieError = err['message'];
 						this.displayLoad = false;
-=======
-
->>>>>>> origin/Lance
 					}, () => {
 						this.searchMovieSub.unsubscribe();
 					}
@@ -143,7 +135,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			console.log('Loading nextpage');
 			console.log(this.selectedGenre);
 			this.loadMore = true;
-<<<<<<< HEAD
 			this.getNextPageSub = this.movieService.getNextPage(this.page += 1)
 			.subscribe(
 				(res) => {
@@ -156,20 +147,11 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					this.loadMore = false;
 				}
 			)
-=======
-			this.getNextPageSub = this.movieService.getNextPage(this.page += 1).subscribe(
-				(data: MOVIES[]) => {
-					console.log(this.page);
-					this.Movies = data;
-					this.loadMore = false;
-				})
->>>>>>> origin/Lance
 		}
 		else if (this.selectedGenre && !this.searchMode && !this.displayLoad) {
 			console.log('Loading genre nextpage');
 			this.loadMore = true;
 			this.getNextMoviePageSub = this.movieService.getGenreNext(this.page += 1)
-<<<<<<< HEAD
 			.subscribe(
 				(res) => {
 					this.Movies = res;
@@ -181,12 +163,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					this.loadMore = false;
 				}
 			)
-=======
-				.subscribe((data: MOVIES[]) => {
-					this.Movies = data;
-					this.loadMore = false;
-				})
->>>>>>> origin/Lance
 		}
 	}
 
@@ -195,21 +171,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		//don't delete it is need VAUGHAN
 	}
 
-
-<<<<<<< HEAD
 	viewMovie(id: number){
 		this.router.navigate(["Movies/Details", id]);
-=======
-	viewMovie(id: number, torrentData: {}) {
-		console.log(torrentData);
-		const quality = torrentData['quality'];
-		if (quality == "720p") {
-			this.router.navigate(["Movies/Details", id, torrentData['hash'], 720, { watch: true }]);
-		} else if (quality == "1080p") {
-
-			this.router.navigate(["Movies/Details", id, torrentData['hash'], 1080, { watch: true }]);
-		}
->>>>>>> origin/Lance
 	}
 
 

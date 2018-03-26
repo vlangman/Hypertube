@@ -21,6 +21,7 @@ export class AuthService {
 
 	private user: Observable<firebase.User>;
 	private userDetails: firebase.User = null;
+
 	username: string;
 	email: string;
 	isVerified: boolean;
@@ -36,8 +37,10 @@ export class AuthService {
 
 	constructor
 		(
-		public _firebaseAuth: AngularFireAuth,
-		private router: Router, private db: AngularFirestore, private http: HttpClient
+			public _firebaseAuth: AngularFireAuth,
+			private router: Router, 
+			private db: AngularFirestore, 
+			private http: HttpClient
 		) {
 		this.user = _firebaseAuth.authState;
 		this.user.subscribe(

@@ -12,6 +12,7 @@
 	width: 100%;
 	height: 60%;
 }
+
 .movie-wrap{
 	display: flex;
 	flex-wrap: wrap;
@@ -54,22 +55,45 @@
 		flex-wrap: wrap;
 	}
 }
-
-<<<<<<< HEAD
-=======
-
-
+.cast-wrap{
+	margin-top: 20px;
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+}
+.cast-card{
+	width: 75px;
+	border-radius: 4px;
+	padding: 0.5%;
+	margin: 1%;
+	background-color: black;
+}
+.cast{
+	text-align: center;
+	width: 100%;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+}
+.cast-image{
+	width: 100%;
+	max-width: 70px;
+	height: auto;
+	margin-bottom: 5px;
+}
+.cast-name{
+	font-size: 0.9em;
+}
 .vjs-comment-list {
     list-style-type: none;
     position: relative;
-    /* background: #D9E254; */
     font-size: 3;
     position: relative;
-    /* max-width: 350px; */
-    /* -moz-user-select: text !important; */
     margin-bottom: 10px;
     font-family: "Times New Roman", Times, Arial, sans-serif !important;
-  /* border-right:  solid 5px #118C4E; */
 }
 
 .comment-user-name{
@@ -94,4 +118,3 @@
  left:0;
 background-repeat: no-repeat;
 }
->>>>>>> origin/Lance

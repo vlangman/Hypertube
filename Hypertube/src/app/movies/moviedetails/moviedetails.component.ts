@@ -26,9 +26,7 @@ export class MoviedetailsComponent implements OnInit {
 	Movie: MOVIES;
 	movieId: string;
 	displayLoad = true;
-<<<<<<< HEAD
-	watch = false;
-=======
+
 	editButton: boolean = false;
 	userid: string;
 	loadedComments: AngularFirestoreCollection<MovieComment>;
@@ -37,58 +35,11 @@ export class MoviedetailsComponent implements OnInit {
 	commentsFound: boolean = true;
 	isValid: boolean;
 
->>>>>>> origin/Lance
+
 
 	constructor(
 		private movieservice: MovieService,
 		private route: ActivatedRoute,
-<<<<<<< HEAD
-		private router: Router,
-	)
-	{}
-
-	ngOnInit() {
-		this.route.params.subscribe(
-		(params) => {
-			const id = params['movie_id'];
-
-			if (this.movieservice.Movies[id])
-			{
-				console.log('Movies');
-				console.log(this.movieservice.Movies[id]);
-				this.Movie = this.movieservice.Movies[id];
-			}
-			else
-			{
-				this.displayLoad = true;
-				this.movieservice.findMovieId(id).subscribe(
-					(ret) => {
-						this.movieservice.Movies.forEach((movie) =>{
-							if (movie['id'] == id)
-							{
-								this.Movie = movie;
-								console.log(this.Movie);
-							}
-						})
-						if (!this.Movie)
-						{
-							this.router.navigate(['/pagenotfound']);
-						}
-						this.displayLoad = false;
-					}, (err) => {
-						console.log(err);
-						this.router.navigate(['/RETURNED.an.ERROR']);
-					}
-				)
-			}
-		})
-
-	}
-
-	watchMovie(torrent: MOVIES){
-		console.log(torrent);
-		this.watch = true;
-=======
 		private authService: AuthService,
 		private db: AngularFirestore
 	) { }
@@ -97,30 +48,20 @@ export class MoviedetailsComponent implements OnInit {
 		this.route.params.subscribe(
 			(params) => {
 				const id = params['movie_id'];
-				const quality = params['quality'];
-				const hash = params['hash'];
-				const watch = params['watch'];
 				this.movieId = id;
-				if (this.movieservice.Movies[id]) {
-					console.log('Movies');
-					console.log(this.movieservice.Movies[id]);
-					this.Movie = this.movieservice.Movies[id];
-				}
-				else {
-					this.displayLoad = true;
-					this.movieservice.findMovieId(id).subscribe(
-						(ret) => {
-							console.log('WHAT THE FUUUUUCK');
-							this.movieservice.Movies.forEach((movie) => {
-								if (movie['id'] == id) {
-									this.Movie = movie;
-								}
-							})
-							this.displayLoad = false;
-						})
-				}
+				this.displayLoad = true;
+				this.movieservice.findMovieId(id).subscribe(
+					(ret) => {
+						this.loadMovie(ret);
+						this.displayLoad = false;
+					},(Error) => {
+						console.log(Error);
+					}
+				)
 			})
 	}
+
+
 	loadComments() {
 		// , ref => ref.where('MovieID', '==', this.movieId)
 		this.loadedComments = this.db.collection('MovieComments', ref => {
@@ -157,7 +98,6 @@ export class MoviedetailsComponent implements OnInit {
 			this.editButton = false;
 		}
 		// console.log(this.editButton);
->>>>>>> origin/Lance
 	}
 
 	addComments(commentform: NgForm) {
@@ -192,6 +132,75 @@ export class MoviedetailsComponent implements OnInit {
 	onPlayerReady(event) {
 		console.log("ready");
 		console.log(event);
+	}
+
+	loadMovie(data) {
+			var id: number;
+			var title: string;
+			var summary: string;
+			var backround_image: string;
+			var image: string;
+			var rating: number;
+			var year: number;
+			var genres: string[];
+			var torrents: string[];
+			var cast = [];
+
+			if (data['id'])
+				id = data['id']
+			else
+				id = NaN;
+
+			if (data['title'])
+				title = data['title'];
+			else
+				title = 'Title Not Found...';
+
+			if (data['summary'])
+				summary = data['summary']
+			else if (data['description'])
+				summary = data['description'];
+			else
+				summary = 'Cannot Load description';
+
+			if (data['large_cover_image'])
+				image = data['large_cover_image'];
+			else if (data['small_cover_image'])
+				image = data['small_cover_image'];
+			else
+				image = '../../assets/no-thumbnail.png';
+
+			if (data['background_image'])
+				backround_image = data['background_image'];
+			else
+				backround_image = '../../assets/blue.jpg';
+
+			if (data['rating'])
+				rating = data['rating']
+			else
+				rating = NaN;
+
+			if (data['year'])
+				year = data['year'];
+			else
+				year = NaN;
+
+			if (data['genres'])
+				genres = data['genres'];
+			else
+				genres = [];
+
+			if (data['torrents'])
+				torrents = data['torrents'];
+			else
+				torrents = [];
+
+			if (data['cast'])
+				cast = data['cast'];
+			else
+				cast = [];
+
+			this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, cast);
 	}
 }
 
