@@ -80,11 +80,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
 						value.photo = '';
 						this.authService.updateProfile(value.username, value.photo.value);
 					}
+					// console.log(this.authService.providerId)
 					this.db.collection("Users").doc(value.username).set({
 						username: value.username,
 						Firstname: value.firstname,
 						Lastname: value.lastname,
-						email: value.email
+						email: value.email,
+						providerId: this.authService.providerId
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {

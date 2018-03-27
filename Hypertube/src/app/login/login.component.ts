@@ -87,22 +87,28 @@ export class LoginComponent implements OnInit, OnDestroy {
 						if (providers.length > 0) {
 							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
 						} else {
-							this.authService.createUserWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-								this.authService.updateProfile(this.username42, this.photo42)
-								this.db.collection("Users").doc(this.username42).set({
-									username: this.username42
-								}).then((res) => {
-									// console.log("added");
-								}).catch((err) => {
-									this.errormsg = err;
-									console.log(err);
-								});
-								// this.msg = this.authService.msg;
+							this.authService.login42(this.email42, this.pass42, data, this.username42, this.photo42)
+							// this.authService.createUserWithEmailAndPassword(this.email42, this.pass42).then((res) => {
 
-							}).catch((err) => {
-								if (err.code != 'auth/email-already-in-use')
-									console.log(err);
-							});
+							// 	this.authService.updateProfile(this.username42, this.photo42)
+							// 	this.db.collection("Users").doc(this.username42).set({
+							// 		username: this.username42,
+							// 		Firstname: data['data']['attributes']['first-name'],
+							// 		Lastname: data['data']['attributes']['last-name'],
+							// 		email: data['data']['attributes']['email'],
+							// 		providerId: '42 Login'
+							// 	}).then((res) => {
+							// 		// console.log("added");
+							// 	}).catch((err) => {
+							// 		this.errormsg = err;
+							// 		console.log(err);
+							// 	});
+							// 	// this.msg = this.authService.msg;
+
+							// }).catch((err) => {
+							// 	if (err.code != 'auth/email-already-in-use')
+							// 		console.log(err);
+							// });
 						}
 					})
 					// console.log(this.checkExist)
@@ -156,17 +162,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	googleLogin() {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
-			.then((res) => {
-				this.db.collection("Users").add({
-					username: res['additionalUserInfo']['profile']['name'],
-					Firstname: res['additionalUserInfo']['profile']['given_name'],
-					Lastname: res['additionalUserInfo']['profile']['family_name'],
-					email: res['additionalUserInfo']['profile']['email']
-				})
-				console.log(res)
-				this._ngZone.run(() => this.router.navigate(['/Profile']));
 
-			})
 			.catch((err) => console.log(err));
 	}
 	emailAndPasswordLogin(f: NgForm) {

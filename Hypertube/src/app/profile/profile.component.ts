@@ -66,12 +66,15 @@ export class ProfileComponent implements OnInit {
 		this.errormsg = '';
 	}
 	getUserInfo(username) {
-		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username));
+
+		console.log(this.authService.providerId)
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username).orderBy('providerId').startAt(this.authService.providerId));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((users) => {
-			console.log(users)
+			// console.log('boooo')
+			// console.log(users)
 			this.email = users['0']['email'];
-			console.log(this.email);
+			// console.log(this.email);
 			this.Firstname = users['0']['Firstname'];
 			this.Lastname = users['0']['Lastname'];
 			// console.log(users.length)

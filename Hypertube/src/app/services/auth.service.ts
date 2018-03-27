@@ -1,6 +1,6 @@
 
 // src/app/services/auth.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from "@angular/router";
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
@@ -32,17 +32,18 @@ export class AuthService {
 	photoURL: string;
 	Firstname: string;
 	Lastname: string;
+	providerId: string;
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
 	userfound: boolean = false;
 	errormsg: string;
 	// msg: string;
-
+	userExist: number;
 
 	constructor
 		(
 		public _firebaseAuth: AngularFireAuth,
-		private router: Router, private db: AngularFirestore, private http: HttpClient
+		private router: Router, private db: AngularFirestore, private _ngZone: NgZone, private http: HttpClient
 		) {
 		this.user = _firebaseAuth.authState;
 		this.user.subscribe(
@@ -53,7 +54,8 @@ export class AuthService {
 					this.email = user.email;
 					this.isVerified = user.emailVerified;
 					this.profilePhoto = user.photoURL;
-					// console.log(user);
+					this.providerId = user['providerData']['0']['providerId']
+					console.log(user);
 					console.log('constructor WHEN CREATING AUTH SERVICE');
 					// console.log(this.userDetails);
 				} else {
@@ -83,26 +85,119 @@ export class AuthService {
 	signInWith42() {
 		return window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=b654f310dbf2bada79b1ed5cb10d6b19ece7fc5649ad79ca9e4dbfc349fd082c&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2FLogin&response_type=code'
 	}
+	login42(email, pass, data, username, photo) {
+		this.createUserWithEmailAndPassword(email, pass).then((res) => {
+			this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username).orderBy('providerId').startAt('password'));
+			this.usersdb = this.usersCollection.valueChanges().first();
+			this.usersdb.subscribe((users) => {
+				console.log('user found')
+				console.log(users.length)
+				this.userExist = users.length;
+			}, err => {
+				console.log(err)
+			}, () => {
+				console.log('completed')
+				if (this.userExist > 0) {
+					// this.errormsg = 'this username is already in use'
+					// this.router.navigate(['/Profile']);
+				} else {
+					this.updateProfile(username, photo)
+					this.db.collection("Users").doc(username).set({
+						username: username,
+						Firstname: data['data']['attributes']['first-name'],
+						Lastname: data['data']['attributes']['last-name'],
+						email: data['data']['attributes']['email'],
+						providerId: 'password'
+					}).then((res) => {
+						// console.log("added");
+					}).catch((err) => {
+						this.errormsg = err;
+						console.log(err);
+					});
+				}
+			})
+
+			// this.msg = this.authService.msg;
+
+		}).catch((err) => {
+			if (err.code != 'auth/email-already-in-use')
+				console.log(err);
+		});
+		// }
+		// })
+		// })
+	}
 	signInWithFacebook() {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.FacebookAuthProvider()
 		).then((res) => {
-			const userVerify = this._firebaseAuth.auth.currentUser;
-			if (userVerify.emailVerified == true) {
-				this.router.navigate(['/Profile']);
-			} else {
-				userVerify.sendEmailVerification().then((res) => {
-					window.alert('email sent');
+			this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', res['additionalUserInfo']['profile']['name']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
+			this.usersdb = this.usersCollection.valueChanges().first();
+			this.usersdb.subscribe((users) => {
+				console.log('user found')
+				console.log(users.length)
+				this.userExist = users.length;
+			}, err => {
+				console.log(err)
+			}, () => {
+				console.log('completed')
+				if (this.userExist > 0) {
+					// this.errormsg = 'this username is already in use'
+					// this.router.navigate(['/Profile']);
+				} else {
+					this.db.collection("Users").add({
+						username: res['additionalUserInfo']['profile']['name'],
+						Firstname: res['additionalUserInfo']['profile']['first_name'],
+						Lastname: res['additionalUserInfo']['profile']['last_name'],
+						email: res['additionalUserInfo']['profile']['email'],
+						providerId: res['additionalUserInfo']['providerId']
+					})
+
+				}
+				const userVerify = this._firebaseAuth.auth.currentUser;
+				if (userVerify.emailVerified == true) {
 					this.router.navigate(['/Profile']);
-				})
-			}
+				} else {
+					userVerify.sendEmailVerification().then((res) => {
+						window.alert('email sent');
+						this.router.navigate(['/Profile']);
+					})
+				}
+			})
+
+
 		})
 	};
 
 	signInWithGoogle() {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
-		);
+		).then((res) => {
+			this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', res['additionalUserInfo']['profile']['name']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
+			this.usersdb = this.usersCollection.valueChanges().first();
+			this.usersdb.subscribe((users) => {
+				console.log('user found')
+				console.log(users.length)
+				this.userExist = users.length;
+			}, err => {
+				console.log(err)
+			}, () => {
+				console.log('completed')
+				if (this.userExist > 0) {
+					this.errormsg = 'this username is already in use'
+				} else {
+					this.db.collection("Users").add({
+						username: res['additionalUserInfo']['profile']['name'],
+						Firstname: res['additionalUserInfo']['profile']['given_name'],
+						Lastname: res['additionalUserInfo']['profile']['family_name'],
+						email: res['additionalUserInfo']['profile']['email'],
+						providerId: res['additionalUserInfo']['providerId']
+					})
+				}
+				this._ngZone.run(() => this.router.navigate(['/Profile']));
+			});
+
+		})
 	};
 
 	createUserWithEmailAndPassword(email, password) {
