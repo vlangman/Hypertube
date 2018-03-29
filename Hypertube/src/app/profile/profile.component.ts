@@ -40,11 +40,13 @@ export class ProfileComponent implements OnInit {
 	reautherrormsg: string;
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
-	userfound: boolean = false;
+	// userfound: boolean = false;
 	usertest: number;
 	usersdbsub: Subscription;
 	reauth: boolean = false;
 	getEmail: string;
+	searchButton: boolean = false;
+	searchVerify: boolean = true;
 
 	constructor(private authService: AuthService, private photoUpload: FileuploadService, private storage: AngularFireStorage, private db: AngularFirestore) { }
 
@@ -61,12 +63,21 @@ export class ProfileComponent implements OnInit {
 		// this.authService.isUserData()
 		// console.log("hi" + this.authService.username.value);
 	}
-
+	searchProfileButton() {
+		if (!this.searchButton) {
+			this.searchButton = true;
+			this.editButton = false;
+			this.editEmailButton = false;
+		} else {
+			this.searchButton = false;
+		}
+	}
 	editProfile() {
 		console.log(this.editButton);
 		if (!this.editButton) {
 			this.editButton = true;
 			this.editEmailButton = false;
+			this.searchButton = false;
 		} else {
 			this.editButton = false;
 		}
@@ -77,6 +88,7 @@ export class ProfileComponent implements OnInit {
 		if (!this.editEmailButton) {
 			this.editEmailButton = true;
 			this.editButton = false;
+			this.searchButton = false;
 		} else {
 			this.editEmailButton = false;
 		}
@@ -98,6 +110,22 @@ export class ProfileComponent implements OnInit {
 			// console.log(users.length)
 			// this.usertest = users.length;
 		})
+	}
+	onSearchProfile(searchform: NgForm) {
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', searchform.value.search));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdbsub = this.usersdb.subscribe((users) => {
+			this.Firstname = users['0']['Firstname'];
+			this.Lastname = users['0']['Lastname'];
+			this.username = users['0']['username'];
+			if (users['0']['photo']) {
+				this.photo = users['0']['photo'];
+			} else {
+				this.photo = '';
+			}
+		})
+		this.searchButton = false;
+		this.searchVerify = false;
 	}
 	onEditProfile(form: NgForm) {
 		if (form.value.length < 5) {
@@ -168,18 +196,48 @@ export class ProfileComponent implements OnInit {
 					value.username = this.username;
 					if (value.photo && !this.downloadURL) {
 						this.photo = value.photo;
-						this.authService.updateProfile_user(value.username, value.photo);
+						this.authService.updateProfile_user(value.username, value.photo).then(() => {
+							this.db.collection("Users").doc(value.username).update({
+								photo: value.photo
+							}).then((res) => {
+								console.log("added");
+								// window.location.reload();
+							}).catch((err) => {
+								// this.errormsg = err;
+								console.log(err);
+							});
+						});
 						// window.location.reload();
 					} else if (!value.photo && this.downloadURL) {
 						value.photo = this.downloadURL;
 						this.photo = value.photo;
-						this.authService.updateProfile_user(value.username, value.photo.value);
+						this.authService.updateProfile_user(value.username, value.photo.value).then(() => {
+							this.db.collection("Users").doc(value.username).update({
+								photo: value.photo
+							}).then((res) => {
+								console.log("added");
+								// window.location.reload();
+							}).catch((err) => {
+								// this.errormsg = err;
+								console.log(err);
+							});
+						});
 						// window.location.reload();
 					} else if (value.photo && this.downloadURL) {
 						this.errormsg = "please choose one photo either the URL or the upload"
 					} else {
 						value.photo = this.authService.profilePhoto;
-						this.authService.updateProfile_user(value.username, value.photo.value);
+						this.authService.updateProfile_user(value.username, value.photo.value).then(() => {
+							this.db.collection("Users").doc(value.username).update({
+								photo: value.photo
+							}).then((res) => {
+								console.log("added");
+								// window.location.reload();
+							}).catch((err) => {
+								// this.errormsg = err;
+								console.log(err);
+							});
+						});
 					}
 				} else {
 					// const tempfname = this.Firstname;
@@ -199,6 +257,7 @@ export class ProfileComponent implements OnInit {
 									Firstname: this.Firstname,
 									Lastname: this.Lastname,
 									email: this.email,
+									photo: value.photo,
 									providerId: this.authService.providerId
 								}).then((res) => {
 									console.log("added");
@@ -218,6 +277,7 @@ export class ProfileComponent implements OnInit {
 									Firstname: this.Firstname,
 									Lastname: this.Lastname,
 									email: this.email,
+									photo: value.photo,
 									providerId: this.authService.providerId
 								}).then((res) => {
 									console.log("added");
@@ -238,6 +298,7 @@ export class ProfileComponent implements OnInit {
 									Firstname: this.Firstname,
 									Lastname: this.Lastname,
 									email: this.email,
+									photo: value.photo,
 									providerId: this.authService.providerId
 								}).then((res) => {
 									console.log("added");

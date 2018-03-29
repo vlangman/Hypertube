@@ -5,6 +5,7 @@
 	flex-direction: row; ">
 	<button class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
 	<button class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="editEmail()">Change Email</button>
+	<button class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="searchProfileButton()">Search for a user</button>
 
 </div>
 <div class="profile-wrap" *ngIf="!displayLoad">
@@ -21,17 +22,20 @@
 			<h5 class="mb-3" *ngIf="username">UserName: {{username}}</h5>
 			<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
 			<h6>About</h6>
-			{{email}}
+			<!-- {{email}} -->
 			<p>
 				Firstname: {{Firstname}} Lastname: {{Lastname}}
 			</p>
-			<h3 class="title">Are you verified</h3>
-			<p *ngIf="!verified" class="title">
-				NO
-			</p>
-			<p *ngIf="verified" class="title">
-				YES
-			</p>
+			<div *ngIf="searchVerify">
+				<h3 class="title">Are you verified</h3>
+				<p *ngIf="!verified" class="title">
+					NO
+				</p>
+				<p *ngIf="verified" class="title">
+					YES
+				</p>
+			</div>
+
 		</div>
 
 	</div>
@@ -82,6 +86,24 @@
 			</div>
 		</div>
 	</div>
+	<div style="overflow: hidden;" *ngIf="searchButton">
+		<form #searchform="ngForm" (ngSubmit)="onSearchProfile(searchform)" class="register-form">
+			<h3>search:</h3>
+			<input type="search" class="form-control" name="search" ngModel required #search="ngModel">
+			<div class="register-buttons form-group">
+				<button class="btn btn-outline-success" type="Submit" [disabled]="!searchform.valid">Search</button>
+				<button class="btn btn-outline-default" type="button" (click)="searchProfileButton()">Cancel</button>
+			</div>
+		</form>
+		<ng-template #Info>
+			<div class="alert alert-info">
+				<strong>Info!</strong> Search for a user via their username
+			</div>
+		</ng-template>
+		<div class="alert alert-warning" *ngIf="errormsg; else Info">
+			<strong>Error!</strong> {{errormsg}}
+		</div>
+	</div>
 
 	<div style="overflow: hidden;" *ngIf="editEmailButton">
 		<form #emailform="ngForm" (ngSubmit)="onEditEmail(emailform)" class="register-form">
@@ -89,7 +111,7 @@
 			<input type="email" class="form-control" name="email" ngModel required email #email="ngModel">
 			<div class="register-buttons form-group">
 				<button class="btn btn-outline-success" type="Submit" [disabled]="!emailform.valid">Update</button>
-				<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
+				<button class="btn btn-outline-default" type="button" (click)="editEmail()">Cancel</button>
 			</div>
 		</form>
 		<ng-template #Info>
