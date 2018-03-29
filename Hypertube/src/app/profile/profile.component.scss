@@ -39,3 +39,11 @@ progress::-webkit-progress-value {
 	flex-direction: row; 
 	flex-wrap: wrap;
 }
+
+.exampleModal {
+	display: block;
+	opacity: 1;
+	// position: fixed;
+	z-index: 1072;
+	padding-right: 16px;
+}

@@ -44,10 +44,10 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 
 
 //video player imports
-import {VgCoreModule} from 'videogular2/core';
-import {VgControlsModule} from 'videogular2/controls';
-import {VgOverlayPlayModule} from 'videogular2/overlay-play';
-import {VgBufferingModule} from 'videogular2/buffering';
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
 
@@ -75,12 +75,12 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
-        VgCoreModule,
-        VgControlsModule,
-        VgOverlayPlayModule,
-        VgBufferingModule,
-        AngularFirestoreModule,
-		AngularFireStorageModule,	
+		VgCoreModule,
+		VgControlsModule,
+		VgOverlayPlayModule,
+		VgBufferingModule,
+		AngularFirestoreModule,
+		AngularFireStorageModule,
 	],
 	providers: [
 		MovieService,

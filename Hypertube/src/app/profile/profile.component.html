@@ -4,6 +4,8 @@
 <div style="display: flex; 
 	flex-direction: row; ">
 	<button class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
+	<button class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="editEmail()">Change Email</button>
+
 </div>
 <div class="profile-wrap" *ngIf="!displayLoad">
 
@@ -19,6 +21,7 @@
 			<h5 class="mb-3" *ngIf="username">UserName: {{username}}</h5>
 			<!-- <h5 class="mb-3" *ngIf="!username else ">{{email}}</h5> -->
 			<h6>About</h6>
+			{{email}}
 			<p>
 				Firstname: {{Firstname}} Lastname: {{Lastname}}
 			</p>
@@ -31,6 +34,72 @@
 			</p>
 		</div>
 
+	</div>
+	<!-- Button trigger modal -->
+	<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+		Launch demo modal
+	</button> -->
+
+	<!-- Modal -->
+	<div class="modal fade" [ngClass]="reauth ? 'exampleModal' : '' " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+	 aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Re-authenticate</h5>
+					<button type="button" class="close" type="button" (click)="onCancel()">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form #reauthform="ngForm" (ngSubmit)="reauthlogin(reauthform)" class="login-form">
+						<div class="form-group">
+							<h3>Username:</h3>
+							<input type="text" class="form-control" ngModel name="usernameauth" required minlength="5" #usernameauth="ngModel">
+							<span class="help-block" *ngIf="!usernameauth.valid && usernameauth.touched">Please enter a valid username minimum characters is length is 5</span>
+							<!-- <span class="help-block" *ngIf="errormsg || userfound && username.touched">This username is already in use</span> -->
+							<!-- <span *ngFor="let user of usersdb | async">This username @{{user.username}} is already in use.</span> -->
+						</div>
+						<div class="form-group">
+							<h3>Password:</h3>
+							<input type="password" class="form-control" ngModel name="password" required minlength="8" #confirmpassword="ngModel">
+							<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Password min length must be greater than 8</span>
+						</div>
+						<div class="login-buttons form-group">
+							<button class="btn btn-outline-success" [disabled]="!reauthform.valid">Login</button>
+							<button class="btn btn-outline-default" type="button" (click)="onCancel()">Cancel</button>
+
+						</div>
+					</form>
+					<div class="alert alert-danger alert-dismissible fade show" *ngIf="reautherrormsg">
+						{{reautherrormsg}}</div>
+				</div>
+
+				<!-- <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div> -->
+			</div>
+		</div>
+	</div>
+
+	<div style="overflow: hidden;" *ngIf="editEmailButton">
+		<form #emailform="ngForm" (ngSubmit)="onEditEmail(emailform)" class="register-form">
+			<h3>Email:</h3>
+			<input type="email" class="form-control" name="email" ngModel required email #email="ngModel">
+			<div class="register-buttons form-group">
+				<button class="btn btn-outline-success" type="Submit" [disabled]="!emailform.valid">Update</button>
+				<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
+			</div>
+		</form>
+		<ng-template #Info>
+			<div class="alert alert-info">
+				<strong>Info!</strong> If you haven't signed in recently you will need to re-authenticate yourself to change your email
+			</div>
+		</ng-template>
+		<div class="alert alert-warning" *ngIf="errormsg; else Info">
+			<strong>Error!</strong> {{errormsg}}
+		</div>
 	</div>
 	<div style="overflow: hidden" *ngIf="editButton">
 		<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">

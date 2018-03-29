@@ -39,6 +39,7 @@ export class AuthService {
 	errormsg: string;
 	// msg: string;
 	userExist: number;
+	changemail: string;
 
 	constructor
 		(
@@ -145,7 +146,7 @@ export class AuthService {
 					// this.errormsg = 'this username is already in use'
 					// this.router.navigate(['/Profile']);
 				} else {
-					this.db.collection("Users").add({
+					this.db.collection("Users").doc(res['additionalUserInfo']['profile']['name']).set({
 						username: res['additionalUserInfo']['profile']['name'],
 						Firstname: res['additionalUserInfo']['profile']['first_name'],
 						Lastname: res['additionalUserInfo']['profile']['last_name'],
@@ -186,7 +187,7 @@ export class AuthService {
 				if (this.userExist > 0) {
 					this.errormsg = 'this username is already in use'
 				} else {
-					this.db.collection("Users").add({
+					this.db.collection("Users").doc(res['additionalUserInfo']['profile']['name']).set({
 						username: res['additionalUserInfo']['profile']['name'],
 						Firstname: res['additionalUserInfo']['profile']['given_name'],
 						Lastname: res['additionalUserInfo']['profile']['family_name'],
@@ -208,10 +209,13 @@ export class AuthService {
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((users) => {
 			console.log(users)
-			this.email = users['0']['email'];
-			console.log(this.email);
-			this.Firstname = users['0']['Firstname'];
-			this.Lastname = users['0']['Lastname'];
+			if (users.length > 0) {
+				this.email = users['0']['email'];
+				console.log(this.email);
+				this.Firstname = users['0']['Firstname'];
+				this.Lastname = users['0']['Lastname'];
+			}
+
 			// console.log(users.length)
 			// this.usertest = users.length;
 		}, err => {
@@ -219,11 +223,15 @@ export class AuthService {
 		}, () => {
 			console.log('completed')
 			console.log(this.email);
+			if (this.email == null || this.email == '') {
+				return window.alert('no User found');
+
+			}
 			this._firebaseAuth.auth.signInWithEmailAndPassword(this.email, password).then((res) => {
 				this.router.navigate(['/Profile']);
 			}).catch((err) => {
 				if (err.code === 'auth/user-not-found') {
-					this.errormsg = 'No user account found with the email and password entered'
+					window.alert('No user account found with the username and password entered')
 				}
 				console.log(err);
 			});
@@ -272,27 +280,38 @@ export class AuthService {
 		// 	photoUpdate = this.photoUpload.downloadURL
 		// }
 		// console.log(this.photoUpload.downloadURL.value);'
-		userUpdate.updateProfile({
+		return userUpdate.updateProfile({
 			displayName: usernameUpdate,
 			photoURL: photoUpdate
 		}).then((res) => {
 			this.username = usernameUpdate;
 
 			this.profilePhoto = photoUpdate;
-			this.db.collection("Users").doc(this.username).set({
-				username: this.username
-			}).then((res) => {
-				console.log("added");
-				// window.location.reload();
-			}).catch((err) => {
-				// this.errormsg = err;
-				console.log(err);
-			});
+
 			// window.location.reload();
 		})
 			.catch((err) => console.log(err));
 	}
+	changeEmail(email, username) {
+		this.email = email;
+		return this._firebaseAuth.auth.currentUser.updateEmail(email).then((email) => {
+			const userVerify = this._firebaseAuth.auth.currentUser;
+			console.log(this.email)
+			userVerify.sendEmailVerification().then((res) => {
+				this.db.collection("Users").doc(username).update({
+					email: this.email,
+				})
+				window.alert('email sent');
+				this.router.navigate(['/Profile']);
+			})
+		})
+	}
+	reauthUser(email, password) {
+		var user = this._firebaseAuth.auth.currentUser;
+		var credential = firebase.auth.EmailAuthProvider.credential(email, password);
 
+		return user.reauthenticateWithCredential(credential)
+	}
 	updateWithOldUsername(usernameUpdate: string, photoUpdate: string) {
 		const userUpdate = this._firebaseAuth.auth.currentUser;
 		// if (photoUpdate == null) {

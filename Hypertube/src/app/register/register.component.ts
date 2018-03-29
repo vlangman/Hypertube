@@ -70,6 +70,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 			} else {
 				console.log('hopefullnessssss')
 				this.authService.createUserWithEmailAndPassword(value.email, value.password).then((res) => {
+					console.log(this.authService.providerId)
 					if (value.photo) {
 						this.authService.updateProfile(value.username, value.photo)
 					} else if (!value.photo && this.downloadURL) {
@@ -86,7 +87,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 						Firstname: value.firstname,
 						Lastname: value.lastname,
 						email: value.email,
-						providerId: this.authService.providerId
+						providerId: res['providerData']['0']['providerId']
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {
