@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
 	getEmail: string;
 	searchButton: boolean = false;
 	searchVerify: boolean = true;
+	errorSearchmsg: string;
 
 	constructor(private authService: AuthService, private photoUpload: FileuploadService, private storage: AngularFireStorage, private db: AngularFirestore) { }
 
@@ -115,13 +116,18 @@ export class ProfileComponent implements OnInit {
 		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', searchform.value.search));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
-			this.Firstname = users['0']['Firstname'];
-			this.Lastname = users['0']['Lastname'];
-			this.username = users['0']['username'];
-			if (users['0']['photo']) {
-				this.photo = users['0']['photo'];
+			if (users.length == 0) {
+				this.errorSearchmsg = 'No user found';
 			} else {
-				this.photo = '';
+				this.Firstname = users['0']['Firstname'];
+				this.Lastname = users['0']['Lastname'];
+				this.username = users['0']['username'];
+				if (users['0']['photo']) {
+					this.photo = users['0']['photo'];
+				} else {
+					this.photo = '';
+				}
+				this.errorSearchmsg = '';
 			}
 		})
 		this.searchButton = false;

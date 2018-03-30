@@ -3,10 +3,14 @@
 </div>
 <div style="display: flex; 
 	flex-direction: row; ">
-	<button class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
-	<button class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="editEmail()">Change Email</button>
-	<button class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="searchProfileButton()">Search for a user</button>
+	<button *ngIf="searchVerify" class="btn btn-outline-success api-button" style="margin-left: 50%;" (click)="editProfile()">Edit profile</button>
+	<button *ngIf="searchVerify" class="btn btn-outline-success api-button" style="padding-left: 5px;" (click)="editEmail()">Change Email</button>
+	<button class="btn btn-outline-success api-button" [ngClass]="!searchVerify ? 'buttonpos': '' " style="padding-left: 5px;"
+	 (click)="searchProfileButton()">Search for a user</button>
 
+</div>
+<div class="alert alert-danger alert-dismissible fade show" *ngIf="errorSearchmsg">
+	{{errorSearchmsg}}
 </div>
 <div class="profile-wrap" *ngIf="!displayLoad">
 
