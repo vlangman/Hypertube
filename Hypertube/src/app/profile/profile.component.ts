@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 // import { promise } from 'protractor';
 import { NgForm } from '@angular/forms';
@@ -19,7 +19,7 @@ export interface User {
 	templateUrl: './profile.component.html',
 	styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 	username: string;
 	email: string;
 	verified: boolean;
@@ -48,6 +48,10 @@ export class ProfileComponent implements OnInit {
 	searchButton: boolean = false;
 	searchVerify: boolean = true;
 	errorSearchmsg: string;
+	movieError: string;
+	watchedMovies = [];
+	movieImage: string;
+	movieTitle: string;
 
 	constructor(private authService: AuthService, private photoUpload: FileuploadService, private storage: AngularFireStorage, private db: AngularFirestore) { }
 
@@ -61,10 +65,12 @@ export class ProfileComponent implements OnInit {
 		// this.Lastname = this.authService.Lastname;
 		this.getUserInfo(this.username);
 		this.displayLoad = false;
+		this.getMoviesWatched(this.username);
 		// this.authService.isUserData()
 		// console.log("hi" + this.authService.username.value);
 	}
 	searchProfileButton() {
+		console.log(this.usersdb)
 		if (!this.searchButton) {
 			this.searchButton = true;
 			this.editButton = false;
@@ -84,6 +90,7 @@ export class ProfileComponent implements OnInit {
 		}
 		// console.log(this.editButton);
 		this.errormsg = '';
+		this.movieError = '';
 	}
 	editEmail() {
 		if (!this.editEmailButton) {
@@ -95,6 +102,7 @@ export class ProfileComponent implements OnInit {
 		}
 		// console.log(this.editButton);
 		this.errormsg = '';
+		this.movieError = '';
 	}
 	getUserInfo(username) {
 
@@ -110,6 +118,23 @@ export class ProfileComponent implements OnInit {
 			this.Lastname = users['0']['Lastname'];
 			// console.log(users.length)
 			// this.usertest = users.length;
+		})
+	}
+	//getting movies
+	getMoviesWatched(username) {
+		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('username', '==', username));
+		this.usersdb = this.usersCollection.valueChanges();
+		this.usersdbsub = this.usersdb.subscribe((users) => {
+			if (users.length == 0) {
+				this.movieError = 'You have no watched movies yet';
+				console.log(this.movieError)
+			} else {
+				users.forEach((movies) => {
+					console.log(movies)
+					this.watchedMovies.push(movies);
+				})
+			}
+
 		})
 	}
 	onSearchProfile(searchform: NgForm) {
@@ -132,6 +157,9 @@ export class ProfileComponent implements OnInit {
 		})
 		this.searchButton = false;
 		this.searchVerify = false;
+		this.watchedMovies = [];
+		this.movieError = '';
+
 	}
 	onEditProfile(form: NgForm) {
 		if (form.value.length < 5) {
@@ -390,4 +418,8 @@ export class ProfileComponent implements OnInit {
 		return snapshot.state === 'running' && snapshot.bytesTransferred < snapshot.totalBytes
 	}
 
+	ngOnDestroy() {
+		if (this.usersdbsub)
+			this.usersdbsub.unsubscribe();
+	}
 }

@@ -179,5 +179,17 @@
 			<strong>Error!</strong> {{errormsg}}
 		</div>
 	</div>
+	<!-- <div style="flex-wrap: wrap; flex-grow: 1;" *ngFor="let movie of watchedMovies">
+		<img src="{{movie.moviepic}}" style="height: 300px;">
+	</div> -->
+	<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+		<div *ngIf="movieError">{{movieError}}</div>
+		<div *ngFor="let movie of watchedMovies">
+
+			<img src="{{movie.moviepic}}" class="items">
+			<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+			<!-- </article> -->
+		</div>
+	</div>
 
 </div>

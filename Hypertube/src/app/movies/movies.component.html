@@ -29,7 +29,7 @@
 				<p [ngClass]=" (hoverMovie == movie.id) ? 'summary-show': 'summary-hide'" class="movie-summary">{{ movie.summary | ellipsis:350 }}</p>
 			</div>
 			<div class="movie-footer">
-				<button *ngIf=" movie.torrent720 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent720)">Watch 720p</button>
+				<button *ngIf=" movie.torrent720 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent720, movie.image, movie.title)">Watch 720p</button>
 				<button *ngIf=" movie.torrent1080 " class="btn btn-outline-primary" (click)="viewMovie(movie.id,movie.torrent1080)">Watch 1080p</button>
 			</div>
 		</div>

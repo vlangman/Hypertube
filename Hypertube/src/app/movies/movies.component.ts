@@ -5,7 +5,8 @@ import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/map';
-import { ErrorObservable  } from 'rxjs/observable/ErrorObservable';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
+		private authService: AuthService
 	) {
 
 	}
@@ -141,9 +143,10 @@ export class MoviesComponent implements OnInit, OnDestroy {
 	}
 
 
-	viewMovie(id: number, torrentData: {}) {
+	viewMovie(id: number, torrentData: {}, moviepic: string, movieTitle: string) {
 		console.log(torrentData);
 		const quality = torrentData['quality'];
+		this.authService.addMovieToDb(moviepic, movieTitle);
 		if (quality == "720p") {
 			this.router.navigate(["Movies/Details", id, torrentData['hash'], 720, { watch: true }]);
 		} else if (quality == "1080p") {
@@ -152,7 +155,10 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	//adding the movie to the db for the user
+	// addMovieToUser(moviepic, movieTitle) {
 
+	// }
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}

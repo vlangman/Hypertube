@@ -292,6 +292,29 @@ export class AuthService {
 		})
 			.catch((err) => console.log(err));
 	}
+	//adding movie details to profile
+	addMovieToDb(moviepic, movieTitle) {
+		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('username').startAt(this.username));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((movies) => {
+			if (movies.length == 0) {
+				console.log('here')
+				this.db.collection("MoviesWatched").add({
+					username: this.username,
+					movieTitle: movieTitle,
+					moviepic: moviepic
+				})
+			}
+			// console.log(movies)
+			console.log(movies.length)
+			// this.userExist = users.length;
+		})
+		// this.db.collection("MoviesWatched").add({
+		// 	username: this.username,
+		// 	movieTitle: movieTitle,
+		// 	moviepic: moviepic
+		// })
+	}
 	changeEmail(email, username) {
 		this.email = email;
 		return this._firebaseAuth.auth.currentUser.updateEmail(email).then((email) => {
