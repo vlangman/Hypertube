@@ -19,7 +19,8 @@ import { environment } from '../environments/environment';
 import { SeriesService } from "./services/series.service";
 import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
-
+import { TorrentService } from './services/torrent.service';
+import { FilesService } from './services/files.service';
 import { FileuploadService } from './services/fileupload.service'
 //components
 import { MoviesComponent } from './movies/movies.component';
@@ -88,6 +89,8 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		AuthService,
 		AuthGuard,
 		FileuploadService,
+		TorrentService,
+		FilesService,
 	],
 	bootstrap: [AppComponent]
 })

@@ -4,14 +4,15 @@ import { AuthService } from '../services/auth.service';
 import { NgForm } from '@angular/forms';
 import { FileuploadService } from '../services/fileupload.service';
 import { AngularFireStorage } from 'angularfire2/storage';
-import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { tap } from 'rxjs/operators';
+import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 
 export interface User {
 	username: string;
-
 }
+
 @Component({
 	selector: 'app-profile',
 	templateUrl: './profile.component.html',
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
 	photo: string;
 	displayLoad: boolean = true;
 	editButton: boolean = false;
+	
 	//edit profile
 	task = this.photoUpload.task;
 	isHovering: boolean;
@@ -32,21 +34,28 @@ export class ProfileComponent implements OnInit {
 	downloadURL = this.photoUpload.downloadURL;
 	downloadLink: string;
 	errormsg: string;
-	usersdb: Observable<User[]>;
-	usersCollection: AngularFirestoreCollection<User>;
-	userfound: boolean = false;
 
-	constructor(private authService: AuthService, private photoUpload: FileuploadService, private storage: AngularFireStorage, private db: AngularFirestore) { }
+	Users: Observable<User[]>;
+	userCol: AngularFirestoreCollection<User>;
+
+
+	constructor(
+			private authService: AuthService,
+			private photoUpload: FileuploadService,
+			private storage: AngularFireStorage,
+			private db: AngularFirestore
+		)
+	{ }
+
 
 	ngOnInit() {
-		// console.log("hahaha")
+
 		this.username = this.authService.username;
 		this.email = this.authService.email;
 		this.verified = this.authService.isVerified;
 		this.photo = this.authService.profilePhoto;
 		this.displayLoad = false;
-		// this.authService.isUserData()
-		// console.log("hi" + this.authService.username.value);
+
 	}
 
 	editProfile() {
@@ -56,75 +65,69 @@ export class ProfileComponent implements OnInit {
 		} else {
 			this.editButton = false;
 		}
-		// console.log(this.editButton);
+
 	}
 
 	onEditProfile(form: NgForm) {
-		const value = form.value;
-		// console.log(value);
-		this.checkUser(value);
+		if (form.value.length < 5) {
+			window.alert("Please enter a valid username");
+		}
+		else{
+			this.checkUser(form.value.username);
+		}
+	
 	}
-	checkUser(value) {
-		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username))
-		// this.usersdb = this.usersCollection.valueChanges()
-		this.usersdb = this.usersCollection.snapshotChanges().map(actions => {
-			return actions.map(action => {
-				const data = action.payload.doc.data() as User;
-				return {
-					username: data.username
-				}
-			});
-		});
-		this.usersdb.subscribe(snapshot => {
-			if (snapshot.length == 0) {
-				// console.log('User not found');
-				this.userfound = false;
-			} else {
-				this.userfound = true;
-				// console.log('User found');
-				// console.log(snapshot);
-				this.errormsg = 'user exists';
-			}
-			if (this.userfound) {
-				// console.log("r u the one" + this.userfound);
-				// console.log("yebogogo");
+	
 
-				// this.userfound = true;
-				// console.log("askhdgaisfgasohfalshgalsghaslghaslg");
-				// console.log(this.userfound);
-			}
-			else {
-				if (!value.username) {
-					value.username = this.username;
-					if (value.photo && !this.downloadURL) {
-						this.authService.updateProfile_user(value.username, value.photo);
-						// window.location.reload();
-					} else if (!value.photo && this.downloadURL) {
-						value.photo = this.downloadURL;
-						this.authService.updateProfile_user(value.username, value.photo.value);
-						// window.location.reload();
-					} else {
-						value.photo = this.authService.profilePhoto;
-						this.authService.updateProfile_user(value.username, value.photo.value);
-					}
-				} else {
-					// console.log("or ar you the one" + this.userfound);
-					// console.log("handidi");
-					if (value.photo && !this.downloadURL) {
-						this.authService.updateProfile_user(value.username, value.photo);
-						// window.location.reload();
-					} else if (!value.photo && this.downloadURL) {
-						value.photo = this.downloadURL;
-						this.authService.updateProfile_user(value.username, value.photo.value);
-						// window.location.reload();
-					} else {
-						value.photo = this.authService.profilePhoto;
-						this.authService.updateProfile_user(value.username, value.photo.value);
-					}
-				}
-			}
-		});
+	checkUser(username :string) {
+		this.userCol = this.db.collection('Users');
+		this.Users = this.userCol.valueChanges();
+		console.log(this.Users);
+
 	}
+		// this.usersdb.subscribe(snapshot => {
+		// 	if (snapshot.length == 0) {
+		
+		// 		this.userfound = false;
+		// 	} else {
+		// 		this.userfound = true;
+	
+		// 		this.errormsg = 'user exists';
+		// 	}
+		// 	if (!this.userfound) {
+		// 		if (!value.username) {
+		// 			value.username = this.username;
+		// 			if (value.photo && !this.downloadURL) {
+		// 				this.authService.updateProfile_user(value.username, value.photo);
+		// 				// window.location.reload();
+		// 			} else if (!value.photo && this.downloadURL) {
+		// 				value.photo = this.downloadURL;
+		// 				this.authService.updateProfile_user(value.username, value.photo.value);
+		// 				// window.location.reload();
+		// 			} else {
+		// 				value.photo = this.authService.profilePhoto;
+		// 				this.authService.updateProfile_user(value.username, value.photo.value);
+		// 			}
+		// 		} else {
+		// 			// console.log("or ar you the one" + this.userfound);
+		// 			// console.log("handidi");
+		// 			if (value.photo && !this.downloadURL) {
+		// 				this.authService.updateProfile_user(value.username, value.photo);
+		// 				// window.location.reload();
+		// 			} else if (!value.photo && this.downloadURL) {
+		// 				value.photo = this.downloadURL;
+		// 				this.authService.updateProfile_user(value.username, value.photo.value);
+		// 				// window.location.reload();
+		// 			} else {
+		// 				value.photo = this.authService.profilePhoto;
+		// 				this.authService.updateProfile_user(value.username, value.photo.value);
+		// 			}
+		// 		}
+		// 	}
+		// 	// else {
+
+		// 	// }
+		// });
 
 	toggleHover(event: boolean) {
 		this.photoUpload.toggleHover(event);
