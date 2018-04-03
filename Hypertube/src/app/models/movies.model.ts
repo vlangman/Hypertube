@@ -13,9 +13,10 @@ export class MOVIES {
 	public torrent720: {};
 	public torrent1080: {};
 	public trailer: SafeResourceUrl;
+	public cast = [];
 
 
-	constructor(movieId: number, movieTitle: string, movieSummary: string, movieImage: string, movieBackroundImage: string, movieRating: number, movieYear: number, movieGenres: string[], movieTorrents: string[], movieYoutube: SafeResourceUrl) {
+	constructor(movieId: number, movieTitle: string, movieSummary: string, movieImage: string, movieBackroundImage: string, movieRating: number, movieYear: number, movieGenres: string[], movieTorrents: string[], movieYoutube: SafeResourceUrl, movieCast) {
 		this.id = movieId;
 		this.title = movieTitle;
 		this.summary = movieSummary;
@@ -27,5 +28,6 @@ export class MOVIES {
 		this.torrent720 = movieTorrents[0];
 		this.torrent1080 = movieTorrents[1];
 		this.trailer = movieYoutube;
+		this.cast = movieCast;
 	}
 }

@@ -5,15 +5,16 @@
 	flex-direction: row; ">
 	<button class="btn btn-outline-warning api-login2" (click)="resetButton()">Reset Password</button>
 </div>
-<div *ngIf="msg" class="alert alert-success alert-dismissible fade show">{{msg}}</div>
+
 <div class="row">
 	<div class="flex" *ngIf="!editButton">
 		<form #f="ngForm" (ngSubmit)="emailAndPasswordLogin(f)" class="login-form">
 			<div class="form-group">
-				<h3>Email:</h3>
-				<input type="Email" id="email" class="form-control" ngModel name="email" required email #email="ngModel">
-				<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email for example: user@example.com</span>
-				<!-- pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" -->
+				<h3>Username:</h3>
+				<input type="text" class="form-control" ngModel name="username" required minlength="5" #username="ngModel">
+				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid username minimum characters is length is 5</span>
+				<!-- <span class="help-block" *ngIf="errormsg || userfound && username.touched">This username is already in use</span> -->
+				<!-- <span *ngFor="let user of usersdb | async">This username @{{user.username}} is already in use.</span> -->
 			</div>
 			<div class="form-group">
 				<h3>Password:</h3>
@@ -26,15 +27,24 @@
 				<button class="btn btn-outline-default">Cancel</button>
 
 			</div>
-			<h3>Alternate Login</h3>
-			<div class="api-login form-group">
-				<button class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
-				<button class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
-				<button class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()">Google</button>
-			</div>
+
 		</form>
 
+		<div *ngIf="errormsg" class="alert alert-success alert-dismissible fade show" style="width: 100%">{{errormsg}}</div>
+		<div style="display: flex; 
+		flex-direction: column; width: 100%">
+			<h3>Alternate Login</h3>
+			<div class="alert alert-info alert-dismissible fade show">
+				<strong>Info!</strong> Please Note since this hasn't been released the facebook login with only currently work with the facebook
+				developer!.
+			</div>
+			<button class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
+			<button class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
+			<button class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()">Google</button>
+		</div>
+
 	</div>
+	
 	<div *ngIf="editButton">
 		<form #emailform="ngForm" (ngSubmit)="emailReset(emailform)" class="login-form">
 			<div class="form-group">
@@ -43,8 +53,8 @@
 				<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email for example: user@example.com</span>
 				<!-- pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" -->
 			</div>
-			<div class="alert alert-danger alert-dismissible fade show" *ngIf="errormsg">
-				{{errormsg}}</div>
+			<!-- <div class="alert alert-danger alert-dismissible fade show" *ngIf="errormsg.length">
+				{{errormsg}}</div> -->
 			<button class="btn btn-outline-success" [disabled]="!emailform.valid">Reset Email</button>
 		</form>
 	</div>
