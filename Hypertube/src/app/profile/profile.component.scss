@@ -1,95 +1,41 @@
-.profile-wrap {
-	display: flex;
-	flex-wrap: wrap;
-	width: 100%;
-	height: 100%;
-	/*justify-content: center;*/
-	background-color: white;
-	color: black;
-	justify-content: space-around;
-}
-
-.profile-card{
-	height: 100%;
-	width: fit-content;
-	background-color: white;
-	color: black;
-	max-width: 500px;
-	border: 1px solid black;
-}
-.profile-image{
-	max-width: 100%;	
-}
-.register-form{
-	flex-shrink: 1;
-	color:black;
-	border: 1px solid yellow;
-}
-.edit-profile{
-	padding: 10px;
-	display: flex;
-	flex-direction: column;
-	padding: 5px;
-	flex-grow: 1;
-	flex-shrink: 1;
-	background-color: rgba(33, 68, 124, 0.8);
-	max-width: 900px;
-}
-.file-input{
-	width: 50%;
-}
-.file{
-	color: black;
-}
-
 .dropzone { 
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: 2px dashed black;
-	border-radius: 5px;
-	background: white;
-	margin: 10px 0;
-	&.hovering {
-		border: 2px solid #f16624;
-		color: #dadada !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+    height: 300px;
+    border: 2px dashed #f16624;
+    border-radius: 5px;
+    background: white;
+    margin: 10px 0;
+
+    &.hovering {
+        border: 2px solid #f16624;
+        color: #dadada !important;
 	}
 	
 	.file-label {
 		font-size: 1.2em
 	}
 }
+
 progress::-webkit-progress-value {
-	transition: width 0.1s ease;
+    transition: width 0.1s ease;
 }
 
 .card {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-	max-width: 300px;
-	// margin: auto;
-	text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    // margin: auto;
+    text-align: center;
 }
 
 .title {
-	color: grey;
-	font-size: 18px;
+    color: grey;
+    font-size: 18px;
 }
-
-.profile-card{
-	height: fit-content;
-}
-.register-buttons{
-	margin-top: auto;
-}
-
-.exampleModal {
-	display: block;
-	opacity: 1;
-	// position: fixed;
-	z-index: 1072;
-	padding-right: 16px;
-}
-.items {
-	height: 300px;
-	padding: 10px;
+.profile-wrap {
+	display: flex; 
+	flex-direction: row; 
+	flex-wrap: wrap;
 }

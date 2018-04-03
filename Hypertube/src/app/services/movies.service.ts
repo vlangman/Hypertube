@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { HttpClient } from '@angular/common/http';
 import { YTS } from "../models/yts.model";
 import { MOVIES } from '../models/movies.model';
+import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
 
 import { Observable } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
@@ -16,7 +17,7 @@ export class MovieService {
 	selectedGenre: string;
 
 
-	genreList: string[] = [
+	genreList : string[] = [
 		"Comedy",
 		"Sci-fi",
 		"Horror",
@@ -37,76 +38,73 @@ export class MovieService {
 
 	];
 
-	apiDetail = "https://yts.am/api/v2/movie_details.json"
 	api = 'https://yts.am/api/v2/list_movies.json';
-	apiComments = 'https://yts.am/api/v2/movie_comments.json'
-
+	
 
 	constructor(
 		private http: HttpClient,
 		private router: Router,
-	) {
+		private sanitizer: DomSanitizer,
+	)
+	{
 
 	}
 
-	searchMovies(query: string): Observable<MOVIES[]> {
+	searchMovies(query: string): Observable<MOVIES[]>{
 		return this.http.get<YTS>(this.api + "?query_term=" + query)
-			.map(res => {
-				this.Movies = [];
-				console.log(res);
-				if (res['data']['movies'] == null) {
-					var err = new Error('Sorry your request for ' + query + ' movies was not found');
-					return Observable.throw(err);
-				}
-				else {
-					this.loadMovies(res);
-					return this.Movies;
-				}
-
-			})._catch((err) => {
+		.map(res => {
+			this.Movies = [];
+			console.log(res);
+			if (res['data']['movies'] == null)
+			{
+				var err = new Error('Sorry your request for ' + query +' movies was not found');
 				return Observable.throw(err);
-			})
+			}
+			else{
+				this.loadMovies(res);
+				return this.Movies;
+			}
+			
+		})._catch((err) => {
+			return Observable.throw(err);
+		})
 	}
 
-
-	getMovies(): Observable<MOVIES[]> {
+	getMovies(): Observable<MOVIES[]>{
 		return this.http.get<YTS>(this.api)
-			.map(res => {
-				console.log(res);
-				this.Movies = [];
+		.map(res => {
+			console.log(res);
+			this.Movies = [];
+			this.loadMovies(res);
+			return this.Movies;
+		})._catch((err) => {
+			return Observable.throw(err);
+		})
+	}
+
+	getGenre(genre: string): Observable<MOVIES[]>{
+		this.selectedGenre = genre;
+		return this.http.get<YTS>(this.api + '?genre=' + this.selectedGenre )
+		.map((res) => {
+			this.Movies = [];
+			this.loadMovies(res);
+			return this.Movies;
+		})
+		._catch((err) => {
+			return Observable.throw(err);
+		})
+	}
+
+	getGenreNext(page: number) : Observable<MOVIES[]>{
+		return this.http.get<YTS>(this.api + '?limit=20&page=' + page +  "&genre=" + this.selectedGenre)
+		.map((res) => {
 				this.loadMovies(res);
 				return this.Movies;
-			})._catch((err) => {
-				console.log("hello");
-				console.log(Observable.throw(err))
+			})
+		._catch(
+			(err) => {
 				return Observable.throw(err);
 			})
-	}
-
-
-	getGenre(genre: string): Observable<MOVIES[]> {
-		this.selectedGenre = genre;
-		return this.http.get<YTS>(this.api + '?genre=' + this.selectedGenre)
-			.map((res) => {
-				this.Movies = [];
-				this.loadMovies(res);
-				return this.Movies;
-			})
-			._catch((err) => {
-				return Observable.throw(err.status(404));
-			})
-	}
-
-	getGenreNext(page: number): Observable<MOVIES[]> {
-		return this.http.get<YTS>(this.api + '?limit=20&page=' + page + "&genre=" + this.selectedGenre)
-			.map((res) => {
-				this.loadMovies(res);
-				return this.Movies;
-			})
-			._catch(
-				(err) => {
-					return Observable.throw(err);
-				})
 	}
 
 	getNextPage(page: number): Observable<MOVIES[]> {
@@ -121,31 +119,24 @@ export class MovieService {
 		})
 	}
 
-
-	// getMovieComments(id): Observable<any> {
-	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
-	// 		return res
-	// 	})
-	// }
-
 	findMovieId(id: number): Observable<MOVIES> {
-		return this.http.get<YTS>(this.apiDetail + '?movie_id=' + id + '&with_images=true&with_cast=true').map(
+		var ret: MOVIES = this.Movies[id];
+		console.log('Searching By Id');
+		console.log(id);
+		return this.http.get<YTS>(this.api + '?movie_id=' + id).map(
 			(res) => {
-				console.log(res);
-				if (res['data']['movie']){
-					return (res['data']['movie']);
-				}
-				else {
-					return Observable.throw('Movie Details cannot be found');
-				}
-			})
-			._catch(
-				(err) => {
-					return Observable.throw(err);
-				})
+			this.loadMovies(res);
+			return(res);
+		})
+		._catch(
+			(err) => {
+				return Observable.throw(err);
+		})
+		
 	}
 
-	loadMovies(res: YTS) {
+
+	loadMovies(res: YTS){
 		res['data']['movies'].forEach((data: JSON) => {
 			var id: number;
 			var title: string;
@@ -156,7 +147,7 @@ export class MovieService {
 			var year: number;
 			var genres: string[];
 			var torrents: string[];
-			var cast = [];
+			var ytTrailer: SafeResourceUrl;
 
 			if (data['id'])
 				id = data['id']
@@ -172,7 +163,7 @@ export class MovieService {
 				summary = data['summary']
 			else if (data['description'])
 				summary = data['description'];
-			else
+			else 
 				summary = 'Cannot Load description';
 
 			if (data['large_cover_image'])
@@ -206,10 +197,16 @@ export class MovieService {
 				torrents = data['torrents'];
 			else
 				torrents = [];
-			var cast = [];
+
+			if (data['yt_trailer_code'])
+				ytTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
+			else
+				ytTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
 
 
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null , cast));
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, ytTrailer));
+
+
 		})
 	}
 

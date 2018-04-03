@@ -2,137 +2,69 @@
 	<div class="loading"></div>
 </div>
 
-<div *ngIf="!displayLoad" class="mainForm">
+<div *ngIf="!displayLoad"  class="mainForm">
+
 	<div class="videoWrapper" >
-		
-		<div class="movie-details" [ngStyle]="{'background-image': 'url(' + Movie.backround_image + ')'}">
-			<div class="image-wrap">
-				<img class="movie-image" src="{{ Movie.image }}">
-				<div class=" btn-group watchbtn">
-					<button [disabled]=" !Movie.torrent1080 " class="btn btn-outline-primary" (click)="watchMovie(Movie.torrent1080)">Watch HD</button>
-					<button [disabled]=" !Movie.torrent720 " class="btn btn-outline-warning" (click)="watchMovie(Movie.torrent720)">Watch SD</button>
-				</div>
-				<h3 *ngIf=" this.torrentService.download">{{ downloadSpeed }}</h3>
-			</div>
+			
+	<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
+					<vg-overlay-play></vg-overlay-play>
+					<vg-buffering></vg-buffering>
 
-			<div class="movie-info">
-				<h1>{{ Movie.title }}</h1>
-				<h3>{{ Movie.year }}</h3>
-				<div class="ratings">
-					<h1><i class="fab fa-imdb imdb"></i> {{Movie.rating}}</h1>
-				</div>
+					<vg-controls>
+						<vg-play-pause></vg-play-pause>
+						<vg-playback-button></vg-playback-button>
+
+						<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+
+						<vg-scrub-bar>
+							<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+							<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+						</vg-scrub-bar>
+
+						<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+						<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+						<vg-track-selector></vg-track-selector>
+						<vg-mute></vg-mute>
+						<vg-volume></vg-volume>
+						<!-- <vg-fullscreen></vg-fullscreen> -->
+					</vg-controls>
+					<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
+						<source src="http://static.videogular.com/assets/videos/vr-demo.mp4" type="video/mp4">
+					</video>
+				</vg-player>
+
+			<div class="movie-details" [ngStyle]="{'background-image': 'url(' + Movie.backround_image + ')'}">
 				
-				<div class="movie-summary">
-					<p>{{ Movie.summary }}</p>
-				</div>
-
-
-			<div class="movie-summary">
-				<span class="movie-genre" *ngFor="let genre of Movie.genres">{{genre}}. </span>
-			</div>
-
-				<hr style="background: white; width: 100%;"/>
+					<img class="movie-image" src="{{ Movie.image }}">
+				<div class="movie-info">
+					<h1>{{ Movie.title }}</h1>
+					<h3>{{ Movie.year }}</h3>
+					<h3>Imbd Rating: {{ Movie.rating }} / 10</h3>
+					<div class="movie-summary">
+						<p >{{ Movie.summary }}</p>
+					</div>
+					<div class="movie-summary">
+						<span class="movie-genre" *ngFor="let genre of Movie.genres">{{genre}}. </span>
+					</div>
+					
+					<hr style="background: white; width: 100%;"/>
+					
+					<div class="watch-control">
+							<iframe *ngIf=" Movie.trailer " class="youtube" [src]="Movie.trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 				
-				<div class="watch-control">	
-					<div class="embed-responsive embed-responsive-16by9 trailer">
-						<iframe *ngIf=" Movie.trailer"  class="youtube" [src]="Movie.trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-					</div>	
-					<div class="cast-wrap">
-						<div *ngFor="let cast of Movie.cast" class="card cast-card">
-							<div class="cast">
-								<img class="cast-image img-thumbnail" *ngIf="cast.url_small_image" src="{{cast.url_small_image}}">
-								<img class="cast-image img-thumbnail" *ngIf="!cast.url_small_image" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png">
-								<p class="cast-name"> {{ cast.name }} </p>
-							</div>
+						<div class="movie-buttons">
+							<button [disabled]=" !Movie.torrent1080 " class="btn btn-outline-primary FHD" (click)="watchMovie(Movie.torrent1080)">Watch HD</button>
+							<button [disabled]=" !Movie.torrent720 " class="btn btn-outline-warning HD" (click)="watchMovie(Movie.torrent720)">Watch SD</button>
 						</div>
 					</div>
+					
 				</div>
-
 				
-
-					<!-- comments section -->
-				<div>
-					<h2>Comments</h2>
-				
-					<button (click)="loadComments()" class="btn btn-success">Load Comments</button>
-					<div *ngIf="!commentsFound">
-						<h3>Be the first to comment on this movie</h3>
-					</div>
-
-				
-					<div *ngFor="let comments of loadedCommentsdb | async" style="border: 2px solid rgb(78, 71, 71);">
-						<span>{{comments.userName}}</span>
-						<span>{{comments.Comments}}</span>
-						<br>
-						<ul style="list-style-type: none;">
-							<li>
-								<div class="l-media">
-									<div class="l-media__figure">
-										<div class="comment-profile-pic">
-											<img src='{{comments.Photo}}' style="width: 48px;
-											height: 48px;" align="left">
-											<h1 class="comment-user-name">
-												{{comments.userName}}
-											</h1>
-
-										</div>
-									</div>
-									<div class="l-media__body">
-
-										<h5>{{comments.Dateadded}}</h5>
-										<div class="vjs-comment-list">
-											{{comments.Comments}}
-										</div>
-									</div>
-								</div>
-							</li>
-						</ul>
-					</div>
-
-
-					<button (click)="addCommentButton()" class="btn btn-dark">Add A Comment</button>
-					<div *ngIf="editButton">
-						<form #commentform="ngForm" (ngSubmit)="addComments(commentform)" class="login-form">
-							<div class="form-group">
-								<h3>Add A Comment:</h3>
-								<input type="text" id="comment" class="form-control" ngModel name="comment" required minlength="3" maxlength="300" comment
-								 #comment="ngModel">
-								<span class="help-block" *ngIf="!comment.valid && comment.touched">Please enter a comment to submit between 3 and 300 characters</span>
-							</div>
-							<button class="btn btn-outline-success" [disabled]="!commentform.valid">Submit Comment</button>
-						</form>
-					</div>
-
-				</div>
-
 			</div>
-		</div>
-			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
-				<vg-overlay-play></vg-overlay-play>
-				<vg-buffering></vg-buffering>
-
-				<vg-controls>
-					<vg-play-pause></vg-play-pause>
-					<vg-playback-button></vg-playback-button>
-
-					<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-
-					<vg-scrub-bar>
-						<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-						<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-					</vg-scrub-bar>
-
-					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-					<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
-
-					<vg-track-selector></vg-track-selector>
-					<vg-mute></vg-mute>
-					<vg-volume></vg-volume>
-					<vg-fullscreen></vg-fullscreen>
-				</vg-controls>
-				<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
-					<!-- <source src="http://static.videogular.com/assets/videos/vr-demo.mp4" type="video/mp4"> -->
-				</video>
-			</vg-player>
-		
+				
+				
+	
+			
 	</div>
+</div>

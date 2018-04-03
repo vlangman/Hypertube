@@ -5,8 +5,7 @@ import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/map';
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
-import { AuthService } from '../services/auth.service';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 
 @Component({
@@ -31,7 +30,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
 	//subscriptions to services that will be destroyed onDestroy
 	routerParamsSub: Subscription;
-	getNextPageSub: Subscription;
+	getNextPageSub : Subscription;
 	movieGenreSub: Subscription;
 	searchMovieSub: Subscription;
 	getMovieSub: Subscription;
@@ -43,9 +42,9 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
-		private authService: AuthService
-	) {
-
+	)
+	{
+		
 	}
 
 	ngOnInit() {
@@ -57,7 +56,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		console.log('creating Movies component');
 
 		this.routerParamsSub = this.route.params.subscribe((params) => {
-			if (params['Search'] && params['query_term']) {
+			if (params['Search'] && params['query_term'])
+			{
 				console.log('loading Search Movies');
 				this.displayLoad = true;
 				this.Movies = [];
@@ -76,9 +76,9 @@ export class MoviesComponent implements OnInit, OnDestroy {
 							console.log(ret);
 							this.Movies = ret;
 							this.movieType = params['query_term'];
-							this.displayLoad = false;
+							this.displayLoad = false;	
 						}
-
+						
 					}, (err) => {
 						console.log(err);
 						this.movieError = err['message'];
@@ -87,7 +87,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 						this.searchMovieSub.unsubscribe();
 					}
 				)
-			} else if (params['genreId']) {
+			} else if (params['genreId'])
+			{
 				console.log('loading Movies by Genre');
 				this.displayLoad = true;
 				this.Movies = [];
@@ -110,7 +111,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			}
 		})
 
-		if (!this.searchMode && !this.genreMode) {
+		if (!this.searchMode && !this.genreMode)
+		{
 			console.log('searching for FEATURED');
 			this.Movies = [];
 			this.getMovieSub = this.movieService.getMovies().subscribe(
@@ -129,7 +131,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			)
 		}
 	}
-
+		
 
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {
@@ -173,23 +175,21 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		//don't delete it is need VAUGHAN
 	}
 
+
 	viewMovie(id: number){
 		this.router.navigate(["Movies/Details", id]);
 	}
 
-	//adding the movie to the db for the user
-	// addMovieToUser(moviepic, movieTitle) {
 
-	// }
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}
 
-	ngOnDestroy() {
+	ngOnDestroy(){
 		console.log('Destroy movies Component');
 		if (this.routerSub)
 			this.routerSub.unsubscribe();
-		if (this.routerParamsSub)
+		if(this.routerParamsSub)
 			this.routerParamsSub.unsubscribe();
 		if (this.getNextMoviePageSub)
 			this.getNextMoviePageSub.unsubscribe();

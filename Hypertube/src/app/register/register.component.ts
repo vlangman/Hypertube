@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,7 +8,6 @@ import { FileuploadService } from '../services/fileupload.service';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 // import { QuerySnapshot, FirebaseFirestore } from '@firebase/firestore-types';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs';
 
 export interface User {
 	username: string;
@@ -19,7 +18,7 @@ export interface User {
 	templateUrl: './register.component.html',
 	styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent implements OnInit {
 
 	isHovering: boolean;
 	percentage = this.photoUpload.percentage;
@@ -30,9 +29,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	errormsg: string;
 	usersdb: Observable<User[]>;
 	usersCollection: AngularFirestoreCollection<User>;
-	// userfound: boolean = false;
-	userdbsub: Subscription;
-	usertest: number;
+	userfound: boolean = false;
 
 	constructor(public authService: AuthService, private router: Router, private photoUpload: FileuploadService, private db: AngularFirestore) {
 
@@ -42,35 +39,35 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	}
 
 	onRegister(f: NgForm) {
-		if (f.value.password.length < 8) {
-			window.alert("this password is to short")
-		} else if (f.value.username.length < 5) {
-			window.alert("this username is to short")
-			this.errormsg = "this username is to short"
-		} else {
-			const value = f.value;
-			this.checkUserExist(value);
-		}
-
+		const value = f.value;
+		this.checkUserExist(value);
 	}
 
 	checkUserExist(value) {
-		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username));
-		this.usersdb = this.usersCollection.valueChanges().first();
-		this.usersdb.subscribe((users) => {
-			console.log('user found')
-			console.log(users.length)
-			this.usertest = users.length;
-		}, err => {
-			console.log(err)
-		}, () => {
-			console.log('completed')
-			if (this.usertest > 0) {
-				this.errormsg = 'this username is already in use'
+		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.username))
+		// this.usersdb = this.usersCollection.valueChanges()
+		this.usersdb = this.usersCollection.snapshotChanges().map(actions => {
+			return actions.map(action => {
+				const data = action.payload.doc.data() as User;
+				return {
+					username: data.username
+				}
+			});
+		});
+		this.usersdb.subscribe(snapshot => {
+			if (snapshot.length == 0) {
+				
+				this.userfound = false;
 			} else {
-				console.log('hopefullnessssss')
+				this.userfound = true;
+				
+				this.errormsg = 'user exists';
+			}
+			if (this.userfound) {
+			
+			} else {
+				
 				this.authService.createUserWithEmailAndPassword(value.email, value.password).then((res) => {
-					console.log(this.authService.providerId)
 					if (value.photo) {
 						this.authService.updateProfile(value.username, value.photo)
 					} else if (!value.photo && this.downloadURL) {
@@ -81,13 +78,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 						value.photo = '';
 						this.authService.updateProfile(value.username, value.photo.value);
 					}
-					// console.log(this.authService.providerId)
 					this.db.collection("Users").doc(value.username).set({
-						username: value.username,
-						Firstname: value.firstname,
-						Lastname: value.lastname,
-						email: value.email,
-						providerId: res['providerData']['0']['providerId']
+						username: value.username
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {
@@ -100,14 +92,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
 					this.errormsg = err;
 					console.log(err);
 				});
+
 			}
-
-
+			// console.log(value);
 		})
-	}
-	ngOnDestroy() {
-		if (this.userdbsub)
-			this.userdbsub.unsubscribe()
 	}
 
 }
