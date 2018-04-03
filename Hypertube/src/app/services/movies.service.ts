@@ -68,6 +68,7 @@ export class MovieService {
 			})
 	}
 
+
 	getMovies(): Observable<MOVIES[]> {
 		return this.http.get<YTS>(this.api)
 			.map(res => {
@@ -83,9 +84,6 @@ export class MovieService {
 	}
 
 
-	
-
-	
 	getGenre(genre: string): Observable<MOVIES[]> {
 		this.selectedGenre = genre;
 		return this.http.get<YTS>(this.api + '?genre=' + this.selectedGenre)
@@ -122,6 +120,8 @@ export class MovieService {
 				return Observable.throw(err);
 		})
 	}
+
+
 	// getMovieComments(id): Observable<any> {
 	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
 	// 		return res
@@ -138,13 +138,11 @@ export class MovieService {
 				else {
 					return Observable.throw('Movie Details cannot be found');
 				}
-				
 			})
 			._catch(
 				(err) => {
 					return Observable.throw(err);
 				})
-
 	}
 
 	loadMovies(res: YTS) {

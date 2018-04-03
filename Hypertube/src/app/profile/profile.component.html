@@ -1,43 +1,183 @@
-
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
 
-<div class="profile-wrap" *ngIf="!displayLoad">
-	
-	<div class="profile-card">
-		<img *ngIf="photo" class="profile-image" src="{{photo}}">
-		<img *ngIf="!photo" class="profile-image" src="../../assets/no-thumbnail.png">
-		<div class="card-body">
-			<h4 class="card-title">{{username}}</h4>
-			<p class="card-text">{{email}}</p>
-			<p *ngIf="!verified" class="title text-danger">Not verified!</p>
-			<p *ngIf="verified" class="title lead text-success">verified</p>
-			<button class="btn" [ngClass]=" editButton ? 'btn-primary' : 'btn-outline-primary' " (click)="editProfile()">Edit profile</button>
-		</div>
+
+	<!-- new alert -->
+	<div  class="alert alert-danger alert-dismissible fade show" *ngIf="errorSearchmsg">
+		{{errorSearchmsg}}
 	</div>
+	
+	<ul *ngIf="!displayLoad" class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item"><a href="#profile" class="nav-link active" id="profile-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="profile" aria-selected="true">Edit Profile</a></li>
+		<li class="nav-item"><a href="#search" class="nav-link" id="search-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="search" aria-selected="false">Search User</a></li>
+		<li class="nav-item"><a href="#email" class="nav-link" id="email-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="email" aria-selected="false">Change Email</a></li>
+		<li class="nav-item"><a href="#watched" class="nav-link" id="watched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="watched" aria-selected="false">Movies Watched</a></li>
+	</ul>
 
-	<form  *ngIf="editButton" #form="ngForm" (ngSubmit)="onEditProfile(form)" class="edit-profile bg-dark">
-		<div class="form-group">
-			<h3>Username:</h3>
-			<input type="text" class="form-control" ngModel name="username" minlength="5" #username="ngModel">
-			<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
-		</div>
-		<div class="form-group">
-			<h3>Photo:</h3>
-			<input type="text" class="form-control" ngModel name="photo" #photo="ngModel">
-		</div>
-		<p>OR</p>
-		<h3>Upload Zone</h3>
-		<div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)" [class.hovering]="isHovering">
+	<div class="profile-wrap" *ngIf="!displayLoad">
 
-			<div class="file">
-				<input class="file-input" type="file" (change)="startUpload($event.target.files)">
-				<span class="file-cta">
-					<span class="file-icon"><i class="fa fa-upload"></i></span>
-					<span class="file-label">or choose a file…</span>
-				</span>
+		<div class="profile-card">
+			<img *ngIf="photo" class="profile-image" src="{{photo}}">
+			<img *ngIf="!photo" class="profile-image" src="../../assets/no-thumbnail.png">
+			<div class="card-body">
+				<h4 class="card-title" *ngIf="username">{{username}}</h4>
+				<p class="card-text">{{email}}</p>
+				<p class="card-text"> {{Firstname}} : {{Lastname}}</p>
+				<p *ngIf="!verified" class="title text-danger">Not verified!</p>
+				<p *ngIf="verified" class="title lead text-success">verified</p>
 			</div>
+		</div>
+
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+				
+				<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
+					<div class="form-group">
+						<h3>Username:</h3>
+						<input type="text" class="form-control" ngModel name="usernameInput" minlength="5" #usernameInput="ngModel">
+						<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid email minimum characters is 5</span>
+						<span class="help-block" *ngFor="let username of usersdb | async">This username @{{username.username}} is already in use.</span>
+					</div>
+					<div class="form-group">
+						<h3>Photo:</h3>
+						<input type="text" class="form-control" ngModel name="photoInput" #photoInput="ngModel">
+						<!-- <span class="help-block" *ngIf="!password.valid && password.touched">Please enter the same password</span> -->
+					</div>
+					<p>OR</p>
+					<div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)" [class.hovering]="isHovering">
+						<h3>AngularFire Drop Zone</h3>
+						<div class="file">
+							<label class="row" style="margin-left: 50px;">
+								<input class="file-input" type="file" (change)="startUpload($event.target.files)">
+								<span class="file-cta">
+									<span class="file-icon">
+										<i class="fa fa-upload"></i>
+									</span>
+									<span class="file-label">
+										or choose a file…
+									</span>
+								</span>
+							</label>
+						</div>
+					</div>
+				</form>
+
+			</div>
+
+
+			<div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+				
+				<form #searchform="ngForm" (ngSubmit)="onSearchProfile(searchform)" class="register-form">
+					<h3>search:</h3>
+					<input type="search" class="form-control" name="search" ngModel required #search="ngModel">
+					<div class="register-buttons form-group">
+						<button class="btn btn-outline-success" type="Submit" [disabled]="!searchform.valid">Search</button>
+						<button class="btn btn-outline-default" type="button" (click)="searchProfileButton()">Cancel</button>
+					</div>
+				</form>
+				
+				<ng-template #Info>
+					<div class="alert alert-info">
+						<strong>Info!</strong> Search for a user via their username
+					</div>
+				</ng-template>
+				
+				<div class="alert alert-warning" *ngIf="errormsg; else Info">
+					<strong>Error!</strong> {{errormsg}}
+				</div>
+			</div>
+
+
+			<div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
+				<form #emailform="ngForm" (ngSubmit)="onEditEmail(emailform)" class="register-form">
+					<h3>Email:</h3>
+					<input type="email" class="form-control" name="emailInput" ngModel required email #emailInput="ngModel">
+					<div class="register-buttons form-group">
+						<button class="btn btn-outline-success" type="Submit" [disabled]="!emailform.valid">Update</button>
+						<button class="btn btn-outline-default" type="button" (click)="editEmail()">Cancel</button>
+					</div>
+				</form>
+
+				<ng-template #Info>
+					<div class="alert alert-info">
+						<strong>Info!</strong> If you haven't signed in recently you will need to re-authenticate yourself to change your email
+					</div>
+				</ng-template>
+
+				<div class="alert alert-warning" *ngIf="errormsg; else Info">
+					<strong>Error!</strong> {{errormsg}}
+				</div>
+			</div>
+
+
+			<div class="tab-pane fade" id="watched" role="tabpanel" aria-labelledby="watched-tab">
+					<!-- new movies watched -->
+					<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+						<div *ngIf="movieError">{{movieError}}</div>
+						<div *ngFor="let movie of watchedMovies">
+							<img src="{{movie.moviepic}}" class="items">
+							<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+						</div>
+					</div>
+			</div>
+
+		</div>
+		
+		<div class="modal fade" [ngClass]="reauth ? 'exampleModal' : '' " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+		 aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLongTitle">Re-authenticate</h5>
+						<button type="button" class="close" type="button" (click)="onCancel()">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form #reauthform="ngForm" (ngSubmit)="reauthlogin(reauthform)" class="login-form">
+							<div class="form-group">
+								<h3>Username:</h3>
+								<input type="text" class="form-control" ngModel name="usernameauth" required minlength="5" #usernameauth="ngModel">
+								<span class="help-block" *ngIf="!usernameauth.valid && usernameauth.touched">Please enter a valid username minimum characters is length is 5</span>
+							</div>
+							<div class="form-group">
+								<h3>Password:</h3>
+								<input type="password" class="form-control" ngModel name="password" required minlength="8" #confirmpassword="ngModel">
+								<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Password min length must be greater than 8</span>
+							</div>
+							<div class="login-buttons form-group">
+								<button class="btn btn-outline-success" [disabled]="!reauthform.valid">Login</button>
+								<button class="btn btn-outline-default" type="button" (click)="onCancel()">Cancel</button>
+							</div>
+						</form>
+						<div class="alert alert-danger alert-dismissible fade show" *ngIf="reautherrormsg">
+							{{reautherrormsg}}
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+
+	<!-- new progress bar -->
+	<!-- <div *ngIf="percentage | async as pct">
+		<progress class="progress is-info" [value]="pct" max="100">
+		</progress>
+		{{ pct | number }}%
+	</div>
+	<div *ngIf="snapshot | async as snap">
+		{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
+
+		<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
+		<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
+		<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
+	</div> -->
+
+
+	<!-- 		</div>
 		</div>
 		<div *ngIf="percentage | async as pct">
 			<progress class="progress is-info" [value]="pct" max="100">
@@ -53,13 +193,8 @@
 		</div>
 		<div class="alert alert-warning" *ngIf="errormsg">
 			<strong>Error!</strong> {{errormsg}}
-		</div>
-		<div class="register-buttons form-group">
-			<button class="btn btn-outline-warning" type="Submit" [disabled]="!form.valid">Update</button>
-			<button class="btn btn-outline-light" type="button" (click)="editProfile()">Cancel</button>
-		</div>
-	</form>
-	
+		</div> -->
 	
 
-</div>
+
+

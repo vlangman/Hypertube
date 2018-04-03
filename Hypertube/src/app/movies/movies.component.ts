@@ -5,7 +5,8 @@ import { MOVIES } from "../models/movies.model";
 import { YTS } from "../models/yts.model";
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/map';
-import { ErrorObservable  } from 'rxjs/observable/ErrorObservable';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
+		private authService: AuthService
 	) {
 
 	}
@@ -175,7 +177,10 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		this.router.navigate(["Movies/Details", id]);
 	}
 
+	//adding the movie to the db for the user
+	// addMovieToUser(moviepic, movieTitle) {
 
+	// }
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}

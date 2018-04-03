@@ -10,6 +10,7 @@ import { Observable } from 'rxjs/Observable';
 import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 
+
 export interface MovieComment {
 	userName: string;
 	Comments: string;
@@ -17,6 +18,7 @@ export interface MovieComment {
 	Photo: string;
 	// MovieId: string;
 }
+
 
 @Component({
 	selector: 'app-moviedetails',
@@ -38,7 +40,6 @@ export class MoviedetailsComponent implements OnInit {
 	isValid: boolean;
 	downloadSpeed: number = 0;
 	api: VgAPI;
-
 
 
 	constructor(
@@ -97,6 +98,8 @@ export class MoviedetailsComponent implements OnInit {
 		});
 		console.log(this.loadedCommentsdb)
 	}
+
+
 	addCommentButton() {
 		console.log(this.editButton);
 		if (!this.editButton) {
@@ -136,21 +139,48 @@ export class MoviedetailsComponent implements OnInit {
 		}
 
 	}
+
+
 	onPlayerReady(api: VgAPI) {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-		this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
-			console.log(data);
-		})
-	}
 
+		
+		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
+		// 	console.log(data);
+		// })
+
+
+		this.loadedCommentsdb = this.loadedComments.snapshotChanges().map(actions => {
+			if (!actions || !actions.length) {
+				this.commentsFound = false;
+			} else {
+				return actions.map(action => {
+					console.log("tetststs");
+					console.log(action)
+					const data = action.payload.doc.data() as MovieComment;
+					console.log(data);
+					return {
+						Comments: data.Comments,
+						userName: data.userName,
+						Dateadded: data.Dateadded,
+						Photo: data.Photo
+
+						// MovieId: data.MovieId
+					}
+				});
+			}
+
+		});
+		console.log(this.loadedCommentsdb)
+	}
+	
 	watchMovie(data){
 		this.watch = true;
 		this.torrentService.checkMovie(data);
+		this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id);
 		setInterval(this.downloadSpeed = this.torrentService.getSpeed(), 1000);
-		
-		
 	}
 
 	loadMovie(data) {

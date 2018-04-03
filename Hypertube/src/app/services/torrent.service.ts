@@ -59,7 +59,6 @@ export class TorrentService {
   downloadMovie(data: TORRENT){
 	console.log('downloading new torrent....' + this.magnet);
 	console.log(data);
-  
 	this.client.add(this.magnet, (Torrent) => {
 		// Torrent.on('torrent', function (data) {
 		// 	console.log(data)
@@ -74,8 +73,6 @@ export class TorrentService {
 			console.log(bytes + ' DOWNLOADED...');
 			console.log(Torrent.torrentFileBlobURL);
 		})
-		
-
 	});
 	 
   }

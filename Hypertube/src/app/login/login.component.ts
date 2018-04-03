@@ -37,26 +37,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		// this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-		// console.log("this is hereerere");
-		// console.log(this.returnUrl);
-
-		// let provider = this.route.snapshot.params['provider'];
-		// console.log("--------------");
-		// console.log(this.route.snapshot.queryParams);
-		// console.log(provider);
+	
 		if (this.route.snapshot.queryParams['code']) {
 			this.fourtytwo(this.route.snapshot.queryParams['code']);
 		}
-		// else {
-		// 	console.log("no query");
-		// }
+
 
 	}
-	// this42test(test) {
-	// 	console.log("wyetwyetwyetwyetwy");
 
-	// }
 	fourtytwo(code: string) {
 		// console.log(code);
 		const params = {
@@ -66,15 +54,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 			client_secret: '71ae6d11e5da5bdd03c9dcae3afe961c16089038137df2da7875ebc33d33f820',
 			redirect_uri: 'http://localhost:4200/Login'
 		};
-		// console.log("____________________________________==");
+
 		return this.sub42post = this.http.post('https://api.intra.42.fr/oauth/token', params)
 			.subscribe((res) => {
-				// console.log(res);
-				// const jwtDecode = require('jwt-decode');
-				// const decoded = jwtDecode('eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.' + res['access_token']);
-				// console.log(decoded);
-				// this.authService.login42('2f3a85687b52ce714425f0592e0d62bb0933672a6a26fac79c374af43a9c64bd')
-				// console.log(test);
+
 				const graphApiUrl = 'https://api.intra.42.fr/v2/me?access_token=' + res['access_token'];
 				let headers = { headers: new HttpHeaders({ 'content-Type': 'application/vnd.api+json' }) };
 				this.sub42get = this.http.get(graphApiUrl, headers).subscribe((data) => {
@@ -82,64 +65,21 @@ export class LoginComponent implements OnInit, OnDestroy {
 					this.username42 = data['data']['attributes']['login'];
 					this.photo42 = data['data']['attributes']['image-url'];
 					this.pass42 = data['data']['id'] + data['data']['attributes']['last-name'];
-					// console.log(this.pass42);
+					
 					this.authService._firebaseAuth.auth.fetchProvidersForEmail(this.email42).then((providers) => {
 						if (providers.length > 0) {
-							this.authService.signInWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-								this.router.navigate(['/Profile']);
-							})
+							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
 						} else {
-							this.authService.createUserWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-								this.authService.updateProfile(this.username42, this.photo42)
-								this.db.collection("Users").doc(this.username42).set({
-									username: this.username42
-								}).then((res) => {
-									// console.log("added");
-								}).catch((err) => {
-									this.errormsg = err;
-									console.log(err);
-								});
-								// this.msg = this.authService.msg;
-
-							}).catch((err) => {
-								if (err.code != 'auth/email-already-in-use')
-									console.log(err);
-							});
+							this.authService.login42(this.email42, this.pass42, data, this.username42, this.photo42)
 						}
 					})
-					// console.log(this.checkExist)
-					// this.authService.createUserWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-					// 	this.authService.updateProfile(this.username42, this.photo42)
-					// 	this.db.collection("Users").doc(this.username42).set({
-					// 		username: this.username42
-					// 	}).then((res) => {
-					// 		// console.log("added");
-					// 	}).catch((err) => {
-					// 		this.errormsg = err;
-					// 		console.log(err);
-					// 	});
-					// 	// this.msg = this.authService.msg;
-
-					// }).catch((err) => {
-					// 	if (err.code === 'auth/email-already-in-use') {
-					// 		this.authService.signInWithEmailAndPassword(this.email42, this.pass42).then((res) => {
-					// 			this.router.navigate(['/Profile']);
-					// 		})
-					// 	}
-					// 	this.errormsg = err;
-					// 	if (err.code != 'auth/email-already-in-use')
-					// 		console.log(err);
-					// });
+				
 				})
 
-				// if (err) return res.status(500).json(err);
-
 			});
+		}
 
 
-		// .catch((error: Response | any) => {
-		// });
-	}
 	is42Login() {
 		// this.loading = true;
 		this.authService.signInWith42()
@@ -147,7 +87,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 	facebookLogin() {
 		this.authService.signInWithFacebook()
-		.then(res => {console.log(res)})
 			.catch((err) => {
 				if (err.code === 'auth/account-exists-with-different-credential') {
 					window.alert(err)
@@ -159,18 +98,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 	googleLogin() {
 		console.log('googlelogin');
 		this.authService.signInWithGoogle()
-			.then((res) => {
-				this._ngZone.run(() => this.router.navigate(['/Profile']));
 
-			})
 			.catch((err) => console.log(err));
 	}
 	emailAndPasswordLogin(f: NgForm) {
+		this.errormsg = '';
 		const value = f.value;
-		this.authService.signInWithEmailAndPassword(value.email, value.password).then((res) => {
-			this.router.navigate(['/Profile']);
-		})
-			.catch((err) => console.log(err));
+		this.authService.signInWithEmailAndPassword(value.username, value.password)
 	}
 	emailReset(emailform: NgForm) {
 		const value = emailform.value
