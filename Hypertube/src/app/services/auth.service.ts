@@ -41,16 +41,17 @@ export class AuthService {
 	// msg: string;
 	userExist: number;
 	changemail: string;
+	userid: string;
 
 	constructor
-	(
+		(
 		public _firebaseAuth: AngularFireAuth,
 		private router: Router,
 		private db: AngularFirestore,
 		private _ngZone: NgZone,
 		private http: HttpClient
-	) {
-	
+		) {
+
 		this.user = _firebaseAuth.authState;
 		this.user.subscribe(
 			(user) => {
@@ -60,7 +61,8 @@ export class AuthService {
 					this.email = user.email;
 					this.isVerified = user.emailVerified;
 					this.profilePhoto = user.photoURL;
-					
+					this.userid = user.uid;
+
 					this.providerId = user['providerData']['0']['providerId']
 					console.log(user);
 					console.log('constructor WHEN CREATING AUTH SERVICE');
@@ -264,7 +266,7 @@ export class AuthService {
 
 	updateProfile_user(usernameUpdate: string, photoUpdate: string) {
 		const userUpdate = this._firebaseAuth.auth.currentUser;
-		
+
 		return userUpdate.updateProfile({
 			displayName: usernameUpdate,
 			photoURL: photoUpdate
@@ -278,13 +280,13 @@ export class AuthService {
 
 	//adding movie details to profile
 	addMovieToDb(moviepic, movieTitle, movieId) {
-		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('username').startAt(this.username));
+		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('userId').startAt(this.userid));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((movies) => {
 			if (movies.length == 0) {
 				console.log('here')
 				this.db.collection("MoviesWatched").add({
-					username: this.username,
+					userId: this.userid,
 					movieTitle: movieTitle,
 					moviepic: moviepic,
 					movieId: movieId
@@ -292,7 +294,7 @@ export class AuthService {
 			}
 			console.log(movies.length)
 		})
-	
+
 	}
 
 

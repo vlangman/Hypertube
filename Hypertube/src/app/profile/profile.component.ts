@@ -21,7 +21,7 @@ export interface User {
 	styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-	
+
 
 	username: string = '';
 	email: string = '';
@@ -32,7 +32,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	displayLoad: boolean = true;
 	editButton: boolean = false;
 	editEmailButton: boolean = false;
-	
+	userid: string;
+
 
 
 	//edit profile
@@ -57,18 +58,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	watchedMovies = [];
 	movieImage: string;
 	movieTitle: string;
+	userExist: string;
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;
 
 
 	constructor(
-			private authService: AuthService,
-			private photoUpload: FileuploadService,
-			private storage: AngularFireStorage,
-			private db: AngularFirestore
-		)
-	{ }
+		private authService: AuthService,
+		private photoUpload: FileuploadService,
+		private storage: AngularFireStorage,
+		private db: AngularFirestore
+	) { }
 
 
 	ngOnInit() {
@@ -78,8 +79,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.email = this.authService.email;
 		this.verified = this.authService.isVerified;
 		this.photo = this.authService.profilePhoto;
+		this.userid = this.authService.userid;
 		this.getUserInfo(this.username);
-		this.getMoviesWatched(this.username);
+		// this.getMoviesWatched(this.userid);
 		this.displayLoad = false;
 	}
 
@@ -93,6 +95,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		} else {
 			this.searchButton = false;
 		}
+		this.userExist = '';
 	}
 
 
@@ -108,6 +111,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		// console.log(this.editButton);
 		this.errormsg = '';
 		this.movieError = '';
+		this.userExist = '';
 	}
 
 
@@ -122,6 +126,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		// console.log(this.editButton);
 		this.errormsg = '';
 		this.movieError = '';
+		this.userExist = '';
 	}
 
 
@@ -138,8 +143,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		})
 	}
 
-	getMoviesWatched(username) {
-		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('username', '==', username));
+	getMoviesWatched(userid) {
+		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('userId', '==', userid));
 		this.usersdb = this.usersCollection.valueChanges();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			if (users.length == 0) {
@@ -178,6 +183,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.searchVerify = false;
 		this.watchedMovies = [];
 		this.movieError = '';
+		// this.userExist = '';
 
 	}
 
@@ -186,9 +192,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		if (form.value.length < 5) {
 			window.alert("Please enter a valid username");
 		}
-		else{
+		else {
 			console.log(form.value)
 			this.checkUser(form.value);
+			form.reset()
 		}
 	}
 
@@ -251,6 +258,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((users) => {
 			this.usertest = users.length;
+			// console.log(users['0']['username'])
+			this.userExist = users['0']['username'];
 			console.log(this.usertest)
 		}, err => {
 			console.log(err)
@@ -304,11 +313,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
 						});
 					}
 				} else {
-					
+
 
 					this.db.collection("Users").doc(this.username).delete().then(() => {
 						this.username = value.usernameInput;
-						
+
 						if (value.photoInput && !this.downloadURL) {
 							this.photo = value.photoInput;
 							this.authService.updateProfile_user(value.usernameInput, value.photoInput).then(() => {
@@ -325,7 +334,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									console.log(err);
 								});
 							});
-							
+
 						} else if (!value.photoInput && this.downloadURL) {
 							value.photo = this.downloadURL;
 							this.photo = value.photoInput;

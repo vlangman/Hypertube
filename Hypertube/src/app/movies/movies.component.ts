@@ -49,11 +49,12 @@ export class MoviesComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		window.scrollTo(0, 0);
 		this.movieError = null;
 		this.page = 1;
 		this.searchMode = false;
 		this.selectedGenre = null;
-		
+
 		console.log('creating Movies component');
 
 		this.routerParamsSub = this.route.params.subscribe((params) => {
@@ -70,7 +71,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 							this.displayLoad = false;
 							this.movieError = ret['error']['message'];
 						}
-						else{
+						else {
 							this.movieError = null;
 							console.log('Bottom')
 							console.log(ret);
@@ -94,7 +95,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 				this.genreMode = true;
 				console.log(params)
 				this.movieGenreSub = this.movieService.getGenre(params['genreId']).subscribe(
-					(res) => {		
+					(res) => {
 						this.Movies = res;
 						this.movieType = params['genreId'];
 						this.selectedGenre = this.movieType;
@@ -118,13 +119,13 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					console.log(res);
 					this.Movies = res;
 					this.movieType = 'Featured'
-				} , (err) => {
+				}, (err) => {
 					this.movieError = err['message'];
 					console.log(this.movieError);
 					this.displayLoad = false;
-				},() => {
+				}, () => {
 					console.log('test');
-						this.displayLoad = false;
+					this.displayLoad = false;
 				}
 			)
 		}
@@ -138,33 +139,33 @@ export class MoviesComponent implements OnInit, OnDestroy {
 			console.log(this.selectedGenre);
 			this.loadMore = true;
 			this.getNextPageSub = this.movieService.getNextPage(this.page += 1)
-			.subscribe(
-				(res) => {
-					this.Movies = res;
-				} , (err) => {
-					this.Movies = [];
-					this.movieError = err['message'];
-					this.loadMore = false;
-				}, () => {
-					this.loadMore = false;
-				}
-			)
+				.subscribe(
+					(res) => {
+						this.Movies = res;
+					}, (err) => {
+						this.Movies = [];
+						this.movieError = err['message'];
+						this.loadMore = false;
+					}, () => {
+						this.loadMore = false;
+					}
+				)
 		}
 		else if (this.selectedGenre && !this.searchMode && !this.displayLoad) {
 			console.log('Loading genre nextpage');
 			this.loadMore = true;
 			this.getNextMoviePageSub = this.movieService.getGenreNext(this.page += 1)
-			.subscribe(
-				(res) => {
-					this.Movies = res;
-				} , (err) => {
-					this.Movies = [];
-					this.movieError = err['message'];
-					this.loadMore = false;
-				}, () => {
-					this.loadMore = false;
-				}
-			)
+				.subscribe(
+					(res) => {
+						this.Movies = res;
+					}, (err) => {
+						this.Movies = [];
+						this.movieError = err['message'];
+						this.loadMore = false;
+					}, () => {
+						this.loadMore = false;
+					}
+				)
 		}
 	}
 
@@ -173,7 +174,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		//don't delete it is need VAUGHAN
 	}
 
-	viewMovie(id: number){
+	viewMovie(id: number) {
 		this.router.navigate(["Movies/Details", id]);
 	}
 
