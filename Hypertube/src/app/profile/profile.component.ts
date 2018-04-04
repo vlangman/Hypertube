@@ -29,6 +29,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	photo: string = '';
 	Firstname: string;
 	Lastname: string;
+	Susername: string = '';
+	Semail: string = '';
+	Sphoto: string = '';
+	SFirstname: string;
+	SLastname: string;
+	tempUsername: string;
 	displayLoad: boolean = true;
 	editButton: boolean = false;
 	editEmailButton: boolean = false;
@@ -59,6 +65,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	movieImage: string;
 	movieTitle: string;
 	userExist: string;
+	displayProfile: boolean = true;
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;
@@ -83,28 +90,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.getUserInfo(this.username);
 		// this.getMoviesWatched(this.userid);
 		this.displayLoad = false;
+		// this.tempUsername = this.username;
+		console.log(this.authService.userid);
 	}
 
 
 	searchProfileButton() {
-		console.log(this.usersdb)
 		if (!this.searchButton) {
 			this.searchButton = true;
 			this.editButton = false;
 			this.editEmailButton = false;
-		} else {
-			this.searchButton = false;
+			this.displayProfile = false;
 		}
 		this.userExist = '';
 	}
 
 
 	editProfile() {
+		// if (this.tempUsername != this.username)
+		// 	this.getUserInfo(this.tempUsername)
 		console.log(this.editButton);
 		if (!this.editButton) {
 			this.editButton = true;
 			this.editEmailButton = false;
 			this.searchButton = false;
+			this.displayProfile = true;
 		} else {
 			this.editButton = false;
 		}
@@ -114,12 +124,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.userExist = '';
 	}
 
+	moviesWatched() {
+		// if (this.tempUsername != this.username)
+		// 	this.getUserInfo(this.tempUsername)
+		if (!this.displayProfile) {
+			this.searchButton = false;
+			this.editEmailButton = false;
+			this.editButton = false;
+			this.displayProfile = true;
+		}
+		this.getMoviesWatched(this.userid)
+	}
 
 	editEmail() {
+		// if (this.tempUsername != this.username)
+		// 	this.getUserInfo(this.tempUsername)
 		if (!this.editEmailButton) {
 			this.editEmailButton = true;
 			this.editButton = false;
 			this.searchButton = false;
+			this.displayProfile = true;
 		} else {
 			this.editEmailButton = false;
 		}
@@ -137,6 +161,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			this.email = users['0']['email'];
+			this.username = this.authService.username;
 			console.log(this.email);
 			this.Firstname = users['0']['Firstname'];
 			this.Lastname = users['0']['Lastname'];
@@ -144,6 +169,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 	getMoviesWatched(userid) {
+		this.watchedMovies = [];
+		this.movieError = '';
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('userId', '==', userid));
 		this.usersdb = this.usersCollection.valueChanges();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
@@ -158,6 +185,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			}
 
 		})
+		this.searchButton = false;
 	}
 
 
@@ -168,15 +196,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			if (users.length == 0) {
 				this.errorSearchmsg = 'No user found';
 			} else {
-				this.Firstname = users['0']['Firstname'];
-				this.Lastname = users['0']['Lastname'];
-				this.username = users['0']['username'];
+				this.SFirstname = users['0']['Firstname'];
+				this.SLastname = users['0']['Lastname'];
+				this.Susername = users['0']['username'];
 				if (users['0']['photo']) {
-					this.photo = users['0']['photo'];
+					this.Sphoto = users['0']['photo'];
 				} else {
-					this.photo = '';
+					this.Sphoto = '';
 				}
 				this.errorSearchmsg = '';
+				this.getMoviesWatched(users['0']['userId'])
 			}
 		})
 		this.searchButton = false;
@@ -327,7 +356,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									Lastname: this.Lastname,
 									email: this.email,
 									photo: value.photoInput,
-									providerId: this.authService.providerId
+									providerId: this.authService.providerId,
+									UserId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
@@ -345,7 +375,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									Lastname: this.Lastname,
 									email: this.email,
 									photo: value.photoInput,
-									providerId: this.authService.providerId
+									providerId: this.authService.providerId,
+									UserId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
@@ -363,7 +394,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									Lastname: this.Lastname,
 									email: this.email,
 									photo: value.photoInput,
-									providerId: this.authService.providerId
+									providerId: this.authService.providerId,
+									UserId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {

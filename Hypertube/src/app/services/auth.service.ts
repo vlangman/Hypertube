@@ -102,12 +102,14 @@ export class AuthService {
 					// this.router.navigate(['/Profile']);
 				} else {
 					this.updateProfile(username, photo)
+					console.log(res);
 					this.db.collection("Users").doc(username).set({
 						username: username,
 						Firstname: data['data']['attributes']['first-name'],
 						Lastname: data['data']['attributes']['last-name'],
 						email: data['data']['attributes']['email'],
-						providerId: 'password'
+						providerId: 'password',
+						userId: res.uid
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {
@@ -144,12 +146,14 @@ export class AuthService {
 			}, () => {
 				console.log('completed')
 				if (this.userExist == 0) {
+					console.log(res)
 					this.db.collection("Users").doc(res['additionalUserInfo']['profile']['name']).set({
 						username: res['additionalUserInfo']['profile']['name'],
 						Firstname: res['additionalUserInfo']['profile']['first_name'],
 						Lastname: res['additionalUserInfo']['profile']['last_name'],
 						email: res['additionalUserInfo']['profile']['email'],
-						providerId: res['additionalUserInfo']['providerId']
+						providerId: res['additionalUserInfo']['providerId'],
+						userId: res['user']['uid']
 					})
 				}
 				const userVerify = this._firebaseAuth.auth.currentUser;
@@ -185,12 +189,15 @@ export class AuthService {
 				if (this.userExist > 0) {
 					this.errormsg = 'this username is already in use'
 				} else {
+					console.log(res);
+					console.log(this.userid)
 					this.db.collection("Users").doc(res['additionalUserInfo']['profile']['name']).set({
 						username: res['additionalUserInfo']['profile']['name'],
 						Firstname: res['additionalUserInfo']['profile']['given_name'],
 						Lastname: res['additionalUserInfo']['profile']['family_name'],
 						email: res['additionalUserInfo']['profile']['email'],
-						providerId: res['additionalUserInfo']['providerId']
+						providerId: res['additionalUserInfo']['providerId'],
+						userId: res['user']['uid']
 					})
 				}
 				this._ngZone.run(() => this.router.navigate(['/Profile']));

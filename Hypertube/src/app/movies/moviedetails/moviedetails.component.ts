@@ -7,7 +7,7 @@ import { NgForm } from '@angular/forms';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
-import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 
 
@@ -62,7 +62,7 @@ export class MoviedetailsComponent implements OnInit {
 					(ret) => {
 						this.loadMovie(ret);
 						this.displayLoad = false;
-					},(Error) => {
+					}, (Error) => {
 						console.log(Error);
 					}
 				)
@@ -146,7 +146,7 @@ export class MoviedetailsComponent implements OnInit {
 		this.api = api;
 		console.log(this.api);
 
-		
+
 		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
 		// 	console.log(data);
 		// })
@@ -175,8 +175,8 @@ export class MoviedetailsComponent implements OnInit {
 		});
 		console.log(this.loadedCommentsdb)
 	}
-	
-	watchMovie(data){
+
+	watchMovie(data) {
 		this.watch = true;
 		this.torrentService.checkMovie(data);
 		this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id);
@@ -184,79 +184,79 @@ export class MoviedetailsComponent implements OnInit {
 	}
 
 	loadMovie(data) {
-			var id: number;
-			var title: string;
-			var summary: string;
-			var backround_image: string;
-			var image: string;
-			var rating: number;
-			var year: number;
-			var genres: string[];
-			var youTubeTrailer: SafeResourceUrl;
-			var torrents: string[];
-			var cast = [];
+		var id: number;
+		var title: string;
+		var summary: string;
+		var backround_image: string;
+		var image: string;
+		var rating: number;
+		var year: number;
+		var genres: string[];
+		var youTubeTrailer: SafeResourceUrl;
+		var torrents: string[];
+		var cast = [];
 
-			if (data['id'])
-				id = data['id']
-			else
-				id = NaN;
+		if (data['id'])
+			id = data['id']
+		else
+			id = NaN;
 
-			if (data['title'])
-				title = data['title'];
-			else
-				title = 'Title Not Found...';
+		if (data['title'])
+			title = data['title'];
+		else
+			title = 'Title Not Found...';
 
-			if (data['description_full'])
-				summary = data['description_full']
-			else if (data['description_intro'])
-				summary = data['description_intro'];
-			else
-				summary = 'Cannot Load description';
+		if (data['description_full'])
+			summary = data['description_full']
+		else if (data['description_intro'])
+			summary = data['description_intro'];
+		else
+			summary = 'Cannot Load description';
 
-			if (data['large_cover_image'])
-				image = data['large_cover_image'];
-			else if (data['small_cover_image'])
-				image = data['small_cover_image'];
-			else
-				image = '../../assets/no-thumbnail.png';
+		if (data['large_cover_image'])
+			image = data['large_cover_image'];
+		else if (data['small_cover_image'])
+			image = data['small_cover_image'];
+		else
+			image = '../../assets/no-thumbnail.png';
 
-			if (data['background_image'])
-				backround_image = data['background_image'];
-			else
-				backround_image = '../../assets/blue.jpg';
+		if (data['background_image'])
+			backround_image = data['background_image'];
+		else
+			backround_image = '../../assets/blue.jpg';
 
-			if (data['rating'])
-				rating = data['rating']
-			else
-				rating = NaN;
+		if (data['rating'])
+			rating = data['rating']
+		else
+			rating = NaN;
 
-			if (data['year'])
-				year = data['year'];
-			else
-				year = NaN;
+		if (data['year'])
+			year = data['year'];
+		else
+			year = NaN;
 
-			
-			if (data['genres'])
-				genres = data['genres'];
-			else
-				genres = [];
 
-			if (data['torrents'])
-				torrents = data['torrents'];
-			else
-				torrents = [];
+		if (data['genres'])
+			genres = data['genres'];
+		else
+			genres = [];
 
-			if (data['cast'])
-				cast = data['cast'];
-			else
-				cast = [];
+		if (data['torrents'])
+			torrents = data['torrents'];
+		else
+			torrents = [];
 
-			if (data['yt_trailer_code'])
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
-			else
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
- 
-			this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast);
+		if (data['cast'])
+			cast = data['cast'];
+		else
+			cast = [];
+
+		if (data['yt_trailer_code'])
+			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
+		else
+			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
+
+		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast);
 	}
 }
 
