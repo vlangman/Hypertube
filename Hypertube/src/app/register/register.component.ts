@@ -33,6 +33,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	// userfound: boolean = false;
 	userdbsub: Subscription;
 	usertest: number;
+	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}";
 
 	constructor(public authService: AuthService, private router: Router, private photoUpload: FileuploadService, private db: AngularFirestore) {
 
@@ -42,11 +44,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
 	}
 
 	onRegister(f: NgForm) {
-		if (f.value.password.length < 8) {
-			window.alert("this password is to short")
-		} else if (f.value.username.length < 5) {
-			window.alert("this username is to short")
-			this.errormsg = "this username is to short"
+		console.log(f.value.confirmpassword)
+		console.log(f.value.password)
+		console.log(f.value.password.match(this.passwordPattern))
+		console.log(f.value.username.match(this.usernameInputPattern))
+		if (!f.value.password.match(this.passwordPattern)) {
+			window.alert("this password does not meet the requirements")
+		} else if (!f.value.username.match(this.usernameInputPattern)) {
+			window.alert("this username does not meet the requirements")
+			// this.errormsg = "this username is to short"
 		} else {
 			const value = f.value;
 			this.checkUserExist(value);

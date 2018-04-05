@@ -66,6 +66,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	movieTitle: string;
 	userExist: string;
 	displayProfile: boolean = true;
+	usernameInputPattern = "^(?=.*[a-zA-Z]{5}[0-9]{1}).{6,}$";
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;
@@ -218,13 +219,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
 	onEditProfile(form: NgForm) {
-		if (form.value.length < 5) {
-			window.alert("Please enter a valid username");
-		}
-		else {
-			console.log(form.value)
+		// if (form.value.length < 5) {
+		// 	window.alert("Please enter a valid username");
+		// }
+		console.log(form.value.usernameInput)
+		var test = 'test';
+		if (!form.value.usernameInput.match(this.usernameInputPattern)) {
 			this.checkUser(form.value);
 			form.reset()
+		} else {
+			window.alert('Please enter the correct format');
 		}
 	}
 
@@ -287,8 +291,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((users) => {
 			this.usertest = users.length;
-			// console.log(users['0']['username'])
-			this.userExist = users['0']['username'];
+			if (users.length > 0) {
+				console.log(users['0']['username'])
+				this.userExist = users['0']['username'];
+			}
+
+
 			console.log(this.usertest)
 		}, err => {
 			console.log(err)
@@ -408,7 +416,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 				}
 				this.editButton = false;
 			}
+
 		})
+		this.userExist = '';
 	}
 
 	toggleHover(event: boolean) {

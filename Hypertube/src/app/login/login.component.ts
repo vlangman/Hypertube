@@ -23,6 +23,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 	pass42: string;
 	sub42post: Subscription;
 	sub42get: Subscription;
+	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}";
 	// checkExist: number;
 	// loading = false;
 
@@ -37,7 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-	
+
 		if (this.route.snapshot.queryParams['code']) {
 			this.fourtytwo(this.route.snapshot.queryParams['code']);
 		}
@@ -65,7 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 					this.username42 = data['data']['attributes']['login'];
 					this.photo42 = data['data']['attributes']['image-url'];
 					this.pass42 = data['data']['id'] + data['data']['attributes']['last-name'];
-					
+
 					this.authService._firebaseAuth.auth.fetchProvidersForEmail(this.email42).then((providers) => {
 						if (providers.length > 0) {
 							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
@@ -73,11 +75,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 							this.authService.login42(this.email42, this.pass42, data, this.username42, this.photo42)
 						}
 					})
-				
+
 				})
 
 			});
-		}
+	}
 
 
 	is42Login() {
@@ -103,8 +105,15 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 	emailAndPasswordLogin(f: NgForm) {
 		this.errormsg = '';
-		const value = f.value;
-		this.authService.signInWithEmailAndPassword(value.username, value.password)
+		if (!f.value.username.match(this.usernameInputPattern)) {
+			window.alert("this username does not meet the requirements")
+		} else if (!f.value.password.match(this.passwordPattern)) {
+			window.alert("this password does not meet the requirements")
+		} else {
+			const value = f.value;
+			this.authService.signInWithEmailAndPassword(value.username, value.password)
+		}
+
 	}
 	emailReset(emailform: NgForm) {
 		const value = emailform.value

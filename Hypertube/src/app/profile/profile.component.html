@@ -48,9 +48,10 @@
 			<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
 				<div class="form-group">
 					<h3>Username:</h3>
-					<input type="text" class="form-control" ngModel name="usernameInput" minlength="5" #usernameInput="ngModel">
-					<span class="help-block" *ngIf="!usernameInput.valid && usernameInput.touched">Please enter a valid username minimum characters is 5</span>
+					<input type="text" class="form-control" ngModel name="usernameInput" [pattern]="usernameInputPattern" #usernameInput="ngModel">
+					<span class="help-block" *ngIf="!usernameInput.valid && usernameInput.touched">Please enter a valid username minimum characters allowed is 5 followed by a number E.G: examp1</span>
 					<span class="help-block" *ngIf="userExist">This username @{{userExist}} is already in use.</span>
+					<!-- <span class="help-block" *ngIf="usernameInput.errors?.pattern">Please enter a valid username minimum characters is 5</span> -->
 				</div>
 				<div class="form-group">
 					<h3>Photo:</h3>

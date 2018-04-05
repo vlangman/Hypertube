@@ -51,6 +51,7 @@ import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
+import { EqualValidator } from './services/password-validator';
 
 @NgModule({
 	declarations: [
@@ -61,6 +62,7 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		LoginComponent,
 		RegisterComponent,
 		EllipsisPipe,
+		EqualValidator,
 		PagenotfoundComponent,
 		WatchComponent,
 		MoviedetailsComponent,

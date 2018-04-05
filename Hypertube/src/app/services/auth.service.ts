@@ -109,7 +109,8 @@ export class AuthService {
 						Lastname: data['data']['attributes']['last-name'],
 						email: data['data']['attributes']['email'],
 						providerId: 'password',
-						userId: res.uid
+						userId: res.uid,
+						photo: photo
 					}).then((res) => {
 						// console.log("added");
 					}).catch((err) => {
@@ -153,7 +154,8 @@ export class AuthService {
 						Lastname: res['additionalUserInfo']['profile']['last_name'],
 						email: res['additionalUserInfo']['profile']['email'],
 						providerId: res['additionalUserInfo']['providerId'],
-						userId: res['user']['uid']
+						userId: res['user']['uid'],
+						photo: res['additionalUserInfo']['profile']['picture']['data']['url']
 					})
 				}
 				const userVerify = this._firebaseAuth.auth.currentUser;
@@ -197,7 +199,8 @@ export class AuthService {
 						Lastname: res['additionalUserInfo']['profile']['family_name'],
 						email: res['additionalUserInfo']['profile']['email'],
 						providerId: res['additionalUserInfo']['providerId'],
-						userId: res['user']['uid']
+						userId: res['user']['uid'],
+						photo: res['additionalUserInfo']['profile']['picture']
 					})
 				}
 				this._ngZone.run(() => this.router.navigate(['/Profile']));
