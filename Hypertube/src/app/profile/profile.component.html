@@ -29,21 +29,21 @@
 
 <div class="profile-wrap" *ngIf="!displayLoad">
 
-	<div *ngIf="displayProfile" class="profile-card">
+	<div *ngIf="displayProfile" class="profile-card ">
 		<img *ngIf="photo" class="profile-image" src="{{photo}}">
 		<img *ngIf="!photo" class="profile-image" src="../../assets/no-thumbnail.png">
 		<div class="card-body">
 			<h4 class="card-title" *ngIf="username">{{username}}</h4>
 			<p class="card-text" *ngIf="searchButton">{{email}}</p>
 			<p class="card-text"> {{Firstname}} : {{Lastname}}</p>
-			<p *ngIf="!verified" class="title text-danger">Not verified!</p>
+			<p *ngIf="!verified" class="title text-danger animated  flash">Not verified!</p>
 			<p *ngIf="verified" class="title lead text-success">verified</p>
 		</div>
 	</div>
 
 
 	<div class="tab-content" id="myTabContent">
-		<div class="tab-pane show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+		<div class="tab-pane show active animate-right" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
 			<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
 				<div class="form-group">
@@ -84,11 +84,11 @@
 		</div>
 
 
-		<div class="tab-pane" id="search" role="tabpanel" aria-labelledby="search-tab">
+		<div class="tab-pane animate-right" id="search" role="tabpanel" aria-labelledby="search-tab">
 			<div *ngIf="!searchButton" class="profile-card">
 				<img *ngIf="Sphoto" class="profile-image" src="{{Sphoto}}">
 				<img *ngIf="!Sphoto" class="profile-image" src="../../assets/no-thumbnail.png">
-				<div class="card-body">
+				<div class="card-body animate-right">
 					<h4 class="card-title" *ngIf="Susername">{{Susername}}</h4>
 					<p class="card-text" *ngIf="searchButton">{{Semail}}</p>
 					<p class="card-text"> {{SFirstname}} : {{SLastname}}</p>
@@ -124,7 +124,7 @@
 		</div>
 
 
-		<div class="tab-pane" id="email" role="tabpanel" aria-labelledby="email-tab">
+		<div class="tab-pane animate-right" id="email" role="tabpanel" aria-labelledby="email-tab">
 			<form #emailform="ngForm" (ngSubmit)="onEditEmail(emailform)" class="register-form">
 				<h3>Email:</h3>
 				<input type="email" class="form-control" name="emailInput" ngModel required email #emailInput="ngModel">
@@ -146,7 +146,7 @@
 		</div>
 
 
-		<div class="tab-pane" id="watched" role="tabpanel" aria-labelledby="watched-tab">
+		<div class="tab-pane animate-zoom" id="watched" role="tabpanel" aria-labelledby="watched-tab">
 			<!-- new movies watched -->
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
 				<div *ngIf="movieError">{{movieError}}</div>

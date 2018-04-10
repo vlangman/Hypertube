@@ -93,3 +93,39 @@ progress::-webkit-progress-value {
 	height: 300px;
 	padding: 10px;
 }
+
+.animate-zoom {
+	animation:animatezoom 0.6s
+}
+@keyframes animatezoom{
+	from{
+		transform:scale(0)
+	} 
+	to{
+		transform:scale(1)
+	}
+}
+.animate-right{
+	position:relative;
+	animation:animateright 0.4s
+}
+@keyframes animateright{
+	from{
+		right:-300px;opacity:0
+	} 
+	to{
+		right:0;opacity:1
+	}
+}
+.animate-left{
+	position:relative;
+	animation:animateleft 0.4s
+}
+@keyframes animateleft{
+	from{
+		left:-300px;opacity:0
+	} 
+	to{
+		left:0;opacity:1
+	}
+}
