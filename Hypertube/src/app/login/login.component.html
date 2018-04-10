@@ -19,7 +19,7 @@
 			<div class="form-group">
 				<h3>Password:</h3>
 				<input type="password" class="form-control" ngModel name="password" required [pattern]="passwordPattern" #confirmpassword="ngModel">
-				<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Must contain at least one UpperCase letter, one LowerCase letter and a Number</span>
+				<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Must contain at least one UpperCase letter, one LowerCase letter, one special character, a Number and longer than 8</span>
 			</div>
 
 			<div class="login-buttons form-group">
