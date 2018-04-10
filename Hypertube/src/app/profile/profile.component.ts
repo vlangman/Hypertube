@@ -286,6 +286,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 
+	resendVerify() {
+		this.authService.resendVerification();
+	}
+
 	checkUser(value) {
 		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', value.usernameInput));
 		this.usersdb = this.usersCollection.valueChanges().first();

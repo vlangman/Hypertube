@@ -143,6 +143,16 @@
 			<div class="alert alert-warning" *ngIf="errormsg; else Infoemail">
 				<strong>Error!</strong> {{errormsg}}
 			</div>
+			<hr>
+			<div class="alert alert-danger">
+				<strong>Not verified?</strong> Need another verification email?
+			</div>
+			<button (click)="resendVerify()" class="btn btn-outline-success">Resend verification email</button>
+
+			<div class="alert alert-info">
+				<strong>Note!</strong> this will send a verification email to your email address registed with this account
+			</div>
+			<hr>
 		</div>
 
 

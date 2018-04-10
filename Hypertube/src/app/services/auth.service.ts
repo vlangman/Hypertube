@@ -273,7 +273,12 @@ export class AuthService {
 			.catch((err) => console.log(err));
 	}
 
-
+	resendVerification() {
+		const userVerify = this._firebaseAuth.auth.currentUser;
+		userVerify.sendEmailVerification().then((res) => {
+			window.alert('email sent');
+		})
+	}
 	updateProfile_user(usernameUpdate: string, photoUpdate: string) {
 		const userUpdate = this._firebaseAuth.auth.currentUser;
 
