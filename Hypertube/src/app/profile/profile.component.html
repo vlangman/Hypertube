@@ -4,9 +4,7 @@
 
 
 <!-- new alert -->
-<div class="alert alert-danger alert-dismissible fade show" *ngIf="errorSearchmsg">
-	{{errorSearchmsg}}
-</div>
+
 
 <ul *ngIf="!displayLoad" class="nav nav-tabs" id="myTab" role="tablist">
 	<li class="nav-item">
@@ -99,7 +97,10 @@
 
 
 		<div class="tab-pane animate-right" id="search" role="tabpanel" aria-labelledby="search-tab">
-			<div *ngIf="!searchButton" class="profile-card">
+			<div class="alert alert-danger alert-dismissible fade show" *ngIf="errorSearchmsg">
+				{{errorSearchmsg}}
+			</div>
+			<div *ngIf="!searchButton && Susername" class="profile-card">
 				<img *ngIf="Sphoto" class="profile-image" src="{{Sphoto}}">
 				<img *ngIf="!Sphoto" class="profile-image" src="../../assets/no-thumbnail.png">
 				<div class="card-body animate-right">

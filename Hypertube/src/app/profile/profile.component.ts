@@ -123,6 +123,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.errormsg = '';
 		this.movieError = '';
 		this.userExist = '';
+		this.downloadURL = null;
+		this.percentage = null;
+		this.snapshot = null;
 	}
 
 	moviesWatched() {
@@ -191,6 +194,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 
 	onSearchProfile(searchform: NgForm) {
+		this.SFirstname = '';
+		this.SLastname = '';
+		this.Susername = '';
+		this.Sphoto = '';
 		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', searchform.value.search));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
@@ -206,6 +213,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 					this.Sphoto = '';
 				}
 				this.errorSearchmsg = '';
+				console.log(users['0'])
 				this.getMoviesWatched(users['0']['userId'])
 			}
 		})
@@ -354,7 +362,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 						this.errormsg = "please choose one photo either the URL or the upload"
 					} else if (!value.photoInput && !this.downloadURL && value.usernameInput) {
 						this.errormsg = 'Please enter a value to update your profile';
-						console.log('hereerererereeeeeeeeeeeeeee');
+						// console.log('hereerererereeeeeeeeeeeeeee');
 					} else {
 						console.log(value.photoInput)
 						console.log(this.downloadURL)
@@ -388,7 +396,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									email: this.email,
 									photo: value.photoInput,
 									providerId: this.authService.providerId,
-									UserId: this.authService.userid
+									userId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
