@@ -66,7 +66,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	movieTitle: string;
 	userExist: string;
 	displayProfile: boolean = true;
-	usernameInputPattern = "^(?=.*[a-zA-Z]{5}[0-9]{1}).{6,}$";
+	usernameInputPattern = "^[a-z0-9_-]{6,}$";
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;
@@ -223,13 +223,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		// 	window.alert("Please enter a valid username");
 		// }
 		console.log(form.value.usernameInput)
-		var test = 'test';
-		if (!form.value.usernameInput.match(this.usernameInputPattern)) {
+		// var test = 'test';
+		if (form.value.usernameInput) {
+			if (form.value.usernameInput.match(this.usernameInputPattern)) {
+				this.checkUser(form.value);
+				form.reset()
+			} else {
+				window.alert('Please enter the correct format');
+			}
+		} else if (form.value.usernameInput == '' || form.value.usernameInput == null) {
 			this.checkUser(form.value);
 			form.reset()
-		} else {
-			window.alert('Please enter the correct format');
 		}
+
 	}
 
 
@@ -323,11 +329,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
 						});
 						// window.location.reload();
 					} else if (!value.photoInput && this.downloadURL) {
+						console.log('here')
+						console.log(this.downloadURL)
 						value.photoInput = this.downloadURL;
-						this.photo = value.photoInput;
+						console.log(value.photoInput.value)
+						this.photo = value.photoInput.value;
+						console.log(this.photo)
 						this.authService.updateProfile_user(value.usernameInput, value.photoInput.value).then(() => {
 							this.db.collection("Users").doc(value.usernameInput).update({
-								photo: value.photoInput
+								photo: value.photoInput.value
 							}).then((res) => {
 								console.log("added");
 								// window.location.reload();
@@ -336,10 +346,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
 								console.log(err);
 							});
 						});
+						this.downloadURL = null;
+						this.percentage = null;
+						this.snapshot = null;
 						// window.location.reload();
 					} else if (value.photoInput && this.downloadURL) {
 						this.errormsg = "please choose one photo either the URL or the upload"
+					} else if (!value.photoInput && !this.downloadURL && value.usernameInput) {
+						this.errormsg = 'Please enter a value to update your profile';
+						console.log('hereerererereeeeeeeeeeeeeee');
 					} else {
+						console.log(value.photoInput)
+						console.log(this.downloadURL)
+						console.log(value.usernameInput)
 						value.photoInput = this.authService.profilePhoto;
 						this.authService.updateProfile_user(value.usernameInput, value.photoInput.value).then(() => {
 							this.db.collection("Users").doc(value.usernameInput).update({
@@ -465,7 +484,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.downloadURL = this.task.downloadURL();
 		this.downloadURL.subscribe(
 			(data) => {
-				// console.log(this.downloadLink);
+				console.log(this.downloadLink);
 				if (data) {
 					this.downloadLink = data;
 				}

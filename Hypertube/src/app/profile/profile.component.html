@@ -49,7 +49,7 @@
 				<div class="form-group">
 					<h3>Username:</h3>
 					<input type="text" class="form-control" ngModel name="usernameInput" [pattern]="usernameInputPattern" #usernameInput="ngModel">
-					<span class="help-block" *ngIf="!usernameInput.valid && usernameInput.touched">Please enter a valid username minimum characters allowed is 5 followed by a number E.G: examp1</span>
+					<span class="help-block" *ngIf="!usernameInput.valid && usernameInput.touched">Please enter a valid username minimum characters allowed is 6 E.G: exampl</span>
 					<span class="help-block" *ngIf="userExist">This username @{{userExist}} is already in use.</span>
 					<!-- <span class="help-block" *ngIf="usernameInput.errors?.pattern">Please enter a valid username minimum characters is 5</span> -->
 				</div>
@@ -75,12 +75,26 @@
 						</label>
 					</div>
 				</div>
+				<div *ngIf="percentage | async as pct">
+					<progress class="progress is-info" [value]="pct" max="100">
+					</progress>
+					{{ pct | number }}%
+				</div>
+				<div *ngIf="snapshot | async as snap">
+					{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
+
+					<!-- <button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
+					<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
+					<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button> -->
+				</div>
 				<div class="register-buttons form-group">
 					<button class="btn btn-outline-success" type="Submit" [disabled]="!form.valid">Update</button>
 					<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
 				</div>
 			</form>
-
+			<div class="alert alert-warning" *ngIf="errormsg">
+				<strong>Error!</strong> {{errormsg}}
+			</div>
 		</div>
 
 
@@ -208,37 +222,3 @@
 		</div>
 	</div>
 </div>
-
-
-<!-- new progress bar -->
-<!-- <div *ngIf="percentage | async as pct">
-		<progress class="progress is-info" [value]="pct" max="100">
-		</progress>
-		{{ pct | number }}%
-	</div>
-	<div *ngIf="snapshot | async as snap">
-		{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-
-		<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
-		<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
-		<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
-	</div> -->
-
-
-<!-- 		</div>
-		</div>
-		<div *ngIf="percentage | async as pct">
-			<progress class="progress is-info" [value]="pct" max="100">
-			</progress>
-			{{ pct | number }}%
-		</div>
-		<div *ngIf="snapshot | async as snap">
-			{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-	
-			<button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
-			<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
-			<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button>
-		</div>
-		<div class="alert alert-warning" *ngIf="errormsg">
-			<strong>Error!</strong> {{errormsg}}
-		</div> -->
