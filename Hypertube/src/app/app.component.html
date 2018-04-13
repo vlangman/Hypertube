@@ -2,10 +2,11 @@
 
 	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
-			<div class="Search">
-				<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text" placeholder="Search">
-				<button class=" searchbutton btn btn-outline-warning my-2 my-sm-0" (click)=" search();">Search</button>
-			</div>
+		<div class="Search">
+			<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text"
+			 placeholder="Search">
+			<button class=" searchbutton btn btn-outline-warning my-2 my-sm-0" (click)=" search();">Search</button>
+		</div>
 	</nav>
 
 	<div id="sidebar-wrapper">
@@ -13,13 +14,13 @@
 			<li class="sidebar-brand">
 				<a href="#">WATCH ANYTHING!</a>
 			</li>
-			<li>
+			<li *ngIf="authService.isVerified">
 				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Movies">Movies</a>
 			</li>
-			<li>
+			<li *ngIf="authService.isVerified">
 				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Series">Series</a>
 			</li>
-			<li>
+			<li *ngIf="authService.isVerified">
 				<a class="genreDropdown" (click)="toggleGenreDropdown()" routerLinkActive="active">Genre
 					<i class="fas fa-caret-down"></i>
 				</a>

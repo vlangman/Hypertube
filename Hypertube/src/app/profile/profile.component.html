@@ -26,7 +26,11 @@
 </ul>
 
 <div class="profile-wrap" *ngIf="!displayLoad">
-
+	<div class="alert alert-info" *ngIf="!verified" style="width: 100%">
+		<strong>Info!</strong>
+		<em> will need to reload the page if you have verified your email for the changes to take effect and have access to the full
+			website</em>
+	</div>
 	<div *ngIf="displayProfile" class="profile-card ">
 		<img *ngIf="photo" class="profile-image" src="{{photo}}">
 		<img *ngIf="!photo" class="profile-image" src="../../assets/no-thumbnail.png">
