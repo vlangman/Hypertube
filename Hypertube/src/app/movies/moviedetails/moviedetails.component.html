@@ -10,10 +10,8 @@
 			<div class="image-wrap">
 				<img class="movie-image" src="{{ Movie.image }}">
 				<div class=" btn-group watchbtn">
-					<button [disabled]=" !Movie.torrent1080 " class="btn btn-outline-primary" (click)="watchMovie(Movie.torrent1080)">Watch HD</button>
-					<button [disabled]=" !Movie.torrent720 " class="btn btn-outline-warning" (click)="watchMovie(Movie.torrent720)">Watch SD</button>
+					<button *ngFor="let torrent of Movie.torrents"  class="btn btn-outline-primary" (click)="watchMovie(torrent)">{{torrent.quality}}</button>
 				</div>
-				<h3 *ngIf=" this.torrentService.download">{{ downloadSpeed }}</h3>
 			</div>
 			
 
@@ -114,10 +112,15 @@
 
 			</div>
 		</div>
-<!-- 			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
+			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
 				<vg-overlay-play></vg-overlay-play>
 				<vg-buffering></vg-buffering>
 
+				<!-- video source -->
+				<video [vgMedia]="media" #media id="Movie" preload="auto" >
+					<source [src]="movielink" type="video/mp4">
+				</video>
+				<!-- video player controls -->
 				<vg-controls>
 					<vg-play-pause></vg-play-pause>
 					<vg-playback-button></vg-playback-button>
@@ -137,9 +140,6 @@
 					<vg-volume></vg-volume>
 					<vg-fullscreen></vg-fullscreen>
 				</vg-controls>
-				<video [vgMedia]="media" #media id="singleVideo" preload="auto" >
-					<source src="movies/sample" type="video/mp4">
-				</video>
-			</vg-player> -->
-			<!-- <iframe class="videogular" src="/movies/sample"></iframe> -->
+				
+			</vg-player>
 	</div>

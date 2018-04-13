@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
 import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
+import { VgBufferingModule } from 'videogular2/buffering';
 
 export interface MovieComment {
 	userName: string;
@@ -21,7 +22,8 @@ export interface MovieComment {
 @Component({
 	selector: 'app-moviedetails',
 	templateUrl: './moviedetails.component.html',
-	styleUrls: ['./moviedetails.component.css']
+	styleUrls: ['./moviedetails.component.css'],
+	providers: [VgBufferingModule]
 })
 export class MoviedetailsComponent implements OnInit {
 
@@ -38,6 +40,7 @@ export class MoviedetailsComponent implements OnInit {
 	isValid: boolean;
 	downloadSpeed: number = 0;
 	api: VgAPI;
+	movielink: SafeResourceUrl;
 
 
 
@@ -60,6 +63,7 @@ export class MoviedetailsComponent implements OnInit {
 				this.movieservice.findMovieId(id).subscribe(
 					(ret) => {
 						this.loadMovie(ret);
+						console.log(this.Movie.torrents);
 						this.displayLoad = false;
 					},(Error) => {
 						console.log(Error);
@@ -140,16 +144,20 @@ export class MoviedetailsComponent implements OnInit {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-		this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
-			console.log(data);
-		})
+		
+		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
+		// 	console.log(data);
+		// })
+
 	}
 
 	watchMovie(data){
-		this.watch = true;
-		this.torrentService.checkMovie(data);
-		setInterval(this.downloadSpeed = this.torrentService.getSpeed(), 1000);
-		
+		this.torrentService.downloadMovie(data).subscribe((data2: JSON) =>{
+			console.log(data2);
+			this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data2['data']['link']);
+			this.watch = true;
+		});
+	
 		
 	}
 
