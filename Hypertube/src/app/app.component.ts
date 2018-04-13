@@ -29,13 +29,12 @@ export class AppComponent implements OnInit {
 	ngOnInit() {
 	}
 
-	search(){
-		if (this.searchQuery == '')
-		{
+	search() {
+		if (this.searchQuery == '') {
 			console.log('Nah Fam..');
 		} else {
 			console.log()
-			this.router.navigate(["Movies/" , { Search: true, query_term :this.searchQuery }]);
+			this.router.navigate(["Movies/", { Search: true, query_term: this.searchQuery }]);
 		}
 	}
 

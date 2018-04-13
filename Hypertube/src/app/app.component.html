@@ -2,6 +2,7 @@
 
 	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
+		<h2>{{authService.count}}</h2>
 		<div class="Search">
 			<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text"
 			 placeholder="Search">

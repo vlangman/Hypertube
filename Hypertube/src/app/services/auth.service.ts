@@ -9,6 +9,8 @@ import { AngularFirestoreCollection, AngularFirestore } from 'angularfire2/fires
 import { HttpClient } from '@angular/common/http';
 // import * as admin from 'firebase-admin';
 import { environment } from "../../environments/environment";
+import { timer } from 'rxjs/observable/timer';
+import { take, map } from 'rxjs/operators';
 
 export interface User {
 	username: string;
@@ -42,6 +44,8 @@ export class AuthService {
 	userExist: number;
 	changemail: string;
 	userid: string;
+	countDown;
+	count: number;
 
 	constructor
 		(
@@ -56,6 +60,16 @@ export class AuthService {
 		this.user.subscribe(
 			(user) => {
 				if (user) {
+					if (!user.emailVerified) {
+						// if (this.authService.isVerified) {
+						const interval = 1000;
+						const duration = 60 * 1000;
+						const stream$ = Observable.timer(0, interval)
+							.finally(() => this.logout())
+							.takeUntil(Observable.timer(duration + interval))
+							.map(value => duration - value * interval);
+						stream$.subscribe(value => this.count = value / 1000);
+					}
 					this.userDetails = user;
 					this.username = user.displayName;
 					this.email = user.email;
