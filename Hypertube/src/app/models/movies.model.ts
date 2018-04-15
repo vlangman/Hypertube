@@ -10,13 +10,27 @@ export class MOVIES {
 	public rating: number;
 	public genres: string[];
 	public year: number;
-	public torrent720: {};
-	public torrent1080: {};
+	public torrents = [];
 	public trailer: SafeResourceUrl;
 	public cast = [];
+	public magnet: string;
 
 
-	constructor(movieId: number, movieTitle: string, movieSummary: string, movieImage: string, movieBackroundImage: string, movieRating: number, movieYear: number, movieGenres: string[], movieTorrents: string[], movieYoutube: SafeResourceUrl, movieCast) {
+	constructor(
+			movieId: number, 
+			movieTitle: string,
+			movieSummary: string,
+			movieImage: string,
+			movieBackroundImage: string,
+			movieRating: number,
+			movieYear: number,
+			movieGenres: string[],
+			movieTorrents: string[],
+			movieYoutube: SafeResourceUrl,
+			movieCast,
+			magnet: string
+		) {
+
 		this.id = movieId;
 		this.title = movieTitle;
 		this.summary = movieSummary;
@@ -25,9 +39,9 @@ export class MOVIES {
 		this.rating = movieRating;
 		this.year = movieYear;
 		this.genres = movieGenres;
-		this.torrent720 = movieTorrents[0];
-		this.torrent1080 = movieTorrents[1];
+		this.torrents = movieTorrents;
 		this.trailer = movieYoutube;
 		this.cast = movieCast;
+		this.magnet = magnet;
 	}
 }

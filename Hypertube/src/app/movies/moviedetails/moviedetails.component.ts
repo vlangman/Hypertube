@@ -9,6 +9,8 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
+import { VgBufferingModule } from 'videogular2/buffering';
+
 
 
 export interface MovieComment {
@@ -23,7 +25,8 @@ export interface MovieComment {
 @Component({
 	selector: 'app-moviedetails',
 	templateUrl: './moviedetails.component.html',
-	styleUrls: ['./moviedetails.component.css']
+	styleUrls: ['./moviedetails.component.css'],
+	providers: [VgBufferingModule]
 })
 export class MoviedetailsComponent implements OnInit {
 
@@ -40,7 +43,9 @@ export class MoviedetailsComponent implements OnInit {
 	isValid: boolean;
 	downloadSpeed: number = 0;
 	api: VgAPI;
-
+	movielink: SafeResourceUrl;
+	prepareDownload: boolean = false;
+	downloading: boolean = false;
 
 	constructor(
 		private movieservice: MovieService,
@@ -61,6 +66,7 @@ export class MoviedetailsComponent implements OnInit {
 				this.movieservice.findMovieId(id).subscribe(
 					(ret) => {
 						this.loadMovie(ret);
+						console.log(this.Movie.torrents);
 						this.displayLoad = false;
 					}, (Error) => {
 						console.log(Error);
@@ -134,7 +140,7 @@ export class MoviedetailsComponent implements OnInit {
 				console.log(err);
 			});
 		} else {
-			window.alert("nice try please enter the correct length");
+			window.alert("Please enter a valid comment");
 			this.isValid = !this.isValid;
 		}
 
@@ -145,6 +151,7 @@ export class MoviedetailsComponent implements OnInit {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
+<<<<<<< HEAD
 
 
 		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
@@ -257,6 +264,106 @@ export class MoviedetailsComponent implements OnInit {
 			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
 
 		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast);
+=======
+	}
+
+	downloadMovie(data){
+		this.torrentService.downloadMovie(data).subscribe((data2: JSON) =>{
+			this.prepareDownload = true;
+			console.log(data2);
+			this.watchMovie(data2);
+			
+			
+		});
+	}
+	
+	watchMovie(data){
+		console.log(data);
+		console.log('WATCHING MOVIE')
+		this.torrentService.watchMovie(data['data']['hash']).subscribe(
+			(response: JSON) =>{
+				console.log('The second response after watch request')
+				console.log(response);
+				this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data['data']['link']);
+				this.watch = true;
+		})
+	}
+
+	loadMovie(data) {
+			var id: number;
+			var title: string;
+			var summary: string;
+			var backround_image: string;
+			var image: string;
+			var rating: number;
+			var year: number;
+			var genres: string[];
+			var youTubeTrailer: SafeResourceUrl;
+			var torrents: string[];
+			var cast = [];
+
+			if (data['id'])
+				id = data['id']
+			else
+				id = NaN;
+
+			if (data['title'])
+				title = data['title'];
+			else
+				title = 'Title Not Found...';
+
+			if (data['description_full'])
+				summary = data['description_full']
+			else if (data['description_intro'])
+				summary = data['description_intro'];
+			else
+				summary = 'Cannot Load description';
+
+			if (data['large_cover_image'])
+				image = data['large_cover_image'];
+			else if (data['small_cover_image'])
+				image = data['small_cover_image'];
+			else
+				image = '../../assets/no-thumbnail.png';
+
+			if (data['background_image'])
+				backround_image = data['background_image'];
+			else
+				backround_image = '../../assets/blue.jpg';
+
+			if (data['rating'])
+				rating = data['rating']
+			else
+				rating = NaN;
+
+			if (data['year'])
+				year = data['year'];
+			else
+				year = NaN;
+
+			
+			if (data['genres'])
+				genres = data['genres'];
+			else
+				genres = [];
+
+			if (data['torrents'])
+				torrents = data['torrents'];
+			else
+				torrents = [];
+
+			if (data['cast'])
+				cast = data['cast'];
+			else
+				cast = [];
+
+			if (data['yt_trailer_code'])
+				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
+			else
+				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
+ 
+			this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '');
+>>>>>>> origin/master
 	}
 }
 

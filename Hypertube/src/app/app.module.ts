@@ -20,7 +20,6 @@ import { SeriesService } from "./services/series.service";
 import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
 import { TorrentService } from './services/torrent.service';
-import { FilesService } from './services/files.service';
 import { FileuploadService } from './services/fileupload.service'
 //components
 import { MoviesComponent } from './movies/movies.component';
@@ -92,7 +91,6 @@ import { EqualValidator } from './services/password-validator';
 		AuthGuard,
 		FileuploadService,
 		TorrentService,
-		FilesService,
 	],
 	bootstrap: [AppComponent]
 })

@@ -34,8 +34,20 @@ export class MovieService {
 		"Biography",
 		"War",
 		"Western",
-
 	];
+
+
+ 	trackers = [
+		"udp://open.demonii.com:1337/announce",
+		"udp://tracker.openbittorrent.com:80",
+		"udp://tracker.coppersurfer.tk:6969",
+		"udp://glotorrents.pw:6969/announce",
+		"udp://tracker.opentrackr.org:1337/announce",
+		"udp://torrent.gresille.org:80/announce",
+		"udp://p4p.arenabg.com:1337",
+		"udp://tracker.leechers-paradise.org:6969",
+		"udp://tracker.internetwarriors.net:1337",
+	]
 
 	apiDetail = "https://yts.am/api/v2/movie_details.json"
 	api = 'https://yts.am/api/v2/list_movies.json';
@@ -203,14 +215,14 @@ export class MovieService {
 				genres = [];
 
 			if (data['torrents'])
-				torrents = data['torrents'];
-			else
+			{
+				torrents = data['torrents']
+			} else {
 				torrents = [];
-			var cast = [];
-
-
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null , cast));
+			}
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null , cast, ''));
 		})
+		console.log(this.Movies)
 	}
 
 }

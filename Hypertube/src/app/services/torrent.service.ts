@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { TORRENT } from '../models/torrent.model';
+import { HttpClient } from '@angular/common/http';
 import { FilesService } from '../services/files.service';
 import * as WebTorrent from 'webtorrent-hybrid';
-import FsChunk = require('fs-chunk-store');
+
+import { MOVIES } from "../models/movies.model";
 
 @Injectable()
 export class TorrentService {
@@ -12,42 +14,25 @@ export class TorrentService {
 	torrent: any;
 	client = new WebTorrent();
 	download: boolean = false;
-
-	magnet: string = 'magnet:?xt=urn:btih:A78A90A9D2BE874B78AE07D432893BE65D31B532&dn=Insidious%3A+The+Last+Key+%282018%29+%5B720p%5D+%5BYTS.AG%5D&tr=udp%3A%2F%2Fglotorrents.pw%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Fp4p.arenabg.ch%3A1337&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337';
-
-	options = {
-		announce: [
-					"udp://open.demonii.com:1337/announce",
-					"udp://tracker.openbittorrent.com:80",
-					"udp://tracker.coppersurfer.tk:6969",
-					"udp://glotorrents.pw:6969/announce",
-					"udp://tracker.opentrackr.org:1337/announce",
-					"udp://torrent.gresille.org:80/announce",
-					"udp://p4p.arenabg.com:1337",
-					"udp://tracker.leechers-paradise.org:6969",
-					"udp://tracker.internetwarriors.net:1337",
-				],
-		tracker: true,
-		dht: true,
-		webSeeds: true,
-		port: 6881,
-		path: '~/Downloads/Movies'
-	}
-
-  constructor(
+	Magnet: string = null;
+	api: string = 'http://localhost:3000/api/';
+	
+	constructor(
+			private http: HttpClient,
 	) {
 		if (WebTorrent.WEBRTC_SUPPORT) {
 			console.log('WEBRTC SUPPORTED!');
 		} else {
 			console.log('WEBRTC NOT SUPPORTED!');
 		}
-  }
+	}
 	
 
 	getSpeed(){
 		return this.client.downloadSpeed;
 	}
 
+<<<<<<< HEAD
 
   checkMovie(data)
   {
@@ -79,4 +64,18 @@ export class TorrentService {
 
 
 
+=======
+	downloadMovie(data: TORRENT) : Observable<any>{
+		console.log(data);
+		console.log('downloading new torrent....' + data.hash);
+		return this.http.get(this.api + 'movie/get/'+ data.hash).map((data) => {
+			return data;
+		});
+	}
+	watchMovie(hash): Observable<any>{
+		return this.http.get(this.api + 'movie/check/' + hash).map((response) =>{
+			return response;
+		})
+	}
+>>>>>>> origin/master
 }
