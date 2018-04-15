@@ -7,9 +7,10 @@ import { NgForm } from '@angular/forms';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
-import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
+
 
 export interface MovieComment {
 	userName: string;
@@ -18,6 +19,7 @@ export interface MovieComment {
 	Photo: string;
 	// MovieId: string;
 }
+
 
 @Component({
 	selector: 'app-moviedetails',
@@ -45,7 +47,6 @@ export class MoviedetailsComponent implements OnInit {
 	downloading: boolean = false;
 
 
-
 	constructor(
 		private movieservice: MovieService,
 		private route: ActivatedRoute,
@@ -67,7 +68,7 @@ export class MoviedetailsComponent implements OnInit {
 						this.loadMovie(ret);
 						console.log(this.Movie.torrents);
 						this.displayLoad = false;
-					},(Error) => {
+					}, (Error) => {
 						console.log(Error);
 					}
 				)
@@ -103,6 +104,8 @@ export class MoviedetailsComponent implements OnInit {
 		});
 		console.log(this.loadedCommentsdb)
 	}
+
+
 	addCommentButton() {
 		console.log(this.editButton);
 		if (!this.editButton) {
@@ -142,15 +145,12 @@ export class MoviedetailsComponent implements OnInit {
 		}
 
 	}
+
+
 	onPlayerReady(api: VgAPI) {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-		
-		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
-		// 	console.log(data);
-		// })
-
 	}
 
 	downloadMovie(data){

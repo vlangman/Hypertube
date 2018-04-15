@@ -15,7 +15,7 @@ export class TorrentService {
 	client = new WebTorrent();
 	download: boolean = false;
 	Magnet: string = null;
-	api: string = 'http://192.168.88.216:3000/api/';
+	api: string = 'http://localhost:3000/api/';
 	
 	constructor(
 			private http: HttpClient,
@@ -39,13 +39,9 @@ export class TorrentService {
 			return data;
 		});
 	}
-
 	watchMovie(hash): Observable<any>{
 		return this.http.get(this.api + 'movie/check/' + hash).map((response) =>{
 			return response;
 		})
 	}
-
-
-
 }
