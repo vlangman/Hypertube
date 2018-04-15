@@ -40,6 +40,12 @@ export class TorrentService {
 		});
 	}
 
+	watchMovie(hash): Observable<any>{
+		return this.http.get(this.api + 'movie/check/' + hash).map((response) =>{
+			return response;
+		})
+	}
+
 
 
 }

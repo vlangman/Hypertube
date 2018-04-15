@@ -41,6 +41,8 @@ export class MoviedetailsComponent implements OnInit {
 	downloadSpeed: number = 0;
 	api: VgAPI;
 	movielink: SafeResourceUrl;
+	prepareDownload: boolean = false;
+	downloading: boolean = false;
 
 
 
@@ -135,7 +137,7 @@ export class MoviedetailsComponent implements OnInit {
 				console.log(err);
 			});
 		} else {
-			window.alert("nice try please enter the correct length");
+			window.alert("Please enter a valid comment");
 			this.isValid = !this.isValid;
 		}
 
@@ -151,14 +153,26 @@ export class MoviedetailsComponent implements OnInit {
 
 	}
 
-	watchMovie(data){
+	downloadMovie(data){
 		this.torrentService.downloadMovie(data).subscribe((data2: JSON) =>{
+			this.prepareDownload = true;
 			console.log(data2);
-			this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data2['data']['link']);
-			this.watch = true;
+			this.watchMovie(data2);
+			
+			
 		});
+	}
 	
-		
+	watchMovie(data){
+		console.log(data);
+		console.log('WATCHING MOVIE')
+		this.torrentService.watchMovie(data['data']['hash']).subscribe(
+			(response: JSON) =>{
+				console.log('The second response after watch request')
+				console.log(response);
+				this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data['data']['link']);
+				this.watch = true;
+		})
 	}
 
 	loadMovie(data) {

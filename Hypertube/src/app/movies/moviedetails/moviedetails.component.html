@@ -10,7 +10,7 @@
 			<div class="image-wrap">
 				<img class="movie-image" src="{{ Movie.image }}">
 				<div class=" btn-group watchbtn">
-					<button *ngFor="let torrent of Movie.torrents"  class="btn btn-outline-primary" (click)="watchMovie(torrent)">{{torrent.quality}}</button>
+					<button *ngFor="let torrent of Movie.torrents"  class="btn btn-outline-primary" (click)="downloadMovie(torrent)">{{torrent.quality}}</button>
 				</div>
 			</div>
 			
