@@ -1,23 +1,19 @@
 var fs = require('fs');
-
 //extentions used to identifyu movie files
 const extentions = ['mp4', 'mkv', 'avi', 'webm'];
-
 const getMovieFile = (repeat, dir) => {
-	return new Promise(function cb(resolve, reject){
+	return new Promise(function cb(resolve, reject) {
 		console.log(repeat - 1 + ' Attempts remaining');
-		if (--repeat > 0)
-		{
+		if (--repeat > 0) {
 			console.log(dir);
 			findfile(dir).then(
-				(file) =>{
-					if (file != false){
+				(file) => {
+					if (file != false) {
 						console.log('FOUND MOVIE FILE');
 						resolve(file);
 					}
-					else
-					{
-						setTimeout(function() {
+					else {
+						setTimeout(function () {
 							cb(resolve, reject);
 						}, 2000)
 					}
@@ -26,28 +22,23 @@ const getMovieFile = (repeat, dir) => {
 		} else {
 			reject('NO VIDEO FILE CREATED');
 		}
-
 	})//end of promise
 }
-
-const findfile = (dir) =>{
+const findfile = (dir) => {
 	return new Promise((resolve, reject) => {
-		fs.readdir(dir, (err, files)=>{
-			if (err){
+		fs.readdir(dir, (err, files) => {
+			if (err) {
 				resolve(false);
 			}
-			if (files.length)
-			{
+			if (files.length) {
 				var found = 0;
-				files.forEach((video) =>{
-					if (extentions.indexOf(video.split('.').pop()) == 0)
-					{
+				files.forEach((video) => {
+					if (extentions.indexOf(video.split('.').pop()) == 0) {
 						resolve(dir + '/' + video);
 						found = 1;
-					}		
+					}
 				})
-				if (!found)
-				{
+				if (!found) {
 					console.log('VIDEO FILE NOT FOUND')
 					resolve(false);
 				}
@@ -58,46 +49,57 @@ const findfile = (dir) =>{
 		})
 	})//end of promise
 }
-
 const watchMovieCheck = (hashDir) => {
 	return new Promise((resolve, reject) => {
 
-		 fs.stat(hashDir, function(err, stats) {
-		 	if (err)
-		 	{
-		 		console.log("NO FILE TO ACCESS!!")
-		 		resolve(false)
-		 	}
-		 	else{
-		 		fs.readdir(hashDir, function(err,torrent){
-					if (err){
-						reject(err);
-					}
-					if (torrent){
-						findfile(hashDir + '/' + torrent).then((file) =>{
-							if (file != false)
-							{
-								console.log('FOUND THE MOVIE FILE' + file)
-								resolve(file);
-							}
-							else{
-								reject(false);
-							}
-						})
-					}
-					else{
-						reject(false);
-					}
-					
+		fs.stat(hashDir, function (err, stats) {
+			if (err) {
+				console.log("NO FILE TO ACCESS!!")
+				resolve(false)
+			}
+			else {
+				getDirectory(hashDir).then((folder) => {
+					findfile(folder).then((video) => {
+						if (video != false) {
+							console.log('FOUND THE MOVIE FILE' + video)
+							resolve(video);
+						}
+						else {
+							reject(false);
+						}
+					})
+				}).catch((err) => {
+					console.log('video dir cant be found');
+					reject(err);
 				})
-		 	}
-		 })
+			}
+		})
+	})
+}
+const getDirectory = (dir) => {
+	return new Promise((resolve, reject) => {
+		console.log('LOKKING FOR DIRECTORY IN ' + dir);
+		fs.readdir(dir, function (err, folders) {
+			if (err) {
+				reject(err);
+			}
+			folders.forEach((file) => {
+				fs.stat(dir + '/' + file, function (err2, stats) {
+					if (err2) {
+						reject(err2);
+					}
+					if (stats.isDirectory()) {
+						resolve(dir + '/' + file);
+					}
+				});
 
-		
+			})
+		})
 	})
 }
 
 module.exports = {
 	getMovieFile,
 	watchMovieCheck,
+	getDirectory,
 }

@@ -9,7 +9,7 @@
 			<div class="image-wrap">
 				<img class="movie-image" src="{{ Movie.image }}">
 				<div class=" btn-group watchbtn">
-					<button *ngFor="let torrent of Movie.torrents"  class="btn btn-outline-primary" (click)="downloadMovie(torrent)">{{torrent.quality}}</button>
+					<button *ngFor="let torrent of Movie.torrents" class="btn btn-outline-primary" (click)="downloadMovie(torrent)">{{torrent.quality}}</button>
 				</div>
 			</div>
 
@@ -106,13 +106,19 @@
 				</div>
 
 			</div>
-			
+
 		</div>
-<<<<<<< HEAD
+
 		<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
 			<vg-overlay-play></vg-overlay-play>
 			<vg-buffering></vg-buffering>
 
+			<!-- video source -->
+			<video [vgMedia]="media" #media id="Movie" preload="auto">
+				<source [src]="movielink" type="video/mp4">
+				<track kind="subtitles" label="English" src="http://static.videogular.com/assets/subs/pale-blue-dot.vtt" srclang="en" default>
+			</video>
+			<!-- video player controls -->
 			<vg-controls>
 				<vg-play-pause></vg-play-pause>
 				<vg-playback-button></vg-playback-button>
@@ -132,42 +138,6 @@
 				<vg-volume></vg-volume>
 				<vg-fullscreen></vg-fullscreen>
 			</vg-controls>
-			<video [vgMedia]="media" #media id="singleVideo" preload="auto" crossorigin>
-				<!-- <source src="http://static.videogular.com/assets/videos/vr-demo.mp4" type="video/mp4"> -->
-			</video>
+
 		</vg-player>
-
-=======
-
-			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
-				<vg-overlay-play></vg-overlay-play>
-				<vg-buffering></vg-buffering>
-
-				<!-- video source -->
-				<video [vgMedia]="media" #media id="Movie" preload="auto" >
-					<source [src]="movielink" type="video/mp4">
-				</video>
-				<!-- video player controls -->
-				<vg-controls>
-					<vg-play-pause></vg-play-pause>
-					<vg-playback-button></vg-playback-button>
-
-					<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
-
-					<vg-scrub-bar>
-						<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-						<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-					</vg-scrub-bar>
-
-					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-					<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
-
-					<vg-track-selector></vg-track-selector>
-					<vg-mute></vg-mute>
-					<vg-volume></vg-volume>
-					<vg-fullscreen></vg-fullscreen>
-				</vg-controls>
-				
-			</vg-player>
->>>>>>> origin/master
 	</div>
