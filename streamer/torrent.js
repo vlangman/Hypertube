@@ -35,7 +35,7 @@ var options = {
 
 const report = () => {
 	console.log('Speed: ' + client.downloadSpeed / 1024 + 'Kbps');
-	console.log('Progress: ' + client.Progress);
+	console.log('Progress: ' + client.progress);
 }
 
 const checkClient = (hash) => {
