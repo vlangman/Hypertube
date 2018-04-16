@@ -6,6 +6,9 @@
 /tmp
 /out-tsc
 
+# downloaded files
+/downloads/*
+
 # dependencies
 /node_modules
 
