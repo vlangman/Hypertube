@@ -7,8 +7,8 @@
 /out-tsc
 
 # downloaded files
-downloads/*
-!downloads/.gitkeep
+/src/downloads/*
+!/src/downloads/.gitkeep
 
 # dependencies
 /node_modules
