@@ -151,43 +151,28 @@ export class MoviedetailsComponent implements OnInit {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-<<<<<<< HEAD
+	}
 
+	downloadMovie(data) {
+		this.torrentService.downloadMovie(data).subscribe((data2: JSON) => {
+			this.prepareDownload = true;
+			console.log(data2);
+			this.watchMovie(data2);
 
-		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
-		// 	console.log(data);
-		// })
-
-
-		this.loadedCommentsdb = this.loadedComments.snapshotChanges().map(actions => {
-			if (!actions || !actions.length) {
-				this.commentsFound = false;
-			} else {
-				return actions.map(action => {
-					console.log("tetststs");
-					console.log(action)
-					const data = action.payload.doc.data() as MovieComment;
-					console.log(data);
-					return {
-						Comments: data.Comments,
-						userName: data.userName,
-						Dateadded: data.Dateadded,
-						Photo: data.Photo
-
-						// MovieId: data.MovieId
-					}
-				});
-			}
 
 		});
-		console.log(this.loadedCommentsdb)
 	}
 
 	watchMovie(data) {
-		this.watch = true;
-		this.torrentService.checkMovie(data);
-		this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id);
-		setInterval(this.downloadSpeed = this.torrentService.getSpeed(), 1000);
+		console.log(data);
+		console.log('WATCHING MOVIE')
+		this.torrentService.watchMovie(data['data']['hash']).subscribe(
+			(response: JSON) => {
+				console.log('The second response after watch request')
+				console.log(response);
+				this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data['data']['link']);
+				this.watch = true;
+			})
 	}
 
 	loadMovie(data) {
@@ -263,107 +248,7 @@ export class MoviedetailsComponent implements OnInit {
 		else
 			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
 
-		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast);
-=======
-	}
-
-	downloadMovie(data){
-		this.torrentService.downloadMovie(data).subscribe((data2: JSON) =>{
-			this.prepareDownload = true;
-			console.log(data2);
-			this.watchMovie(data2);
-			
-			
-		});
-	}
-	
-	watchMovie(data){
-		console.log(data);
-		console.log('WATCHING MOVIE')
-		this.torrentService.watchMovie(data['data']['hash']).subscribe(
-			(response: JSON) =>{
-				console.log('The second response after watch request')
-				console.log(response);
-				this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data['data']['link']);
-				this.watch = true;
-		})
-	}
-
-	loadMovie(data) {
-			var id: number;
-			var title: string;
-			var summary: string;
-			var backround_image: string;
-			var image: string;
-			var rating: number;
-			var year: number;
-			var genres: string[];
-			var youTubeTrailer: SafeResourceUrl;
-			var torrents: string[];
-			var cast = [];
-
-			if (data['id'])
-				id = data['id']
-			else
-				id = NaN;
-
-			if (data['title'])
-				title = data['title'];
-			else
-				title = 'Title Not Found...';
-
-			if (data['description_full'])
-				summary = data['description_full']
-			else if (data['description_intro'])
-				summary = data['description_intro'];
-			else
-				summary = 'Cannot Load description';
-
-			if (data['large_cover_image'])
-				image = data['large_cover_image'];
-			else if (data['small_cover_image'])
-				image = data['small_cover_image'];
-			else
-				image = '../../assets/no-thumbnail.png';
-
-			if (data['background_image'])
-				backround_image = data['background_image'];
-			else
-				backround_image = '../../assets/blue.jpg';
-
-			if (data['rating'])
-				rating = data['rating']
-			else
-				rating = NaN;
-
-			if (data['year'])
-				year = data['year'];
-			else
-				year = NaN;
-
-			
-			if (data['genres'])
-				genres = data['genres'];
-			else
-				genres = [];
-
-			if (data['torrents'])
-				torrents = data['torrents'];
-			else
-				torrents = [];
-
-			if (data['cast'])
-				cast = data['cast'];
-			else
-				cast = [];
-
-			if (data['yt_trailer_code'])
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
-			else
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
- 
-			this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '');
->>>>>>> origin/master
+		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '');
 	}
 }
 
