@@ -186,6 +186,20 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		this.hoverMovie = hoverId;
 	}
 
+	onFilter(option) {
+		this.displayLoad = true;
+		this.movieService.getFilter(option).subscribe((filter) => {
+			this.Movies = filter;
+			this.movieType = 'Filtered by ' + option;
+		}, (err) => {
+			this.movieError = err['message'];
+			console.log(this.movieError);
+			this.displayLoad = false;
+		}, () => {
+			this.displayLoad = false;
+		})
+	}
+
 	ngOnDestroy() {
 		console.log('Destroy movies Component');
 		if (this.routerSub)

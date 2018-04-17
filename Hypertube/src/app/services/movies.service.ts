@@ -37,7 +37,7 @@ export class MovieService {
 	];
 
 
- 	trackers = [
+	trackers = [
 		"udp://open.demonii.com:1337/announce",
 		"udp://tracker.openbittorrent.com:80",
 		"udp://tracker.coppersurfer.tk:6969",
@@ -123,16 +123,28 @@ export class MovieService {
 
 	getNextPage(page: number): Observable<MOVIES[]> {
 		return this.http.get<YTS>(this.api + '?limit=20&page=' + page)
-		.map((res) => {
+			.map((res) => {
+				this.loadMovies(res);
+				return this.Movies;
+			})
+			._catch(
+				(err) => {
+					return Observable.throw(err);
+				})
+	}
+
+	getFilter(option): Observable<MOVIES[]> {
+		// console.log(this.http.get<YTS>(this.api + '?sort_by=' + option))
+		return this.http.get<YTS>(this.api + '?sort_by=' + option).map((res) => {
+			this.Movies = [];
+			console.log(res)
 			this.loadMovies(res);
 			return this.Movies;
 		})
-		._catch(
-			(err) =>{
-				return Observable.throw(err);
-		})
+			._catch((err) => {
+				return Observable.throw(err.status(404));
+			})
 	}
-
 
 	// getMovieComments(id): Observable<any> {
 	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
@@ -144,7 +156,7 @@ export class MovieService {
 		return this.http.get<YTS>(this.apiDetail + '?movie_id=' + id + '&with_images=true&with_cast=true').map(
 			(res) => {
 				console.log(res);
-				if (res['data']['movie']){
+				if (res['data']['movie']) {
 					return (res['data']['movie']);
 				}
 				else {
@@ -214,13 +226,12 @@ export class MovieService {
 			else
 				genres = [];
 
-			if (data['torrents'])
-			{
+			if (data['torrents']) {
 				torrents = data['torrents']
 			} else {
 				torrents = [];
 			}
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null , cast, ''));
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null, cast, ''));
 		})
 		console.log(this.Movies)
 	}
