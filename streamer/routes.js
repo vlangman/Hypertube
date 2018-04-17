@@ -47,6 +47,10 @@ router.get('/api/movie/get/:hash', (req, res) => {
 					return (torrent.movieFile(downloadHash));
 				}
 			})
+		.then((resolve) => {
+			console.log('hererererrer');
+			console.log(torrent.downloadSubtitles(downloadHash));
+		})
 		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
 		//returning a watch link for the client based on whether or not the files where created;
 		.then(

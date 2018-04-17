@@ -68,29 +68,7 @@ const downloadTorrent = (hash) => {
 	const moviePath = moviesDir + hash;
 	return new Promise(
 		(resolve) => {
-			console.log('haosudhasofgaosgf');
-			if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
-				OpenSubtitles.search({ imdbid: 'tt6143568', sublanguageid: 'fre, eng' }).then((subtitles) => {
-					if (!subtitles['fr'] && !subtitles['en']) {
-						throw 'no subtitles found';
-					}
-					if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
-						if (subtitles['en']) {
-							request(subtitles['en'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'eng' + '.vtt'));
-							console.log(subtitles['en'].url);
-						}
-					}
 
-					if (!fs.existsSync(moviesDir + hash + '/fre.vtt')) {
-						if (subtitles['fr']) {
-							request(subtitles['fr'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'fre' + '.vtt'));
-							console.log(subtitles['fr'].url);
-						}
-					}
-				}).catch(err => {
-					console.log(err)
-				});
-			}
 			client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
 				torrent.on('download', function (bytes) {
 					report();
@@ -105,6 +83,35 @@ const downloadTorrent = (hash) => {
 			})
 		}
 	)//end of promise
+}
+
+const downloadSubtitles = (hash) => {
+	return new Promise((resolve) => {
+		console.log('haosudhasofgaosgf');
+		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
+			OpenSubtitles.search({ imdbid: 'tt6143568', sublanguageid: 'fre, eng' }).then((subtitles) => {
+				if (!subtitles['fr'] && !subtitles['en']) {
+					throw 'no subtitles found';
+				}
+				if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
+					if (subtitles['en']) {
+						request(subtitles['en'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'eng' + '.vtt'));
+						console.log(subtitles['en'].url);
+					}
+				}
+
+				if (!fs.existsSync(moviesDir + hash + '/fre.vtt')) {
+					if (subtitles['fr']) {
+						request(subtitles['fr'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'fre' + '.vtt'));
+						console.log(subtitles['fr'].url);
+					}
+				}
+			}).catch(err => {
+				console.log(err)
+			});
+		}
+		resolve(moviesDir + hash)
+	})
 }
 
 const movieFile = (hash) => {
@@ -163,6 +170,7 @@ const isPlayable = (repeat, hash) => {
 module.exports = {
 	checkClient,
 	downloadTorrent,
+	downloadSubtitles,
 	movieFile,
 	isPlayable,
 	report,
