@@ -98,8 +98,30 @@ const getDirectory = (dir) => {
 	})
 }
 
+// const getfile = (dir) => {
+// 	return new Promise((resolve, reject) => {
+// 		console.log('LOKKING FOR DIRECTORY IN ' + dir);
+// 		fs.readdir(dir, function (err, folders) {
+// 			if (err) {
+// 				reject(err);
+// 			}
+// 			folders.forEach((file) => {
+// 				fs.stat(dir + '/' + file, function (err2, stats) {
+// 					if (err2) {
+// 						reject(err2);
+// 					}
+// 					if (stats.isFile()) {
+// 						resolve(dir + '/' + file);
+// 					}
+// 				});
+
+// 			})
+// 		})
+// 	})
+// }
 module.exports = {
 	getMovieFile,
 	watchMovieCheck,
 	getDirectory,
+	// getfile,
 }

@@ -31,6 +31,7 @@ router.get('/api/movie/get/:hash', (req, res) => {
 			}
 			else {
 				console.log('STARTING DOWNLOAD');
+				console.log(resolve);
 				return (torrent.downloadTorrent(downloadHash));
 			}
 		}
@@ -48,8 +49,11 @@ router.get('/api/movie/get/:hash', (req, res) => {
 				}
 			})
 		.then((resolve) => {
-			console.log('hererererrer');
-			console.log(torrent.downloadSubtitles(downloadHash));
+			console.log('****************************************************************************************************************download subtitles********************************');
+			console.log(resolve);
+			torrent.downloadSubtitles(downloadHash);
+
+
 		})
 		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
 		//returning a watch link for the client based on whether or not the files where created;
@@ -72,6 +76,16 @@ router.get('/api/movie/get/:hash', (req, res) => {
 			})
 
 })
+// router.get('/api/subtitles/check/:hash', (req, res) => {
+// 	console.log('==========================================================================CHECK Subtitles===================================================================================');
+// 	const movieHash = req.params.hash;
+// 	var path = null;
+// 	console.log(movieHash);
+// 	const downloadHash = req.params.hash;
+// 	console.log('****************************************************************************************************************FIND subtitles********************************');
+// 	// console.log(resolve);
+// 	return torrent.subtitlesFile(downloadHash);
+// })
 
 router.get('/api/movie/check/:hash', (req, res) => {
 	console.log('==========================================================================CHECK MOVIE===================================================================================');

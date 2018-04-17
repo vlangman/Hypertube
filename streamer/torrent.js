@@ -114,6 +114,14 @@ const downloadSubtitles = (hash) => {
 	})
 }
 
+// const subtitlesFile = (hash) => {
+// 	return new Promise((resolve) => {
+// 		files.getfile(moviesDir + hash).then((file) => {
+// 			console.log('file is ' + file)
+// 		})
+// 	})
+// }
+
 const movieFile = (hash) => {
 	const moviePath = moviesDir + hash;
 
@@ -174,4 +182,5 @@ module.exports = {
 	movieFile,
 	isPlayable,
 	report,
+	// subtitlesFile,
 }
