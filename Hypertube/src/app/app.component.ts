@@ -15,18 +15,20 @@ export class AppComponent implements OnInit {
 
 	genres: string[] = [];
 	genreToggle: boolean = false;
+	languageToggle: boolean = false;
 	navOpen: boolean = true;
-	private searchQuery: string = '';
+	public searchQuery: string = '';
 
 	constructor(
 		private movieservice: MovieService,
-		private authService: AuthService,
+		public authService: AuthService,
 		private router: Router,
 	) {
 		this.genres = movieservice.genreList;
 	}
 
 	ngOnInit() {
+
 	}
 
 	search() {
@@ -50,6 +52,17 @@ export class AppComponent implements OnInit {
 
 		}
 	}
+	toggleLanguageDrop() {
+		if (this.languageToggle) {
+			this.languageToggle = false;
+			console.log(this.languageToggle);
+		}
+		else {
+			this.languageToggle = true;
+			console.log(this.languageToggle);
+
+		}
+	}
 
 	toggleNavbar() {
 		if (this.navOpen) {
@@ -59,7 +72,11 @@ export class AppComponent implements OnInit {
 			this.navOpen = true;
 		}
 	}
-
+	languageIs(value) {
+		console.log(value)
+		document.cookie = "googtrans=/en/" + value;
+		location.reload();
+	}
 	onLogout() {
 		this.authService.logout();
 	}
