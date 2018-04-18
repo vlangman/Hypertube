@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.userid = this.authService.userid;
 		this.getUserInfo(this.username);
 		// this.getMoviesWatched(this.userid);
-		this.displayLoad = false;
+
 		// this.tempUsername = this.username;
 		console.log(this.authService.userid);
 	}
@@ -169,7 +169,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			console.log(this.email);
 			this.Firstname = users['0']['Firstname'];
 			this.Lastname = users['0']['Lastname'];
+			this.displayLoad = false;
 		})
+
 	}
 
 	getMoviesWatched(userid) {

@@ -89,6 +89,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					}
 				)
 			} else if (params['genreId']) {
+				window.scrollTo(0, 0);
 				console.log('loading Movies by Genre');
 				this.displayLoad = true;
 				this.Movies = [];
