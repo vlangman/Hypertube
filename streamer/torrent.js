@@ -116,7 +116,7 @@ const downloadSubtitles = (hash) => {
 
 // const subtitlesFile = (hash) => {
 // 	return new Promise((resolve) => {
-// 		files.getfile(moviesDir + hash).then((file) => {
+// 		files.getfile(moviesDir + hash, 'fre.vtt').then((file) => {
 // 			console.log('file is ' + file)
 // 		})
 // 	})
