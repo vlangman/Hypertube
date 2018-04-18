@@ -1,6 +1,5 @@
 var fs = require('fs');
 // var path = require('path');
-
 //extentions used to identifyu movie files
 const extentions = ['mp4', 'mkv', 'avi', 'webm'];
 const getMovieFile = (repeat, dir) => {
