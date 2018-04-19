@@ -46,6 +46,8 @@ export class MoviedetailsComponent implements OnInit {
 	movielink: SafeResourceUrl;
 	prepareDownload: boolean = false;
 	downloading: boolean = false;
+	moviePic: string;
+	movieTitle: string;
 
 	constructor(
 		private movieservice: MovieService,
@@ -66,6 +68,8 @@ export class MoviedetailsComponent implements OnInit {
 				this.movieservice.findMovieId(id).subscribe(
 					(ret) => {
 						this.loadMovie(ret);
+						this.movieTitle = this.Movie.title;
+						this.moviePic = this.Movie.image;
 						console.log(this.Movie.torrents);
 						this.displayLoad = false;
 					}, (Error) => {
@@ -154,6 +158,7 @@ export class MoviedetailsComponent implements OnInit {
 	}
 
 	downloadMovie(data) {
+		this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
 		this.torrentService.downloadMovie(data).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
