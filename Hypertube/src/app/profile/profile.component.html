@@ -184,8 +184,10 @@
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
 				<div *ngIf="movieError">{{movieError}}</div>
 				<div *ngFor="let movie of watchedMovies">
-					<img src="{{movie.moviepic}}" class="items">
-					<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					<a (click)="viewMovie(movie.movieId)" style="cursor: pointer;">
+						<img src="{{movie.moviepic}}" class="items">
+						<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					</a>
 				</div>
 			</div>
 		</div>

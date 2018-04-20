@@ -10,6 +10,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs';
 import { LoginComponent } from '../login/login.component';
+import { Router } from '@angular/router';
 
 export interface User {
 	username: string;
@@ -76,7 +77,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		private authService: AuthService,
 		private photoUpload: FileuploadService,
 		private storage: AngularFireStorage,
-		private db: AngularFirestore
+		private db: AngularFirestore,
+		// private route: ActivatedRoute,
+		private router: Router,
 	) { }
 
 
@@ -227,6 +230,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 	}
 
+	viewMovie(id: number) {
+		console.log(id);
+		this.router.navigate(["Movies/Details", id]);
+	}
 
 	onEditProfile(form: NgForm) {
 		// if (form.value.length < 5) {
