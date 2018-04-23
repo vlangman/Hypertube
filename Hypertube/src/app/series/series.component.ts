@@ -1,7 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SERIES } from "../models/series.model";
+import { SHOWS } from "../models/shows.model";
+
 import { SeriesService } from "../services/series.service";
 import { Subscription } from "rxjs/Subscription";
+import { Router,ActivatedRoute } from "@angular/router";
+
 
 
 @Component({
@@ -17,13 +21,23 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	hoverSeries: number;
 	imbdSearch: boolean;
 	page: number = 1;
+	AllShows: SHOWS[] = [];
+	loadedShows: SHOWS[] = [];
+	showIndex: number = 0;
+	Shows = [];
 
 	//subscriptions
 	getSeriesSub: Subscription;
 	NextPageSub: Subscription;
 	getImdbSub: Subscription;
+	routerParamsSub: Subscription;
+	getAllShows :Subscription;
 
-	constructor(private seriesService: SeriesService) {
+	constructor(
+		private seriesService: SeriesService,
+		private router: Router,
+		private route: ActivatedRoute,
+	) {
 	}
 
 
@@ -32,13 +46,37 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		console.log('Create Series Component');
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
-		this.getSeriesSub = this.seriesService.getSeries().subscribe(
-			(data) => {
-				this.Series = [];
-				this.Series = data;
-				this.displayLoad = false;
+		
+		this.routerParamsSub = this.route.url.subscribe((url)=>{
+			console.log(url);
+			if (url[1])
+			{
+				if(url[1]['path'])
+				{
+					console.log('getting all shows!!');
+					this.getAllShows = this.seriesService.getAllShows().subscribe(
+						(data) =>{
+							console.log(data)
+							this.loadShows(data);
+							this.loadNext();
+							this.seriesService.getShowInfo(this.loadedShows);
+							this.displayLoad = false;
+						}
+					)
+				}
 			}
-		)
+			else{
+				this.getSeriesSub = this.seriesService.getSeries().subscribe(
+					(data) => {
+						this.Series = [];
+						this.Series = data;
+						this.displayLoad = false;
+					}
+				)
+			}
+		})
+
+		
 
 	}
 
@@ -81,7 +119,59 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			this.displayLoad = false
 		})
 	}
+
+
+	viewSeries(id: number, hash: string, filename: string){
+		console.log('view series: ' + id)
+		this.router.navigate(["Series/Details", id, hash, filename]);
+	}
 	
+	loadNext(){
+		var newArr = [];
+		if (this.AllShows == [])
+		{
+			console.log('ARRAY IS EMPTY!!');
+			// getAllShows again
+		}
+		else{
+			for(var _i = this.showIndex; _i < this.showIndex + 30 && this.AllShows[_i]; _i++)
+			{
+				newArr.push(this.AllShows[_i]);
+			}
+			this.loadedShows = newArr;
+		}
+	}
+
+	loadShows(shows){
+		var newArr = [];
+		var id: number;
+		var name: string;
+		var slug: string;
+
+		shows.forEach((show)=>{
+			// console.log(show)
+			if (show["id"]) {
+				id = show["id"];
+			} else{
+				id = null;
+			}
+
+			if (show["show"]) {
+				name = show["show"];
+			} else{
+				name = null;
+			}
+
+			if (show["slug"]) {
+				slug = show["slug"];
+			} else{
+				slug = null;
+			}
+			console.log('COUNT')
+			this.AllShows.push(new SHOWS(id, name, slug));
+		})
+	}
+
 	ngOnDestroy(){
 		console.log('Destroy Series Component');
 		if (this.getSeriesSub)

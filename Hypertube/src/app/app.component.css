@@ -1,24 +1,61 @@
 
-.genreDropdown{
-	cursor: pointer;
-}
 .genreActive{
-  background-color: rgba(50, 115, 219, 0.8); /* For browsers that do not support gradients */
-  background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
-	
+  background-color: rgba(255, 255, 255, 0.5);
 	color: white;
 }
+.movie-submenu{
+  cursor: pointer;
+  background-color: rgba(50, 115, 219, 0.3);
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.series-submenu{
+  cursor: pointer;
+  background-color: rgba(255, 162, 35, 0.56);
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.series-submenu-item{
+  color: white;
+}
+/*.movie-submenu-item{
+  border-bottom: 0.75px solid rgba(50, 115, 219, 0.3);
+}*/
+ 
+.movie-submenu-item:hover{
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.movie-submenu-item-active{
+  background-color: rgba(50, 115, 219, 0.5);
+}
+.series-submenu-item-active{
+  background-color: rgba(255, 162, 35, 0.5);
+  color: white;
+}
 .submenu{
-	transition: height 0.6s;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
 }
 .submenu-closed{
 	transition: height 0.6s;
 	display: none;
 }
-.genre{
+.sub-catagory{
 	transition: height 0.6s;
 	display: block;
 	cursor: pointer;
+}
+.series{
+  transition: height 0.6s;
+  display: block;
+  cursor: pointer;
+}
+.seriesActive{
+  /*background-color: rgba(50, 115, 219, 0.8);  For browsers that do not support gradients */
+  /*background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
+  color: white;
+  background-color: orange;
 }
 .navbar-button:hover{
 	color: white;
@@ -113,13 +150,19 @@
 .sidebar-nav li a:hover {
   text-decoration: none;
   color: #fff;
-  background: rgb(255, 163, 5);
+  background: rgba(255, 255, 255, 0.35);
 }
 .active{
   background-color: rgba(50, 115, 219, 0.8); /* For browsers that do not support gradients */
   background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
   border-bottom: 1px solid cornflowerblue;
 }
+.seriesActive{
+  background-color: rgba(255, 162, 35, 0.8); /* For browsers that do not support gradients */
+  background: linear-gradient(to right, rgba(255, 162, 35, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
+  border-bottom: 1px solid orange;
+}
+
 .sidebar-nav li a:active, .sidebar-nav li a:focus {
   text-decoration: none;
 }
@@ -142,16 +185,19 @@
   margin-top: 20px;
 }
 .genre{
+  border-bottom: 0.75px solid rgba(50, 115, 219, 0.3);
 	display: flex;
 	align-items: center;
 	text-align: center;
 	height: 30px;
 }
 .genre:hover{ 
-	background-color: orange;
+	background-color: rgba(50, 115, 219, 0.5);
 	color: white;
 }
-
+.genreSubmenuToggle{
+  background-color: rgba(255, 255, 255, 0.5);
+}
 
 
 @media(min-width:768px) {

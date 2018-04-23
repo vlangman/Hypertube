@@ -114,22 +114,22 @@
 		</div>
 			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
 				<vg-overlay-play></vg-overlay-play>
-				<vg-buffering></vg-buffering>
+				<vg-buffering [vgFor]=" videoPlayer " ></vg-buffering>
 
 				<!-- video source -->
-				<video [vgMedia]="media" #media id="Movie" preload="auto" >
-					<source [src]="movielink" type="video/mp4">
+				<video [vgMedia]="media" #media id="videoPlayer" preload="auto" >
+					<source [src]="source" type="video/mp4">
 				</video>
 				<!-- video player controls -->
 				<vg-controls>
-					<vg-play-pause></vg-play-pause>
-					<vg-playback-button></vg-playback-button>
+					<vg-play-pause [vgFor]=" videoPlayer "></vg-play-pause>
+					<vg-playback-button [vgFor]=" videoPlayer "></vg-playback-button>
 
 					<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
 
 					<vg-scrub-bar>
-						<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-						<vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+						<vg-scrub-bar-current-time [vgFor]=" videoPlayer "></vg-scrub-bar-current-time>
+						<vg-scrub-bar-buffering-time [vgFor]=" videoPlayer "></vg-scrub-bar-buffering-time>
 					</vg-scrub-bar>
 
 					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>

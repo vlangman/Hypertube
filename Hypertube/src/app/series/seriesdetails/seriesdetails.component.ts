@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService } from "../../services/movies.service";
+import { SeriesService } from "../../services/series.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { MOVIES } from "../../models/movies.model";
+import { SERIES } from "../../models/series.model";
 import { TorrentService } from '../../services/torrent.service';
 import { NgForm } from '@angular/forms';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
@@ -11,44 +11,47 @@ import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { TMDB } from "../../models/tmdb.model";
 
-export interface MovieComment {
+
+
+export interface SeriesComment {
 	userName: string;
 	Comments: string;
 	Dateadded: Date;
 	Photo: string;
-	// MovieId: string;
+	// SeriesId: string;
 }
 
 @Component({
-	selector: 'app-moviedetails',
-	templateUrl: './moviedetails.component.html',
-	styleUrls: ['./moviedetails.component.css'],
-	providers: [VgBufferingModule]
+  selector: 'app-seriesdetails',
+  templateUrl: './seriesdetails.component.html',
+  styleUrls: ['./seriesdetails.component.css']
 })
-export class MoviedetailsComponent implements OnInit {
+export class SeriesdetailsComponent implements OnInit {
 
-	Movie: MOVIES;
-	movieId: string;
+	Series: SERIES;
+	seriesId: string;
 	displayLoad = true;
 	watch: boolean = false;
 	editButton: boolean = false;
 	userid: string;
-	loadedComments: AngularFirestoreCollection<MovieComment>;
-	loadedCommentsdb: Observable<MovieComment[]>;
+	loadedComments: AngularFirestoreCollection<SeriesComment>;
+	loadedCommentsdb: Observable<SeriesComment[]>;
 	snapshot: any;
 	commentsFound: boolean = true;
 	isValid: boolean;
-	downloadSpeed: number = 0;
 	api: VgAPI;
-	source: any;
+	source: SafeResourceUrl;
 	prepareDownload: boolean = false;
 	downloading: boolean = false;
-
+	Details: TMDB;
+	hash: string;
+	filename: string;
 
 
 	constructor(
-		private movieservice: MovieService,
+		private seriesservice: SeriesService,
 		private route: ActivatedRoute,
 		private router: Router,
 		private authService: AuthService,
@@ -61,26 +64,33 @@ export class MoviedetailsComponent implements OnInit {
 	ngOnInit() {
 		this.route.params.subscribe(
 			(params) => {
-				const id = params['movie_id'];
-				this.movieId = id;
+				const id = params['series_id'];
+				this.hash = params['series_hash'];
+				this.filename = params['filename'];
+			
+				console.log('getting details for: ' + id);
+				this.seriesId = id;
 				this.displayLoad = true;
-				this.movieservice.findMovieId(id).subscribe(
+		
+				this.seriesservice.findSeriesimdb(id).subscribe(
 					(ret) => {
-						this.loadMovie(ret);
-						console.log(this.Movie.torrents);
+						this.loadDetailsSeries(ret);
 						this.displayLoad = false;
 					},(Error) => {
 						console.log(Error);
 					}
 				)
+	
 			})
+
 	}
 
+	
 
 	loadComments() {
-		// , ref => ref.where('MovieID', '==', this.movieId)
-		this.loadedComments = this.db.collection('MovieComments', ref => {
-			return ref.where('MovieID', '==', this.movieId).orderBy('Dateadded', 'desc')
+		// , ref => ref.where('SeriesID', '==', this.seriesId)
+		this.loadedComments = this.db.collection('SeriesComments', ref => {
+			return ref.where('SeriesID', '==', this.seriesId).orderBy('Dateadded', 'desc')
 		})
 		this.loadedCommentsdb = this.loadedComments.snapshotChanges().map(actions => {
 			if (!actions || !actions.length) {
@@ -89,7 +99,7 @@ export class MoviedetailsComponent implements OnInit {
 				return actions.map(action => {
 					console.log("tetststs");
 					console.log(action)
-					const data = action.payload.doc.data() as MovieComment;
+					const data = action.payload.doc.data() as SeriesComment;
 					console.log(data);
 					return {
 						Comments: data.Comments,
@@ -97,7 +107,7 @@ export class MoviedetailsComponent implements OnInit {
 						Dateadded: data.Dateadded,
 						Photo: data.Photo
 
-						// MovieId: data.MovieId
+						// SeriesId: data.SeriesId
 					}
 				});
 			}
@@ -127,10 +137,10 @@ export class MoviedetailsComponent implements OnInit {
 			const year = date.getFullYear();
 			const todaydate = day + '/' + month + '/' + year;
 			console.log(todaydate)
-			this.db.collection("MovieComments").add({
+			this.db.collection("SeriesComments").add({
 				userName: user.displayName,
 				Comments: value.comment,
-				MovieID: this.movieId,
+				SeriesID: this.seriesId,
 				Dateadded: todaydate,
 				Photo: user.photoURL
 			}).then((res) => {
@@ -157,118 +167,96 @@ export class MoviedetailsComponent implements OnInit {
 
 	}
 
-	downloadMovie(data){
-		this.torrentService.downloadMovie(data).subscribe((data2: JSON) =>{
+	// 1
+	downloadSeries(){
+		this.torrentService.downloadSeries(this.hash, this.filename,).subscribe((data2: JSON) =>{
 			this.prepareDownload = true;
 			console.log(data2);
-			this.watchMovie(data2);
-			
-			
+			this.watchSeries(data2);
 		});
 	}
 	
-	watchMovie(data){
+	//2
+	watchSeries(data){
 		console.log(data);
-		console.log('MOVIE IS DOWLOADING')
-		this.torrentService.watchMovie(data['data']['hash']).subscribe(
+		console.log('SERIES IS DOWLOADING')
+		this.torrentService.watchSeries(data['data']['hash']).subscribe(
 			(response: JSON) =>{
-				console.log('MOVIE CHECKED AND IS READY TO STREAM')
+				console.log('SERIES CHECKED AND IS READY TO STREAM')
 				console.log(response);
-
 				this.startStream(data['data']['link'], response['data']['format']);
 				
 		})
 	}
 
+	//3
 	startStream(link, format){
 
 		var headers = new HttpHeaders()
-		.set('Content-Type', 'video/mp4')
+		.set('Content-Type', 'video/mkv')
+	
 		console.log('STARTING STREAM!!');
 		console.log(link);
+		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;
-		this.source = link;
 		// this.http.get(link, { headers: headers }).subscribe((video) => {
 		// 	console.log('GOT A RESPONSE');
 		// 	this.source = video;
-			
+		// 	this.watch = true;
 		// })
 	}
 
-	loadMovie(data) {
-			var id: number;
-			var title: string;
-			var summary: string;
-			var backround_image: string;
-			var image: string;
-			var rating: number;
-			var year: number;
-			var genres: string[];
-			var youTubeTrailer: SafeResourceUrl;
-			var torrents: string[];
-			var cast = [];
+	
+	loadDetailsSeries(res){
+		console.log('LOADING DATA')
+		console.log(res);
+		var tv_res = res['tv_results'][0];
+		console.log(tv_res)
+		console.log(tv_res['name']);
 
-			if (data['id'])
-				id = data['id']
-			else
-				id = NaN;
 
-			if (data['title'])
-				title = data['title'];
-			else
-				title = 'Title Not Found...';
+			var TVposter: string;
+			var TVvotes: number;
+			var TVid: number;
+			var TVbackdrop: string;
+			var TVvote_average: number;
+			var TVorigin: string[];
+			var TVoriginal_lang: string;
+			var TVname: string;
+			var TVtv_episodes: string[];
+			var TVoverview: string;
+			var TVairdate: string;
 
-			if (data['description_full'])
-				summary = data['description_full']
-			else if (data['description_intro'])
-				summary = data['description_intro'];
-			else
-				summary = 'Cannot Load description';
+			TVposter = "https://image.tmdb.org/t/p/w400_and_h600_bestv2"+  tv_res['poster_path'];
+			TVvotes = tv_res['vote_count'];
+			TVid = tv_res['id'];
+			TVbackdrop = "https://image.tmdb.org/t/p/original" + tv_res['backdrop_path'];
+			TVvote_average = tv_res['vote_average'];
+			TVorigin = tv_res['origin_country'];
+			TVoriginal_lang = tv_res['original_language'];
+			TVname = tv_res['name'];
+			TVtv_episodes = tv_res['tv_episodes'];
+			TVoverview = tv_res['overview'];
+			TVairdate = tv_res['first_air_date']
 
-			if (data['large_cover_image'])
-				image = data['large_cover_image'];
-			else if (data['small_cover_image'])
-				image = data['small_cover_image'];
-			else
-				image = '../../assets/no-thumbnail.png';
 
-			if (data['background_image'])
-				backround_image = data['background_image'];
-			else
-				backround_image = '../../assets/blue.jpg';
 
-			if (data['rating'])
-				rating = data['rating']
-			else
-				rating = NaN;
-
-			if (data['year'])
-				year = data['year'];
-			else
-				year = NaN;
-
-			
-			if (data['genres'])
-				genres = data['genres'];
-			else
-				genres = [];
-
-			if (data['torrents'])
-				torrents = data['torrents'];
-			else
-				torrents = [];
-
-			if (data['cast'])
-				cast = data['cast'];
-			else
-				cast = [];
-
-			if (data['yt_trailer_code'])
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);
-			else
-				youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
- 
-			this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '');
+			var tv_results = [];
+			tv_results.push({
+				poster: TVposter, 
+				votes: TVvotes,
+				id: TVid,
+				backdrop: TVbackdrop,
+				rating: TVvote_average,
+				origin: TVorigin,
+				original_lang :TVoriginal_lang,
+				name: TVname,
+				overview: TVoverview,
+				airdate: TVairdate
+			})
+			this.Details = new TMDB([], [], tv_results, [], []);
+			console.log(this.Details);
 	}
+
 }
 

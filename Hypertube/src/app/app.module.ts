@@ -38,9 +38,6 @@ import { AuthGuard } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
-
-import { WatchComponent } from './watch/watch.component';
-
 import { FileSizePipe } from './pipes/file-size.pipe';
 
 
@@ -51,6 +48,7 @@ import {VgOverlayPlayModule} from 'videogular2/overlay-play';
 import {VgBufferingModule} from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
+import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.component';
 
 @NgModule({
 	declarations: [
@@ -62,10 +60,10 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		RegisterComponent,
 		EllipsisPipe,
 		PagenotfoundComponent,
-		WatchComponent,
 		MoviedetailsComponent,
 		DropZoneDirective,
-		FileSizePipe
+		FileSizePipe,
+		SeriesdetailsComponent
 	],
 	imports: [
 		BrowserModule,

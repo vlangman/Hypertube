@@ -11,22 +11,50 @@
 	<div id="sidebar-wrapper">
 		<ul class="sidebar-nav">
 			<li class="sidebar-brand">
-				<a href="#">WATCH ANYTHING!</a>
+				<a href="#">HYPERTUBE!</a>
 			</li>
 			<li>
-				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Movies">Movies</a>
-			</li>
-			<li>
-				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Series">Series</a>
-			</li>
-			<li>
-				<a class="genreDropdown" (click)="toggleGenreDropdown()" routerLinkActive="active">Genre
+				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Movies" (click)=" toggleMovieDropdown() ">
+					Movies
 					<i class="fas fa-caret-down"></i>
 				</a>
-				<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
-					<li routerLinkActive="genreActive" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
+
+
+				<ul [ngClass]=" movieToggle ? '' : 'submenu-closed' " class="list-unstyled movie-submenu">
+					<li routerLinkActive="movie-submenu-item-active" routerLink="/Movies" [routerLinkActiveOptions]="{exact: true}" class="movie-submenu-item">
+						<a>Featured Movies</a>
+					</li>
+					
+					<li>
+						<a class="movie-submenu-item" [ngClass]=" genreToggle ? 'genreSubmenuToggle' : '' " (click)="toggleGenreDropdown()">
+							Genres 
+							<i class="fas fa-caret-down"></i>
+						</a>
+						<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
+							<li routerLinkActive="genreActive" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
+						</ul>
+					</li>
 				</ul>
 			</li>
+
+			<li>
+				<a class="sidebar-navbutton" routerLinkActive="seriesActive" routerLink="/Series" (click)=" toggleSeriesDropdown() ">
+					Series
+					<i class="fas fa-caret-down"></i>
+				</a>
+				<ul [ngClass]=" seriesToggle ? '' : 'submenu-closed' "  class="list-unstyled series-submenu">
+					<li class="series-submenu-item">
+						<a routerLink="/Series" routerLinkActive="series-submenu-item-active" [routerLinkActiveOptions]="{exact: true}" class="series-submenu-item">Featured Series</a>
+					</li>
+
+					<li class="series-submenu-item">
+						<a routerLink="/Series/AllShows" routerLinkActive="series-submenu-item-active" class="series-submenu-item">All Shows</a>
+					</li>
+				</ul>
+			</li>
+			
+
+
 			<hr style="background-color: white; width: 90%">
 			<ng-template [ngIf]="!authService.isLoggedIn()">
 				<li class="user-login">

@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 import { ErrorObservable  } from 'rxjs/observable/ErrorObservable';
 
 
+
 @Component({
 	selector: 'app-movies',
 	templateUrl: './movies.component.html',
@@ -42,6 +43,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
+		
 	) {
 
 	}
@@ -70,8 +72,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 						}
 						else{
 							this.movieError = null;
-							console.log('Bottom')
-							console.log(ret);
 							this.Movies = ret;
 							this.movieType = params['query_term'];
 							this.displayLoad = false;
