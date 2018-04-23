@@ -68,7 +68,7 @@ export class SeriesService {
 		console.log(shows);
 		var newArr = [];
 		shows.forEach((show)=>{
-			// console.log(show);
+			console.log(show);
 			this.getShow(show).subscribe(
 				(res) =>{
 					newArr.push(res);

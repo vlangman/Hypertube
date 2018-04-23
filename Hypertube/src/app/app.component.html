@@ -2,10 +2,12 @@
 
 	<nav [ngClass]="  navOpen ? '' : 'navbar-closed'" class="navbar fixed-top">
 		<a (click)="toggleNavbar();" class="btn navbar-button navbar-brand" style="color: white">HyperTube</a>
-			<div class="Search">
-				<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text" placeholder="Search">
-				<button class=" searchbutton btn btn-outline-warning my-2 my-sm-0" (click)=" search();">Search</button>
-			</div>
+		<h2>{{authService.count}}</h2>
+		<div class="Search">
+			<input [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" class="form-control mr-sm-1 searchbox" type="text"
+			 placeholder="Search">
+			<button class=" searchbutton btn btn-outline-warning my-2 my-sm-0" (click)=" search();">Search</button>
+		</div>
 	</nav>
 
 	<div id="sidebar-wrapper">
@@ -13,6 +15,7 @@
 			<li class="sidebar-brand">
 				<a href="#">HYPERTUBE!</a>
 			</li>
+
 			<li>
 				<a class="sidebar-navbutton" routerLinkActive="active" routerLink="/Movies" (click)=" toggleMovieDropdown() ">
 					Movies
@@ -52,10 +55,18 @@
 					</li>
 				</ul>
 			</li>
-			
-
+		
+		
 
 			<hr style="background-color: white; width: 90%">
+				<li>
+					<a class="sidebar-navbutton" (click)="toggleLanguageDrop()">Change Language</a>
+					<ul [ngClass]=" languageToggle ? '': 'submenu-closed'" class="list-unstyled submenu ">
+						<li class="movie-submenu-item" (click)="languageIs('fr')">French</li>
+						<li  class="movie-submenu-item" (click)="languageIs('en')">English</li>
+					</ul>
+				</li>
+			
 			<ng-template [ngIf]="!authService.isLoggedIn()">
 				<li class="user-login">
 					<button class="btn btn-outline-warning" routerLink="/Login">Login</button>

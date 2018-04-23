@@ -44,6 +44,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		console.log('Create Series Component');
+		window.scrollTo(0, 0);
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
 		
@@ -113,12 +114,13 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		this.imbdSearch = true;
 		this.displayLoad = true;
 		this.getImdbSub = this.seriesService.getImdb(code).subscribe(
-		(data) => {
-			this.Series = [];
-			this.Series = data;
-			this.displayLoad = false
-		})
+			(data) => {
+				this.Series = [];
+				this.Series = data;
+				this.displayLoad = false
+			})
 	}
+
 
 
 	viewSeries(id: number, hash: string, filename: string){
@@ -172,7 +174,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		})
 	}
 
-	ngOnDestroy(){
+	ngOnDestroy(){ 
 		console.log('Destroy Series Component');
 		if (this.getSeriesSub)
 			this.getSeriesSub.unsubscribe();
@@ -180,6 +182,5 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			this.NextPageSub.unsubscribe();
 		else if (this.getImdbSub)
 			this.getImdbSub.unsubscribe();
-	
 	}
 }

@@ -143,6 +143,7 @@
   color: white;
 }
 .sidebar-nav li a {
+  cursor: pointer;
   display: block;
   text-decoration: none;
 }

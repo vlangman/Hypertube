@@ -42,13 +42,14 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 
 
 //video player imports
-import {VgCoreModule} from 'videogular2/core';
-import {VgControlsModule} from 'videogular2/controls';
-import {VgOverlayPlayModule} from 'videogular2/overlay-play';
-import {VgBufferingModule} from 'videogular2/buffering';
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
 import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.component';
+import { EqualValidator } from './services/password-validator';
 
 @NgModule({
 	declarations: [
@@ -59,6 +60,7 @@ import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.com
 		LoginComponent,
 		RegisterComponent,
 		EllipsisPipe,
+		EqualValidator,
 		PagenotfoundComponent,
 		MoviedetailsComponent,
 		DropZoneDirective,
@@ -74,12 +76,12 @@ import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.com
 		AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
-        VgCoreModule,
-        VgControlsModule,
-        VgOverlayPlayModule,
-        VgBufferingModule,
-        AngularFirestoreModule,
-		AngularFireStorageModule,	
+		VgCoreModule,
+		VgControlsModule,
+		VgOverlayPlayModule,
+		VgBufferingModule,
+		AngularFirestoreModule,
+		AngularFireStorageModule,
 	],
 	providers: [
 		MovieService,

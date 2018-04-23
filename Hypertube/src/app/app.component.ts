@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
 	seriesToggle: boolean = false;
 	movieToggle: boolean = false;
 	navOpen: boolean = true;
+	languageToggle: boolean = false;
 	private searchQuery: string = '';
 
 	constructor(
@@ -31,13 +32,12 @@ export class AppComponent implements OnInit {
 	ngOnInit() {
 	}
 
-	search(){
-		if (this.searchQuery == '')
-		{
+	search() {
+		if (this.searchQuery == '') {
 			console.log('Nah Fam..');
 		} else {
 			console.log()
-			this.router.navigate(["Movies/" , { Search: true, query_term :this.searchQuery }]);
+			this.router.navigate(["Movies/", { Search: true, query_term: this.searchQuery }]);
 		}
 	}
 
@@ -79,6 +79,24 @@ export class AppComponent implements OnInit {
 		}
 		else {
 			this.navOpen = true;
+		}
+	}
+
+	languageIs(value) {
+		console.log(value)
+		document.cookie = "googtrans=/en/" + value;
+		location.reload();
+	}
+
+	toggleLanguageDrop() {
+		if (this.languageToggle) {
+			this.languageToggle = false;
+			console.log(this.languageToggle);
+		}
+		else {
+			this.languageToggle = true;
+			console.log(this.languageToggle);
+
 		}
 	}
 
