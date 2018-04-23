@@ -1,3 +1,4 @@
+import { SafeResourceUrl  } from '@angular/platform-browser';
 export class SERIES {
 
 	public id: number;
@@ -8,8 +9,25 @@ export class SERIES {
 	public seeds: number;
 	public peers: number;
 	public imdb: number;
+	public hash: string;
+	public filename: string;
+	public magnet: string;
 
-	constructor(seriesId: number, seriesTitle: string, seriesnum: string, seriesImage: string, seriesSize: number, seriesPeers: number, seriesSeeds: number, seriesImdb: number) {
+
+	constructor(
+		seriesId: number,
+		seriesTitle: string,
+		seriesnum: string,
+		seriesImage: string, 
+		seriesSize: number,
+		seriesPeers: number,
+		seriesSeeds: number,
+		seriesImdb: number,
+		seriesHash: string,
+		seriesFilename: string,
+		seriesMagnet: string,
+		) 
+	{
 		this.id = seriesId;
 		this.title = seriesTitle;
 		this.size_bytes = seriesSize;
@@ -18,5 +36,8 @@ export class SERIES {
 		this.peers = seriesPeers;
 		this.seeds = seriesSeeds;
 		this.imdb = seriesImdb;
+		this.hash = seriesHash;
+		this.filename = seriesFilename;
+		this.magnet = seriesMagnet;
 	}
 }

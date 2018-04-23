@@ -10,6 +10,8 @@ import { Observable } from 'rxjs/Observable';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 
 
@@ -43,7 +45,7 @@ export class MoviedetailsComponent implements OnInit {
 	isValid: boolean;
 	downloadSpeed: number = 0;
 	api: VgAPI;
-	movielink: SafeResourceUrl;
+	source: any;
 	prepareDownload: boolean = false;
 	downloading: boolean = false;
 	moviePic: string;
@@ -57,6 +59,7 @@ export class MoviedetailsComponent implements OnInit {
 		private db: AngularFirestore,
 		private sanitizer: DomSanitizer,
 		private torrentService: TorrentService,
+		private http: HttpClient,
 	) { }
 
 	ngOnInit() {
@@ -158,7 +161,7 @@ export class MoviedetailsComponent implements OnInit {
 	}
 
 	downloadMovie(data) {
-		this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
+		// this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
 		this.torrentService.downloadMovie(data).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
@@ -170,14 +173,31 @@ export class MoviedetailsComponent implements OnInit {
 
 	watchMovie(data) {
 		console.log(data);
-		console.log('WATCHING MOVIE')
+		console.log('MOVIE IS DOWLOADING')
 		this.torrentService.watchMovie(data['data']['hash']).subscribe(
 			(response: JSON) => {
-				console.log('The second response after watch request')
+				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data.hash);
+				console.log('MOVIE CHECKED AND IS READY TO STREAM')
 				console.log(response);
-				this.movielink = this.sanitizer.bypassSecurityTrustResourceUrl(data['data']['link']);
-				this.watch = true;
+
+				this.startStream(data['data']['link'], response['data']['format']);
+
 			})
+	}
+
+	startStream(link, format) {
+
+		var headers = new HttpHeaders()
+			.set('Content-Type', 'video/mp4')
+		console.log('STARTING STREAM!!');
+		console.log(link);
+		this.watch = true;
+		this.source = link;
+		// this.http.get(link, { headers: headers }).subscribe((video) => {
+		// 	console.log('GOT A RESPONSE');
+		// 	this.source = video;
+
+		// })
 	}
 
 	loadMovie(data) {

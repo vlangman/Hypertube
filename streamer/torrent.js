@@ -6,16 +6,16 @@ const OpenSubtitles = new OS('hypertube9');
 const srt2vtt = require('srt-to-vtt');
 const request = require('request');
 
-var client = new WebTorrent()
-var moviesDir = '../Hypertube/src/downloads/'
-var movieHashLink = 'https://yts.am/torrent/download/';
-var movieApi = "https://yts.am/api/v2/movie_details.json"
-
+const client = new WebTorrent()
+const moviesDir = '../Hypertube/src/downloads/'
+const movieHashLink = 'https://yts.am/torrent/download/';
+const movieApi = "https://yts.am/api/v2/movie_details.json"
+const seriesFilelink = "https://zoink.ch/torrent/";
 // var torrentApi = "";
 
 
 //options for webtorrent client.add()
-var options = {
+const options = {
 	announce: [
 		"udp://open.demonii.com:1337/announce",
 		"udp://tracker.openbittorrent.com:80",
@@ -32,6 +32,15 @@ var options = {
 	webSeeds: true,
 	port: 6881,
 }
+
+const seriesTrackers = [
+	"&tr=udp://tracker.coppersurfer.tk:80",
+	"&tr=udp://glotorrents.pw:6969/announce",
+	"&tr=udp://tracker.leechers-paradise.org:6969",
+	"&tr=udp://tracker.opentrackr.org:1337/announce",
+	"&tr=udp://exodus.desync.com:6969",
+];
+
 
 const report = () => {
 	console.log('Speed: ' + client.downloadSpeed / 1024 + 'Kbps');
@@ -59,7 +68,6 @@ const checkClient = (hash) => {
 	)//end of promise
 }
 
-
 //downloads a new torrent and resolves with the download location for the file
 const downloadTorrent = (hash) => {
 	var torrentId = movieHashLink + hash;
@@ -72,11 +80,38 @@ const downloadTorrent = (hash) => {
 			client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
 				torrent.on('download', function (bytes) {
 					report();
-					resolve(moviesDir + hash);
+					torrent.removeListener('download', () => {
+						resolve(moviesDir + hash);
+					});
 				})
 				torrent.on('done', () => {
-					torrent.removeAllListeners()
+					console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
+				})
+				resolve(moviesDir + hash);
+			})
+		}
+	)//end of promise
+}
 
+const downloadSeries = (hash, filename) => {
+	console.log('TORRENT DOWNLOAD HASH');
+	console.log(hash);
+	var magnet = 'magnet:?xt=urn:btih:' + hash + '&dn=' + encodeURI(filename);
+	seriesTrackers.forEach((tracker) => {
+		magnet = magnet + tracker;
+	})
+	console.log('TORRENT DOWNLOAD MAGNET');
+	console.log(magnet);
+	return new Promise(
+		(resolve) => {
+			client.add(magnet, { path: moviesDir + hash }, function (torrent) {
+				torrent.on('download', function (bytes) {
+					report();
+					torrent.removeListener('download', () => {
+						resolve(moviesDir + hash);
+					});
+				})
+				torrent.on('done', () => {
 					console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
 				})
 				resolve(moviesDir + hash);
@@ -134,7 +169,7 @@ const movieFile = (hash) => {
 						(file) => {
 							resolve(file);
 						}).catch((err) => {
-							console.log('video file not created yet');
+							console.log('MAIN DIRECTORY file not created yet');
 							resolve(false);
 						})
 				}).catch((err) => {
@@ -143,6 +178,32 @@ const movieFile = (hash) => {
 				})
 		}
 	)//end of promise
+}
+
+const seriesFile = (repeat, hash) => {
+	const seriesPath = moviesDir + hash;
+
+	return new Promise(function cb(resolve, reject) {
+		console.log(repeat - 1 + ' Attempts remaining');
+		if (--repeat > 0) {
+			files.findfile(seriesPath).then(
+				(file) => {
+					if (file != false) {
+						console.log('FOUND MOVIE FILE');
+						resolve(file);
+						return;
+					}
+					else {
+						setTimeout(function () {
+							cb(resolve, reject);
+						}, 2000)
+					}
+				}
+			)
+		} else {
+			reject('NO VIDEO FILE CREATED');
+		}
+	})//end of promise
 }
 
 const isPlayable = (repeat, hash) => {
@@ -182,5 +243,7 @@ module.exports = {
 	movieFile,
 	isPlayable,
 	report,
+	downloadSeries,
 	// subtitlesFile,
+	seriesFile,
 }

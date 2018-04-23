@@ -43,7 +43,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
-		private authService: AuthService
 	) {
 
 	}
@@ -73,8 +72,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 						}
 						else {
 							this.movieError = null;
-							console.log('Bottom')
-							console.log(ret);
 							this.Movies = ret;
 							this.movieType = params['query_term'];
 							this.displayLoad = false;

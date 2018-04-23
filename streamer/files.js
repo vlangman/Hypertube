@@ -25,22 +25,30 @@ const getMovieFile = (repeat, dir) => {
 		}
 	})//end of promise
 }
+
 const findfile = (dir) => {
+	console.log('looking in dir ' + dir);
 	return new Promise((resolve, reject) => {
 		fs.readdir(dir, (err, files) => {
+			console.log('reading dir');
 			if (err) {
+				console.log(err);
 				resolve(false);
 			}
 			if (files.length) {
 				var found = 0;
 				files.forEach((video) => {
-					if (extentions.indexOf(video.split('.').pop()) == 0) {
-						resolve(dir + '/' + video);
-						found = 1;
-					}
+					console.log(video);
+					console.log(video.split('.').pop())
+					extentions.forEach((type) => {
+						if (video.split('.').pop() == type) {
+							resolve(dir + '/' + video);
+							found = 1;
+						}
+					})
 				})
 				if (!found) {
-					console.log('VIDEO FILE NOT FOUND')
+					console.log('VIDEO FILE NOT FOUND YET!!')
 					resolve(false);
 				}
 			} else {
@@ -50,6 +58,29 @@ const findfile = (dir) => {
 		})
 	})//end of promise
 }
+
+const getDirectory = (dir) => {
+	return new Promise((resolve, reject) => {
+		console.log('LOKKING FOR DIRECTORY IN ' + dir);
+		fs.readdir(dir, function (err, folders) {
+			if (err) {
+				reject(err);
+			}
+			folders.forEach((file) => {
+				fs.stat(dir + '/' + file, function (err2, stats) {
+					if (err2) {
+						reject(err2);
+					}
+					if (stats.isDirectory()) {
+						resolve(dir + '/' + file);
+					}
+				});
+
+			})
+		})
+	})
+}
+
 const watchMovieCheck = (hashDir) => {
 	return new Promise((resolve, reject) => {
 
@@ -77,24 +108,28 @@ const watchMovieCheck = (hashDir) => {
 		})
 	})
 }
-const getDirectory = (dir) => {
+
+const watchSeriesCheck = (hashDir) => {
 	return new Promise((resolve, reject) => {
-		console.log('LOKKING FOR DIRECTORY IN ' + dir);
-		fs.readdir(dir, function (err, folders) {
+		fs.stat(hashDir, function (err, stats) {
 			if (err) {
-				reject(err);
+				console.log("NO FILE TO ACCESS!!")
+				resolve(false)
 			}
-			folders.forEach((file) => {
-				fs.stat(dir + '/' + file, function (err2, stats) {
-					if (err2) {
-						reject(err2);
+			else {
+				findfile(hashDir).then((video) => {
+					if (video != false) {
+						console.log('FOUND THE MOVIE FILE' + video)
+						resolve(video);
 					}
 					if (stats.isDirectory()) {
 						resolve(dir + '/' + file);
 					}
-				});
-
-			})
+				}).catch((err) => {
+					console.log('video dir cant be found');
+					reject(err);
+				})
+			}
 		})
 	})
 }
@@ -126,5 +161,7 @@ module.exports = {
 	getMovieFile,
 	watchMovieCheck,
 	getDirectory,
+	findfile,
+	watchSeriesCheck,
 	// getfile,
 }

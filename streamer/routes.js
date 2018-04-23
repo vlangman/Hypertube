@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const torrent = require('./torrent.js');
+const seriesTorrent = require('./seriesTorrent.js')
 const files = require('./files.js')
 var moviesDir = '../Hypertube/src/downloads/'
 fs = require('fs');
@@ -36,6 +37,7 @@ router.get('/api/movie/get/:hash', (req, res) => {
 			}
 		}
 	)
+
 		//checking if the download starts and returns the folder where torrent will be
 		.then(
 			(resolve) => {
@@ -48,13 +50,16 @@ router.get('/api/movie/get/:hash', (req, res) => {
 					return (torrent.movieFile(downloadHash));
 				}
 			})
-		.then((resolve) => {
-			console.log('****************************************************************************************************************download subtitles********************************');
-			console.log(resolve);
-			torrent.downloadSubtitles(downloadHash);
+		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
+		//returning a watch link for the client based on whether or not the files where created;
+		.then(
+			(resolve) => {
+				console.log('MOVIEFILE RESOLVE!')
+				console.log(resolve);
+				torrent.downloadSubtitles(downloadHash);
 
 
-		})
+			})
 		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
 		//returning a watch link for the client based on whether or not the files where created;
 		.then(
@@ -74,7 +79,6 @@ router.get('/api/movie/get/:hash', (req, res) => {
 				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
 				res.json(obj);
 			})
-
 })
 // router.get('/api/subtitles/check/:hash', (req, res) => {
 // 	console.log('==========================================================================CHECK Subtitles===================================================================================');
@@ -125,14 +129,13 @@ router.get('/api/movie/check/:hash', (req, res) => {
 		)
 		.then(
 			(resolve) => {
-				res.json({ request: "READY" })
+				res.json({ request: "READY", data: { hash: movieHash, format: "mp4" } })
 			}
 		)
 		.catch((err) => {
 			console.log(err)
-			res.json({ request: "FAILED", data: { hash: movieHash, link: "404" } })
+			res.json({ request: "FAILED", data: { hash: movieHash, link: "404", format: "" } })
 		})
-
 })
 
 router.get('/api/movie/watch/:hash', (req, res) => {
@@ -179,13 +182,243 @@ router.get('/api/movie/watch/:hash', (req, res) => {
 				res.writeHead(200, head)
 				fs.createReadStream(path).pipe(res)
 			}
+		}).catch(
+			(err) => {
+				res.json({ request: "FAILED", data: { hash: hash, link: err } })
+			})
+})
 
+router.get('/api/series/get/imdb/:imdb_code', (req, res) => {
+	var imdb = req.params.imdb_code;
+
+	console.log('getting IMDB REFERENCES: ' + imdb);
+	seriesTorrent.getImdb(imdb).then(
+		(resolve) => {
+			res.send(resolve);
 		}
 	).catch(
 		(err) => {
-			res.json({ request: "FAILED", data: { hash: hash, link: err } })
-		})
+			console.log('IT FAILED TO GET IMDB REJECTED!!!')
+			res.json({ FAILURE: "err" })
+		}
+	)
+})
 
+router.get('/api/series/get/detail/:imdb_code', (req, res) => {
+	const imdb_code = req.params.imdb_code;
+	seriesTorrent.getDetails(imdb_code).then(
+		(data) => {
+			res.json(data)
+		}
+	)
+})
+
+router.get('/api/series/download/:series_hash/:filename', (req, res) => {
+	const filename = req.params.filename;
+	const downloadHash = req.params.series_hash;
+	console.log(filename);
+	console.log(downloadHash);
+
+
+	console.log('checking client');
+	torrent.checkClient(downloadHash).then(
+		(resolve) => {
+			//if -1 torrent needs to be downloaded
+			if (resolve != -1) {
+				return (false);
+			}
+			else {
+				console.log('STARTING DOWNLOAD');
+				return (torrent.downloadSeries(downloadHash, filename));
+			}
+		}
+	)
+		//checking if the download starts and returns the folder where torrent will be
+		.then(
+			(resolve) => {
+				if (resolve) {
+					console.log('Downloading at : ' + resolve);
+					return (torrent.seriesFile(20, downloadHash));
+				}
+				else {
+					console.log('CLIENT ALREADY DOWNLOADING THE FILE');
+					return (torrent.seriesFile(20, downloadHash));
+				}
+			})
+		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
+		//returning a watch link for the client based on whether or not the files where created;
+		.then(
+			(resolve) => {
+				console.log('SeriesFILE RESOLVE!')
+				console.log(resolve);
+				apiRequest = 'OK'
+				watchLink = 'http://192.168.88.216:3000/api/series/watch/' + downloadHash;
+
+				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
+				res.json(obj);
+			}
+		).catch(
+			(err) => {
+				console.log('SERIESFILE REJECT!')
+				console.log(err);
+				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
+				res.json(obj);
+			})
+})
+
+router.get('/api/series/check/:hash', (req, res) => {
+	console.log('==========================================================================CHECK SERIES===================================================================================');
+	const hash = req.params.hash;
+	var path = null;
+	// checking if the files exist before downloading them
+	// all downloads must come from within the client side
+	files.watchSeriesCheck('../Hypertube/src/downloads/' + hash).then(
+		(resolve) => {
+			if (resolve != false) {
+				path = resolve;
+				return (torrent.checkClient(hash));
+			}
+			else {
+				//if files are not downloading cannot get a progress report from isPlayable
+				//throw error since downloads can only be initialted from series/download
+				throw "Files not downloading";
+			}
+		}
+	)
+		//checking if the file in the client has downloaded enough to stream
+		.then(
+			(resolve) => {
+				if (resolve != -1) {
+					return (torrent.isPlayable(40, hash));
+				}
+				else {
+					console.log('ADDING TORRENT TO CLIENT');
+					torrent.downloadTorrent(hash).then((resolve) => {
+						//20 attempts means +-40 seconds of download time before returning
+						return (torrent.isPlayable(40, hash));
+					})
+				}
+			}
+
+		)
+		.then(
+			(resolve) => {
+				res.json({ request: "READY", data: { hash: hash, format: "mp4" } })
+			}
+		)
+		.catch((err) => {
+			console.log(err)
+			res.json({ request: "FAILED", data: { hash: hash, link: "404", format: "" } })
+		})
+})
+
+router.get('/api/series/watch/:hash', (req, res) => {
+	console.log('========================================================================== WATCH SERIES ==========================================================================')
+	const hash = req.params.hash;
+	// 5 attemps to check for file Should already exist;
+	torrent.seriesFile(5, hash).then(
+		(path) => {
+			console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
+			const filetype = path.split('.').pop();
+			console.log('THE FILE TYPE IS: ' + filetype);
+			// if (filetype == "mkv"){
+			// 	filetype = "x-matroska";
+			// }
+			console.log('STARTING STREAMING' + filetype)
+
+			const stat = fs.statSync(path);
+			const fileSize = stat.size;
+			const range = req.headers.range;
+
+			if (range) {
+				console.log(range);
+				const parts = range.replace(/bytes=/, "").split("-")
+				const start = parseInt(parts[0], 10);
+				const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+				const chunksize = (end - start) + 1
+
+				const head = {
+					'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+					'Accept-Ranges': 'bytes',
+					'Content-Length': chunksize,
+					'Content-Type': 'video/x-matroska',
+				}
+
+				let stream_position = {
+					start: start,
+					end: end
+				}
+				var stream = fs.createReadStream(path, stream_position)
+				res.writeHead(206, head);
+				stream.on('open', function () {
+					stream.pipe(res);
+				}).on("error", function (err) {
+					res.end(err);
+				})
+			} else {
+				const head = {
+					'Content-Length': fileSize,
+					'Content-Type': 'video/x-matroska',
+				}
+				res.writeHead(200, head)
+				var stream = fs.createReadStream(path).on("open", function () {
+					stream.pipe(res);
+				}).on("error", function (err) {
+					res.end(err);
+				});
+			}
+
+		}
+	).catch((err) => {
+		res.json({ request: "FAILED", data: { hash: hash, link: err } })
+	})
+})
+
+router.get('/api/series/get/:page/:limit', (req, res) => {
+	var pageNum = req.params.page;
+	var limit = req.params.limit;
+	console.log('getting series');
+	seriesTorrent.getTorrents(pageNum, limit).then(
+		(resolve) => {
+			res.send(resolve)
+		}
+	)
+})
+
+router.get('/api/series/get/all', (req, res) => {
+
+	console.log('getting all shows');
+	seriesTorrent.getAllShows().then(
+		(resolve) => {
+			res.json(resolve);
+		}
+	)
+})
+
+router.get('/api/series/get/show/:id/:show/:slug', (req, res) => {
+	console.log('getting show');
+	const id = req.params.id;
+	const show = req.params.show;
+	const slug = req.params.slug;
+
+	var arr = {
+		id: id,
+		show: show,
+		slug: slug
+	}
+	seriesTorrent.getShowData(arr).then(
+		(resolve) => {
+			res.json(resolve);
+		}
+	)
+})
+
+router.get('/api/series/search/:query', (req, res) => {
+	console.log('Searching for a Series')
+	const query = req.params.query;
+	seriesTorrent.search(query).then(
+
+	)
 })
 
 module.exports = router;

@@ -309,13 +309,12 @@ export class AuthService {
 
 
 	//adding movie details to profile
-	addMovieToDb(moviepic, movieTitle, movieId, hash) {
+	addMovieToDb(moviepic, movieTitle, movieId, movieHash) {
 		var date = new Date();
 		const day = date.getDate();
 		const month = date.getMonth() + 1;
 		const year = date.getFullYear();
 		const todaydate = day + '/' + month + '/' + year;
-		// console.log(todaydate);
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('userId').startAt(this.userid));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((movies) => {
@@ -329,8 +328,8 @@ export class AuthService {
 					moviepic: moviepic,
 					movieId: movieId,
 					lastWatched: todaydate,
-					movieHash: hash,
-					uniqueID: uuid
+					uniqueID: uuid,
+					movieHash: movieHash,
 				})
 			}
 			console.log(movies.length)

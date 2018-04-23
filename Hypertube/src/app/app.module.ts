@@ -20,7 +20,9 @@ import { SeriesService } from "./services/series.service";
 import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
 import { TorrentService } from './services/torrent.service';
-import { FileuploadService } from './services/fileupload.service'
+import { FileuploadService } from './services/fileupload.service';
+import { EqualValidator } from './services/password-validator';
+
 //components
 import { MoviesComponent } from './movies/movies.component';
 import { MoviedetailsComponent } from './movies/moviedetails/moviedetails.component';
@@ -29,6 +31,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.component';
 
 //Util/Dom
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
@@ -37,9 +40,6 @@ import { AuthGuard } from './services/auth-guard.service';
 
 //pipes
 import { EllipsisPipe } from './pipes/ellipsis.pipe';
-
-import { WatchComponent } from './watch/watch.component';
-
 import { FileSizePipe } from './pipes/file-size.pipe';
 
 
@@ -50,7 +50,8 @@ import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
-import { EqualValidator } from './services/password-validator';
+
+
 
 @NgModule({
 	declarations: [
@@ -63,10 +64,10 @@ import { EqualValidator } from './services/password-validator';
 		EllipsisPipe,
 		EqualValidator,
 		PagenotfoundComponent,
-		WatchComponent,
 		MoviedetailsComponent,
 		DropZoneDirective,
-		FileSizePipe
+		FileSizePipe,
+		SeriesdetailsComponent
 	],
 	imports: [
 		BrowserModule,
