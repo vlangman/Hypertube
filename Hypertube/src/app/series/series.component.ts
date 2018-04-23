@@ -119,6 +119,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 				this.Series = data;
 				this.displayLoad = false
 			})
+
 	}
 
 

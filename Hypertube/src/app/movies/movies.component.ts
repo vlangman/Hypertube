@@ -9,7 +9,6 @@ import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 import { AuthService } from '../services/auth.service';
 
 
-
 @Component({
 	selector: 'app-movies',
 	templateUrl: './movies.component.html',
@@ -44,7 +43,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		private movieService: MovieService,
 		private route: ActivatedRoute,
 		private router: Router,
-
 	) {
 
 	}

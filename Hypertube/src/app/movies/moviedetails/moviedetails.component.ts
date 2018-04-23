@@ -13,6 +13,7 @@ import { VgBufferingModule } from 'videogular2/buffering';
 import { HttpClient,HttpHeaders } from '@angular/common/http';
 
 
+
 export interface MovieComment {
 	userName: string;
 	Comments: string;
@@ -149,19 +150,10 @@ export class MoviedetailsComponent implements OnInit {
 	}
 
 
-
 	onPlayerReady(api: VgAPI) {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-
-		
-
-		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
-		// 	console.log(data);
-		// })
-
-
 	}
 
 	downloadMovie(data){

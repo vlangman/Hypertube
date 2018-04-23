@@ -10,6 +10,7 @@
 }
 
 .profile-card{
+	margin-right: 5px;
 	height: 100%;
 	width: fit-content;
 	background-color: white;
@@ -23,7 +24,7 @@
 .register-form{
 	flex-shrink: 1;
 	color:black;
-	border: 1px solid yellow;
+	/*border: 1px solid yellow;*/
 }
 .edit-profile{
 	padding: 10px;

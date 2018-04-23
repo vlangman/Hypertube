@@ -20,8 +20,9 @@ import { SeriesService } from "./services/series.service";
 import { AuthService } from "./services/auth.service";
 import { MovieService } from "./services/movies.service";
 import { TorrentService } from './services/torrent.service';
-import { FilesService } from './services/files.service';
-import { FileuploadService } from './services/fileupload.service'
+import { FileuploadService } from './services/fileupload.service';
+import { EqualValidator } from './services/password-validator';
+
 //components
 import { MoviesComponent } from './movies/movies.component';
 import { MoviedetailsComponent } from './movies/moviedetails/moviedetails.component';
@@ -30,6 +31,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.component';
 
 //Util/Dom
 import { InfiniteScrollModule } from "angular2-infinite-scroll";
@@ -48,8 +50,8 @@ import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 //directives
 import { DropZoneDirective } from './services/drop-zone.directive';
-import { SeriesdetailsComponent } from './series/seriesdetails/seriesdetails.component';
-import { EqualValidator } from './services/password-validator';
+
+
 
 @NgModule({
 	declarations: [
@@ -90,7 +92,6 @@ import { EqualValidator } from './services/password-validator';
 		AuthGuard,
 		FileuploadService,
 		TorrentService,
-		FilesService,
 	],
 	bootstrap: [AppComponent]
 })
