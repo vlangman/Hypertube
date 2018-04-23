@@ -44,4 +44,20 @@ export class TorrentService {
 			return response;
 		})
 	}
+
+
+	watchSeries(hash): Observable<any>{
+		return this.http.get(this.api + 'series/check/' + hash).map((response) =>{
+			return response;
+		})
+	}
+
+	downloadSeries(hash: string , filename: string): Observable<any>{
+		return this.http.get(this.api + 'series/download/'+ hash + '/'+ filename).map(
+				(Response)=>{
+					return Response;
+				})
+	}
+
+
 }

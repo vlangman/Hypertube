@@ -25,8 +25,8 @@
 				</p>
 			</div>
 			<div class="series-footer">
-				<button class="btn btn-outline-primary">Watch Now</button>
-				<button (click)="getRating(series.imdb)" class="btn btn-success">More</button>
+				<button class="btn btn-outline-primary" (click)="viewSeries( series.imdb, series.hash, series.filename )">Watch Now</button>
+				<button *ngIf="series.imdb" (click)="getRating(series.imdb)" class="btn btn-success">More</button>
 			</div>
 		</div>
 	</div>

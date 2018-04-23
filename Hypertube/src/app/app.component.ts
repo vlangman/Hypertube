@@ -15,7 +15,10 @@ export class AppComponent implements OnInit {
 
 	genres: string[] = [];
 	genreToggle: boolean = false;
+	seriesToggle: boolean = false;
+	movieToggle: boolean = false;
 	navOpen: boolean = true;
+	languageToggle: boolean = false;
 	private searchQuery: string = '';
 
 	constructor(
@@ -42,12 +45,31 @@ export class AppComponent implements OnInit {
 	toggleGenreDropdown() {
 		if (this.genreToggle) {
 			this.genreToggle = false;
-			console.log(this.genreToggle);
 		}
 		else {
 			this.genreToggle = true;
-			console.log(this.genreToggle);
+		}
+	}
 
+	toggleSeriesDropdown() {
+		if (this.seriesToggle) {
+			this.seriesToggle = false;
+		}
+		else {
+			this.seriesToggle = true;
+		if (this.movieToggle == true)
+			this.movieToggle = false;
+		}
+	}
+
+	toggleMovieDropdown(){
+		if (this.movieToggle) {
+			this.movieToggle = false;
+		}
+		else {
+			this.movieToggle = true;
+			if (this.seriesToggle == true)
+				this.seriesToggle = false;
 		}
 	}
 
@@ -57,6 +79,24 @@ export class AppComponent implements OnInit {
 		}
 		else {
 			this.navOpen = true;
+		}
+	}
+
+	languageIs(value) {
+		console.log(value)
+		document.cookie = "googtrans=/en/" + value;
+		location.reload();
+	}
+
+	toggleLanguageDrop() {
+		if (this.languageToggle) {
+			this.languageToggle = false;
+			console.log(this.languageToggle);
+		}
+		else {
+			this.languageToggle = true;
+			console.log(this.languageToggle);
+
 		}
 	}
 

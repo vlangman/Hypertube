@@ -308,7 +308,7 @@ export class AuthService {
 
 
 	//adding movie details to profile
-	addMovieToDb(moviepic, movieTitle, movieId) {
+	addMovieToDb(moviepic, movieTitle, movieId, movieHash) {
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('userId').startAt(this.userid));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((movies) => {
@@ -318,7 +318,8 @@ export class AuthService {
 					userId: this.userid,
 					movieTitle: movieTitle,
 					moviepic: moviepic,
-					movieId: movieId
+					movieId: movieId,
+					movieHash: movieHash,
 				})
 			}
 			console.log(movies.length)

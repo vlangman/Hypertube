@@ -82,14 +82,22 @@ export class MovieService {
 
 
 	getMovies(): Observable<MOVIES[]> {
+		console.log('GETTING THE FEATURED');
 		return this.http.get<YTS>(this.api)
 			.map(res => {
 				console.log(res);
 				this.Movies = [];
-				this.loadMovies(res);
-				return this.Movies;
+				
+				if (res['data']['movies'])
+				{
+					this.loadMovies(res);
+					return this.Movies;
+				} else {
+					throw new Error("Api returned empty array");	
+				}
+				
 			})._catch((err) => {
-				console.log("hello");
+				console.log("Failed to get movies");
 				console.log(Observable.throw(err))
 				return Observable.throw(err);
 			})
@@ -105,6 +113,8 @@ export class MovieService {
 				return this.Movies;
 			})
 			._catch((err) => {
+				console.log("Failed to get genre");
+				console.log(Observable.throw(err))
 				return Observable.throw(err.status(404));
 			})
 	}
@@ -117,6 +127,8 @@ export class MovieService {
 			})
 			._catch(
 				(err) => {
+					console.log("Failed to get next genre");
+					console.log(Observable.throw(err))
 					return Observable.throw(err);
 				})
 	}
@@ -129,6 +141,8 @@ export class MovieService {
 		})
 		._catch(
 			(err) =>{
+				console.log("Failed to get next page");
+				console.log(Observable.throw(err))
 				return Observable.throw(err);
 		})
 	}
@@ -153,6 +167,7 @@ export class MovieService {
 			})
 			._catch(
 				(err) => {
+					console.log('failed to get details');
 					return Observable.throw(err);
 				})
 	}

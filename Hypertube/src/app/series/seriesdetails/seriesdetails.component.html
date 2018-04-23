@@ -1,0 +1,84 @@
+<div *ngIf="displayLoad" class="loading-container">
+	<div class="loading"></div>
+</div>
+
+<div *ngIf="!displayLoad" class="mainForm">
+
+	<div class="seriesWrapper" >
+		<div class="series-details" [ngStyle]="{'background-image': 'url(' + Details.tv_results[0].backdrop + ')'}">
+			<div class="image-wrap">
+				<img class="series-image" src="{{ Details.tv_results[0].poster }}">
+				<div class=" btn-group watchbtn">
+					<button class="btn btn-outline-primary" (click)="downloadSeries()">FIX THIS BUTTON</button>
+				</div>
+			</div>
+			
+
+			<div class="series-info">
+				<h1>{{ Details.tv_results[0].name }}</h1>
+				<h3>First air: {{ Details.tv_results[0].airdate }}</h3>
+				<div class="ratings">
+					<h1><i class="fab fa-imdb imdb"></i> {{ Details.tv_results[0].rating }}</h1>
+					<p class="text-warning" >  from {{ Details.tv_results[0].votes }} votes</p>
+				</div>
+				
+				<div class="series-summary">
+					<p>{{ Details.tv_results[0].overview }}</p>
+				</div>
+
+
+			<div class="series-summary">
+				<!-- <span class="series-genre" *ngFor="let genre of Movie.genres">{{ Details.tv_series[0].overview}}. </span> -->
+			</div>
+				
+				<hr style="background: white; width: 100%;"/>
+			<!-- 	
+				<div class="watch-control">	
+					<div class="embed-responsive embed-responsive-16by9 trailer">
+						<iframe *ngIf=" Movie.trailer"  class="youtube" [src]="Movie.trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+					</div>	
+					<div class="cast-wrap">
+						<div *ngFor="let cast of Movie.cast" class="card cast-card">
+							<div class="cast">
+								<img class="cast-image img-thumbnail" *ngIf="cast.url_small_image" src="{{cast.url_small_image}}">
+								<img class="cast-image img-thumbnail" *ngIf="!cast.url_small_image" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png">
+								<p class="cast-name"> {{ cast.name }} </p>
+							</div>
+						</div>
+					</div>
+				</div>	 -->
+			</div>
+
+
+		</div>
+			<vg-player *ngIf=" watch " class="videogular" (onPlayerReady)="onPlayerReady($event)">
+				<vg-overlay-play></vg-overlay-play>
+				<vg-buffering [vgFor]=" videoPlayer " ></vg-buffering>
+
+
+				<video [vgMedia]="media" #media id="videoPlayer" preload="auto" >
+					<source [src]="source" type="video/mp4">
+				</video>
+		
+				<vg-controls>
+					<vg-play-pause [vgFor]=" videoPlayer "></vg-play-pause>
+					<vg-playback-button [vgFor]=" videoPlayer "></vg-playback-button>
+
+					<vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+
+					<vg-scrub-bar>
+						<vg-scrub-bar-current-time [vgFor]=" videoPlayer "></vg-scrub-bar-current-time>
+						<vg-scrub-bar-buffering-time [vgFor]=" videoPlayer "></vg-scrub-bar-buffering-time>
+					</vg-scrub-bar>
+
+					<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+					<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+					<vg-track-selector></vg-track-selector>
+					<vg-mute></vg-mute>
+					<vg-volume></vg-volume>
+					<vg-fullscreen></vg-fullscreen>
+				</vg-controls>
+				
+			</vg-player>
+	</div>
