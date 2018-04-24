@@ -50,6 +50,8 @@ export class MoviedetailsComponent implements OnInit {
 	downloading: boolean = false;
 	moviePic: string;
 	movieTitle: string;
+	subtitlesStreameng: string;
+	subtitlesStreamfre: string;
 
 	constructor(
 		private movieservice: MovieService,
@@ -176,10 +178,11 @@ export class MoviedetailsComponent implements OnInit {
 		console.log('MOVIE IS DOWLOADING')
 		this.torrentService.watchMovie(data['data']['hash']).subscribe(
 			(response: JSON) => {
-				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data.hash);
+				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
 				console.log('MOVIE CHECKED AND IS READY TO STREAM')
 				console.log(response);
 
+				this.subtitlesLink(data);
 				this.startStream(data['data']['link'], response['data']['format']);
 
 			})
@@ -198,6 +201,37 @@ export class MoviedetailsComponent implements OnInit {
 		// 	this.source = video;
 
 		// })
+	}
+
+	subtitlesLink(hash) {
+		this.subtitlesStreameng = '';
+		this.subtitlesStreamfre = '';
+		if (this.subtitlesStreamfre == '') {
+			console.log('oh hello');
+			console.log(hash['data']['hash']);
+			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
+				console.log('heree')
+				if (data == 404) {
+					this.subtitlesStreamfre = '';
+				} else {
+					this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
+				}
+			})
+		}
+		if (this.subtitlesStreameng == '') {
+			console.log('oh hello');
+			console.log(hash['data']['hash']);
+			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
+				console.log('heree')
+				console.log(data);
+				if (data == 404) {
+					this.subtitlesStreamfre = '';
+				} else {
+					this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
+				}
+			})
+		}
+
 	}
 
 	loadMovie(data) {

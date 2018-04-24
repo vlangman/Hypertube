@@ -1,5 +1,5 @@
 var fs = require('fs');
-// var path = require('path');
+var path = require('path');
 //extentions used to identifyu movie files
 const extentions = ['mp4', 'mkv', 'avi', 'webm'];
 const getMovieFile = (repeat, dir) => {
@@ -135,33 +135,36 @@ const watchSeriesCheck = (hashDir) => {
 }
 
 
-// function getfile(startPath, filter) {
-// 	if (!fs.existsSync(startPath)) {
-// 		console.log("no dir ", startPath);
-// 		return;
-// 	}
-// 	return new Promise((resolve, reject) => {
-// 		console.log('hi')
-// 		var files = fs.readdirSync(startPath);
-// 		for (var i = 0; i < files.length; i++) {
-// 			var filename = path.join(startPath, files[i]);
-// 			var stat = fs.lstatSync(filename);
-// 			if (stat.isDirectory()) {
-// 				// getfile(filename, filter); //recurse
-// 			}
-// 			else if (filename.indexOf(filter) >= 0) {
-// 				console.log('-- found: ', filename);
-// 				resolve(filename);
-// 			};
+function getfile(startPath, filter) {
+	if (!fs.existsSync(startPath)) {
+		console.log("no dir ", startPath);
+		return;
+	}
+	return new Promise((resolve, reject) => {
+		console.log('hi')
+		var files = fs.readdirSync(startPath);
+		for (var i = 0; i < files.length; i++) {
+			var filename = path.join(startPath, files[i]);
+			var stat = fs.lstatSync(filename);
+			if (stat.isDirectory()) {
+				// getfile(filename, filter); //recurse
+			}
+			else if (filename.indexOf(filter) >= 0) {
+				console.log('-- found: ', filename);
+				resolve(filename);
+			}
 
-// 		};
-// 	});
-// }
+			else if (filename.indexOf(filter) === -1) {
+				resolve(false)
+			};
+		};
+	});
+}
 module.exports = {
 	getMovieFile,
 	watchMovieCheck,
 	getDirectory,
 	findfile,
 	watchSeriesCheck,
-	// getfile,
+	getfile,
 }

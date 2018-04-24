@@ -80,16 +80,36 @@ router.get('/api/movie/get/:hash', (req, res) => {
 				res.json(obj);
 			})
 })
-// router.get('/api/subtitles/check/:hash', (req, res) => {
-// 	console.log('==========================================================================CHECK Subtitles===================================================================================');
-// 	const movieHash = req.params.hash;
-// 	var path = null;
-// 	console.log(movieHash);
-// 	const downloadHash = req.params.hash;
-// 	console.log('****************************************************************************************************************FIND subtitles********************************');
-// 	// console.log(resolve);
-// 	return torrent.subtitlesFile(downloadHash);
-// })
+router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
+	console.log('==========================================================================CHECK Subtitles===================================================================================');
+	const movieHash = req.params.hash;
+	var path = null;
+	console.log(movieHash);
+	const downloadHash = req.params.hash;
+	const subtitlelanguage = req.params.lang;
+	console.log('****************************************************************************************************************FIND subtitles********************************');
+	// console.log(resolve);
+	const subtitleFiles = torrent.subtitlesFile(downloadHash, subtitlelanguage).then((resolve) => {
+		// return resolve
+		const head = {
+			'Content-Type': 'text/vtt',
+		}
+		if (resolve != false) {
+			const file = fs.createReadStream(resolve)
+			res.writeHead(206, head);
+			file.pipe(res);
+		} else {
+			throw 'no subtitle found';
+		}
+
+		// res.json(resolve);
+	}).catch((err) => {
+		res.json(404)
+		console.log(err)
+	})
+	// console.log(subtitleFiles);
+	// res.json(subtitleFiles);
+})
 
 router.get('/api/movie/check/:hash', (req, res) => {
 	console.log('==========================================================================CHECK MOVIE===================================================================================');

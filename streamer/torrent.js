@@ -124,7 +124,7 @@ const downloadSubtitles = (hash) => {
 	return new Promise((resolve) => {
 		console.log('haosudhasofgaosgf');
 		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
-			OpenSubtitles.search({ imdbid: 'tt6143568', sublanguageid: 'fre, eng' }).then((subtitles) => {
+			OpenSubtitles.search({ imdbid: 'tt4779026', sublanguageid: 'fre, eng' }).then((subtitles) => {
 				if (!subtitles['fr'] && !subtitles['en']) {
 					throw 'no subtitles found';
 				}
@@ -149,13 +149,18 @@ const downloadSubtitles = (hash) => {
 	})
 }
 
-// const subtitlesFile = (hash) => {
-// 	return new Promise((resolve) => {
-// 		files.getfile(moviesDir + hash, 'fre.vtt').then((file) => {
-// 			console.log('file is ' + file)
-// 		})
-// 	})
-// }
+const subtitlesFile = (hash, lang) => {
+	return new Promise((resolve) => {
+		console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+		console.log(lang)
+		files.getfile(moviesDir + hash, lang + '.vtt').then((file) => {
+			console.log('file is ' + file)
+			resolve(file);
+		}).catch((err) => {
+			console.log(err);
+		})
+	})
+}
 
 const movieFile = (hash) => {
 	const moviePath = moviesDir + hash;
@@ -244,6 +249,6 @@ module.exports = {
 	isPlayable,
 	report,
 	downloadSeries,
-	// subtitlesFile,
+	subtitlesFile,
 	seriesFile,
 }
