@@ -164,7 +164,7 @@ export class MoviedetailsComponent implements OnInit {
 
 	downloadMovie(data) {
 		// this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
-		this.torrentService.downloadMovie(data).subscribe((data2: JSON) => {
+		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
 			this.watchMovie(data2);
@@ -241,6 +241,7 @@ export class MoviedetailsComponent implements OnInit {
 		var backround_image: string;
 		var image: string;
 		var rating: number;
+		var imbd_code: string;
 		var year: number;
 		var genres: string[];
 		var youTubeTrailer: SafeResourceUrl;
@@ -251,7 +252,10 @@ export class MoviedetailsComponent implements OnInit {
 			id = data['id']
 		else
 			id = NaN;
-
+		if (data['imdb_code'])
+			imbd_code = data['imdb_code']
+		else
+			imbd_code = '';
 		if (data['title'])
 			title = data['title'];
 		else
@@ -307,7 +311,7 @@ export class MoviedetailsComponent implements OnInit {
 		else
 			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/dQw4w9WgXcQ");
 
-		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '');
+		this.Movie = new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, youTubeTrailer, cast, '', imbd_code);
 	}
 }
 

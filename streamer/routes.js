@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 //downloads the torrent file from yts to check against current files
 //looks for current files, if found resumes torrent
 //starts the download and waits for the video file to appear before returning json link back to client
-router.get('/api/movie/get/:hash', (req, res) => {
+router.get('/api/movie/get/:hash/:imdb', (req, res) => {
 	console.log('==========================================================================GET MOVIE===================================================================================')
 	const downloadHash = req.params.hash;
 	console.log('checking client');
@@ -56,7 +56,7 @@ router.get('/api/movie/get/:hash', (req, res) => {
 			(resolve) => {
 				console.log('MOVIEFILE RESOLVE!')
 				console.log(resolve);
-				torrent.downloadSubtitles(downloadHash);
+				torrent.downloadSubtitles(downloadHash, req.params.imdb);
 
 
 			})

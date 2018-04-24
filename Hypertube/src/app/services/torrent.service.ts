@@ -32,10 +32,10 @@ export class TorrentService {
 		return this.client.downloadSpeed;
 	}
 
-	downloadMovie(data: TORRENT): Observable<any> {
+	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {
 		console.log(data);
 		console.log('downloading new torrent....' + data.hash);
-		return this.http.get(this.api + 'movie/get/' + data.hash).map((data) => {
+		return this.http.get(this.api + 'movie/get/' + data.hash + '/' + imdb_code).map((data) => {
 			return data;
 		});
 	}

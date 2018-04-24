@@ -120,11 +120,11 @@ const downloadSeries = (hash, filename) => {
 	)//end of promise
 }
 
-const downloadSubtitles = (hash) => {
+const downloadSubtitles = (hash, imdb) => {
 	return new Promise((resolve) => {
 		console.log('haosudhasofgaosgf');
 		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
-			OpenSubtitles.search({ imdbid: 'tt4779026', sublanguageid: 'fre, eng' }).then((subtitles) => {
+			OpenSubtitles.search({ imdbid: imdb, sublanguageid: 'fre, eng' }).then((subtitles) => {
 				if (!subtitles['fr'] && !subtitles['en']) {
 					throw 'no subtitles found';
 				}
