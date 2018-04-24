@@ -193,6 +193,7 @@ export class MovieService {
 			var image: string;
 			var rating: number;
 			var year: number;
+			var imbd_code: string;
 			var genres: string[];
 			var torrents: string[];
 			var cast = [];
@@ -201,7 +202,10 @@ export class MovieService {
 				id = data['id']
 			else
 				id = NaN;
-
+			if (data['imdb_code'])
+				imbd_code = data['imdb_code']
+			else
+				imbd_code = '';
 			if (data['title'])
 				title = data['title'];
 			else
@@ -246,7 +250,7 @@ export class MovieService {
 			} else {
 				torrents = [];
 			}
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null, cast, ''));
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null, cast, '', imbd_code));
 		})
 		console.log(this.Movies)
 	}
