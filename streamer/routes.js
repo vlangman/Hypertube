@@ -252,7 +252,7 @@ router.get('/api/series/download/:series_hash/:filename', (req, res) => {
 				console.log('SeriesFILE RESOLVE!')
 				console.log(resolve);
 				apiRequest = 'OK'
-				watchLink = 'http://192.168.88.216:3000/api/series/watch/' + downloadHash;
+				watchLink = 'http://localhost:3000/api/series/watch/' + downloadHash;
 
 				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
 				res.json(obj);

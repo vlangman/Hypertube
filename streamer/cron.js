@@ -9,7 +9,7 @@ admin.initializeApp({
 });
 
 let job = new CronJob({
-	cronTime: '00 */1 * * * *',
+	cronTime: '00 00 06 * * *',
 	onTick: function () {
 		console.log("cron job has begun");
 		var date = new Date();
