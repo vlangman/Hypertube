@@ -153,12 +153,35 @@ const subtitlesFile = (hash, lang) => {
 	return new Promise((resolve) => {
 		console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 		console.log(lang)
-		files.getfile(moviesDir + hash, lang + '.vtt').then((file) => {
-			console.log('file is ' + file)
-			resolve(file);
-		}).catch((err) => {
-			console.log(err);
-		})
+		if (lang == 'eng') {
+			if (fs.existsSync(moviesDir + hash + '/eng.vtt')) {
+				files.getfile(moviesDir + hash, lang + '.vtt').then((file) => {
+					console.log('file is ' + file)
+					resolve(file);
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else {
+				resolve(false)
+			}
+
+		} else if (lang == 'fre') {
+			if (fs.existsSync(moviesDir + hash + '/fre.vtt')) {
+				files.getfile(moviesDir + hash, lang + '.vtt').then((file) => {
+					console.log('file is ' + file)
+					resolve(file);
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else {
+				resolve(false)
+			}
+		}
+		else {
+			resolve(false);
+		}
+
+
 	})
 }
 

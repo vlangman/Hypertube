@@ -96,7 +96,8 @@ router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
 		}
 		if (resolve != false) {
 			const file = fs.createReadStream(resolve)
-			res.writeHead(206, head);
+			res.writeHead(200, head);
+			// res.json(302)
 			file.pipe(res);
 		} else {
 			throw 'no subtitle found';

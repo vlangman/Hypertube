@@ -207,29 +207,32 @@ export class MoviedetailsComponent implements OnInit {
 		this.subtitlesStreameng = '';
 		this.subtitlesStreamfre = '';
 		if (this.subtitlesStreamfre == '') {
-			console.log('oh hello');
+			console.log('oh hello fre');
 			console.log(hash['data']['hash']);
+			this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
+			console.log(this.subtitlesStreamfre)
 			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
-				console.log('heree')
-				if (data == 404) {
-					this.subtitlesStreamfre = '';
-				} else {
-					this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
-				}
-			})
-		}
-		if (this.subtitlesStreameng == '') {
-			console.log('oh hello');
-			console.log(hash['data']['hash']);
-			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
 				console.log('heree')
 				console.log(data);
 				if (data == 404) {
 					this.subtitlesStreamfre = '';
-				} else {
-					this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
 				}
 			})
+			console.log(this.subtitlesStreamfre)
+		}
+		if (this.subtitlesStreameng == '') {
+			console.log('oh hello eng');
+			console.log(hash['data']['hash']);
+			this.subtitlesStreameng = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
+			console.log(this.subtitlesStreameng)
+			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
+				console.log('work')
+				console.log(data);
+				if (data == 404) {
+					this.subtitlesStreameng = '';
+				}
+			})
+			console.log(this.subtitlesStreameng)
 		}
 
 	}

@@ -154,9 +154,9 @@ function getfile(startPath, filter) {
 				resolve(filename);
 			}
 
-			else if (filename.indexOf(filter) === -1) {
-				resolve(false)
-			};
+			// else if (filename.indexOf(filter) === -1) {
+			// 	resolve(false)
+			// };
 		};
 	});
 }

@@ -54,6 +54,8 @@ export class TorrentService {
 
 	getSubtitles(hash, lang): Observable<any> {
 		return this.http.get(this.api + 'subtitles/check/' + hash + '/' + lang).map((response) => {
+			console.log('----------------------------------------------------')
+			console.log(response)
 			return response;
 		})
 	}
