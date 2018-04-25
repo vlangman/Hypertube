@@ -396,12 +396,16 @@ router.get('/api/show/get/details/:id/:show/:slug', (req, res)=>{
 					ret = resolve;
 					return (seriesTorrent.getDetails(resolve['imdb'].slice(2, 9)))
 				}
+				else{
+					return new Error('Failed to get imdb reference');
+				}
 			}
 		)
 		//getting images
 		.then(
 			(data) =>{
 				ret['tmdb'] = data['tv_results'][0];
+				// ret['episodes'] = episodes;
 				res.json(ret);
 			}
 			

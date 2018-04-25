@@ -129,23 +129,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		})
 	}
 
-		//use for show details !
-	// getShowInfo(shows){
-	// 	shows.forEach((show)=>{
-	// 		this.detailsSub.add(this.seriesService.getShowInfo(show).subscribe(
-	// 			(data)=>{
-	// 				console.log('GOT DATA');
-	// 				if (data['tmdb'] && !data['err']){
-	// 					this.Shows.push(data);
-	// 				}
-	// 			},(err) =>{
-	// 				console.log(err);
-	// 			}
-	// 		))
-	// 	})
-	// 	return this.detailsSub;
-	// }
-
 	//increment index by 20 where u call it
 	loadShowDetails(){
 		console.log('getting list')
@@ -156,14 +139,18 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			{
 				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i]).subscribe(
 					(data)=>{
-						console.log(data);
 						if (data['tmdb'] && !data['err']){
 							this.Shows.push(data);
-							console.log('push')
+							console.log(data);
+							console.log('pushed reply');
+						}
+						else{
+							console.log('Bad Reply');
 						}
 					}
 				))
 			}
+
 		}
 	}
 
@@ -178,6 +165,14 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			}
 		}
 
+	}
+
+	viewShow(obj){
+
+		var id = obj['id'];
+		var show = obj['show'];
+		var slug = obj['slug']
+		this.router.navigate(["Series/Details/Show", id, show, slug]);
 	}
 
 	switchIndex(Char){

@@ -58,7 +58,7 @@
 				<p [ngClass]=" (hoverSeries == show.id) ? 'show-summary-show': 'show-summary-hide'" class="show-summary">{{ show.tmdb.overview | ellipsis:350 }}</p>
 			</div>
 			<div class="show-footer">
-				<!-- <button class="btn btn-outline-primary" (click)="viewMovie(show.id)">Watch Now!</button> -->
+				<button class="btn btn-outline-primary" (click)="viewShow(show)">Watch Now!</button>
 			</div>
 		</div>
 	</div>
