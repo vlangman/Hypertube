@@ -62,7 +62,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	searchVerify: boolean = true;
 	errorSearchmsg: string;
 	movieError: string;
+	seriesError: string;
 	watchedMovies = [];
+	watchedSeries = [];
 	movieImage: string;
 	movieTitle: string;
 	userExist: string;
@@ -143,6 +145,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.getMoviesWatched(this.userid)
 	}
 
+	seriesWatched() {
+		// if (this.tempUsername != this.username)
+		// 	this.getUserInfo(this.tempUsername)
+		if (!this.displayProfile) {
+			this.searchButton = false;
+			this.editEmailButton = false;
+			this.editButton = false;
+			this.displayProfile = true;
+		}
+		this.getSeriesWatched(this.userid)
+	}
+
 	editEmail() {
 		// if (this.tempUsername != this.username)
 		// 	this.getUserInfo(this.tempUsername)
@@ -178,6 +192,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 	getMoviesWatched(userid) {
+		this.watchedSeries = [];
 		this.watchedMovies = [];
 		this.movieError = '';
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('userId', '==', userid));
@@ -185,6 +200,27 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			if (users.length == 0) {
 				this.movieError = 'You have no watched movies yet';
+				console.log(this.movieError)
+			} else {
+				users.forEach((movies) => {
+					console.log(movies)
+					this.watchedMovies.push(movies);
+				})
+			}
+
+		})
+		this.searchButton = false;
+	}
+
+	getSeriesWatched(userid) {
+		this.watchedMovies = [];
+		this.watchedSeries = [];
+		this.seriesError = '';
+		this.usersCollection = this.db.collection('SeriesWatched', ref => ref.where('userId', '==', userid));
+		this.usersdb = this.usersCollection.valueChanges();
+		this.usersdbsub = this.usersdb.subscribe((users) => {
+			if (users.length == 0) {
+				this.movieError = 'You have no watched series yet';
 				console.log(this.movieError)
 			} else {
 				users.forEach((movies) => {

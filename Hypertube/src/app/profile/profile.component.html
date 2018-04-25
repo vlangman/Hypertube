@@ -25,7 +25,7 @@
 	</li>
 	<li class="nav-item">
 		<a href="#Swatched" class="nav-link" id="watched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="swatched"
-		 aria-selected="false" (click)="moviesWatched()">Series Watched</a>
+		 aria-selected="false" (click)="seriesWatched()">Series Watched</a>
 	</li>
 </ul>
 
@@ -196,6 +196,18 @@
 			</div>
 		</div>
 
+		<div class="tab-pane animate-zoom" id="Swatched" role="tabpanel" aria-labelledby="watched-tab">
+			<!-- new movies watched -->
+			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+				<div *ngIf="movieError">{{movieError}}</div>
+				<div *ngFor="let movie of watchedMovies">
+					<a (click)="viewMovie(movie.movieId)" style="cursor: pointer;">
+						<img src="{{movie.moviepic}}" class="items">
+						<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" [ngClass]="reauth ? 'exampleModal' : '' " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"

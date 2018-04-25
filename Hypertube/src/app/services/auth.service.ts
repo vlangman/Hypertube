@@ -337,6 +337,33 @@ export class AuthService {
 
 	}
 
+	addSeriesToDb(seriespic, seriesTitle, seriesId, seriesHash) {
+		var date = new Date();
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		const year = date.getFullYear();
+		const todaydate = day + '/' + month + '/' + year;
+		this.usersCollection = this.db.collection('SeriesWatched', ref => ref.where('seriesTitle', '==', seriesTitle).orderBy('userId').startAt(this.userid));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((series) => {
+			if (series.length == 0) {
+				console.log('here')
+				let uuid = UUID.UUID();
+				console.log('new uid', uuid);
+				this.db.collection("SeriesWatched").doc(uuid).set({
+					userId: this.userid,
+					seriesTitle: seriesTitle,
+					seriespic: seriespic,
+					seriesId: seriesId,
+					lastWatched: todaydate,
+					uniqueID: uuid,
+					seriesHash: seriesHash,
+				})
+			}
+			console.log(series.length)
+		})
+
+	}
 
 	changeEmail(email, username) {
 		this.email = email;

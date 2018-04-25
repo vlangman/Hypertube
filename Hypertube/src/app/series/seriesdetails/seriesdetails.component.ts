@@ -7,10 +7,10 @@ import { NgForm } from '@angular/forms';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
-import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TMDB } from "../../models/tmdb.model";
 
 
@@ -24,9 +24,9 @@ export interface SeriesComment {
 }
 
 @Component({
-  selector: 'app-seriesdetails',
-  templateUrl: './seriesdetails.component.html',
-  styleUrls: ['./seriesdetails.component.css']
+	selector: 'app-seriesdetails',
+	templateUrl: './seriesdetails.component.html',
+	styleUrls: ['./seriesdetails.component.css']
 })
 export class SeriesdetailsComponent implements OnInit {
 
@@ -67,25 +67,25 @@ export class SeriesdetailsComponent implements OnInit {
 				const id = params['series_id'];
 				this.hash = params['series_hash'];
 				this.filename = params['filename'];
-			
+
 				console.log('getting details for: ' + id);
 				this.seriesId = id;
 				this.displayLoad = true;
-		
+
 				this.seriesservice.findSeriesimdb(id).subscribe(
 					(ret) => {
 						this.loadDetailsSeries(ret);
 						this.displayLoad = false;
-					},(Error) => {
+					}, (Error) => {
 						console.log(Error);
 					}
 				)
-	
+
 			})
 
 	}
 
-	
+
 
 	loadComments() {
 		// , ref => ref.where('SeriesID', '==', this.seriesId)
@@ -160,7 +160,7 @@ export class SeriesdetailsComponent implements OnInit {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-		
+
 		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
 		// 	console.log(data);
 		// })
@@ -168,33 +168,34 @@ export class SeriesdetailsComponent implements OnInit {
 	}
 
 	// 1
-	downloadSeries(){
-		this.torrentService.downloadSeries(this.hash, this.filename,).subscribe((data2: JSON) =>{
+	downloadSeries() {
+		this.torrentService.downloadSeries(this.hash, this.filename, ).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
 			this.watchSeries(data2);
 		});
 	}
-	
+
 	//2
-	watchSeries(data){
+	watchSeries(data) {
 		console.log(data);
 		console.log('SERIES IS DOWLOADING')
 		this.torrentService.watchSeries(data['data']['hash']).subscribe(
-			(response: JSON) =>{
+			(response: JSON) => {
+				// this.authService.addSeriesToDb(this.Series.image, this.Series.title, this.Series.id, data['data']['hash']); waiting for merge to sort out
 				console.log('SERIES CHECKED AND IS READY TO STREAM')
 				console.log(response);
 				this.startStream(data['data']['link'], response['data']['format']);
-				
-		})
+
+			})
 	}
 
 	//3
-	startStream(link, format){
+	startStream(link, format) {
 
 		var headers = new HttpHeaders()
-		.set('Content-Type', 'video/mkv')
-	
+			.set('Content-Type', 'video/mkv')
+
 		console.log('STARTING STREAM!!');
 		console.log(link);
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
@@ -206,8 +207,8 @@ export class SeriesdetailsComponent implements OnInit {
 		// })
 	}
 
-	
-	loadDetailsSeries(res){
+
+	loadDetailsSeries(res) {
 		console.log('LOADING DATA')
 		console.log(res);
 		var tv_res = res['tv_results'][0];
@@ -215,47 +216,47 @@ export class SeriesdetailsComponent implements OnInit {
 		console.log(tv_res['name']);
 
 
-			var TVposter: string;
-			var TVvotes: number;
-			var TVid: number;
-			var TVbackdrop: string;
-			var TVvote_average: number;
-			var TVorigin: string[];
-			var TVoriginal_lang: string;
-			var TVname: string;
-			var TVtv_episodes: string[];
-			var TVoverview: string;
-			var TVairdate: string;
+		var TVposter: string;
+		var TVvotes: number;
+		var TVid: number;
+		var TVbackdrop: string;
+		var TVvote_average: number;
+		var TVorigin: string[];
+		var TVoriginal_lang: string;
+		var TVname: string;
+		var TVtv_episodes: string[];
+		var TVoverview: string;
+		var TVairdate: string;
 
-			TVposter = "https://image.tmdb.org/t/p/w400_and_h600_bestv2"+  tv_res['poster_path'];
-			TVvotes = tv_res['vote_count'];
-			TVid = tv_res['id'];
-			TVbackdrop = "https://image.tmdb.org/t/p/original" + tv_res['backdrop_path'];
-			TVvote_average = tv_res['vote_average'];
-			TVorigin = tv_res['origin_country'];
-			TVoriginal_lang = tv_res['original_language'];
-			TVname = tv_res['name'];
-			TVtv_episodes = tv_res['tv_episodes'];
-			TVoverview = tv_res['overview'];
-			TVairdate = tv_res['first_air_date']
+		TVposter = "https://image.tmdb.org/t/p/w400_and_h600_bestv2" + tv_res['poster_path'];
+		TVvotes = tv_res['vote_count'];
+		TVid = tv_res['id'];
+		TVbackdrop = "https://image.tmdb.org/t/p/original" + tv_res['backdrop_path'];
+		TVvote_average = tv_res['vote_average'];
+		TVorigin = tv_res['origin_country'];
+		TVoriginal_lang = tv_res['original_language'];
+		TVname = tv_res['name'];
+		TVtv_episodes = tv_res['tv_episodes'];
+		TVoverview = tv_res['overview'];
+		TVairdate = tv_res['first_air_date']
 
 
 
-			var tv_results = [];
-			tv_results.push({
-				poster: TVposter, 
-				votes: TVvotes,
-				id: TVid,
-				backdrop: TVbackdrop,
-				rating: TVvote_average,
-				origin: TVorigin,
-				original_lang :TVoriginal_lang,
-				name: TVname,
-				overview: TVoverview,
-				airdate: TVairdate
-			})
-			this.Details = new TMDB([], [], tv_results, [], []);
-			console.log(this.Details);
+		var tv_results = [];
+		tv_results.push({
+			poster: TVposter,
+			votes: TVvotes,
+			id: TVid,
+			backdrop: TVbackdrop,
+			rating: TVvote_average,
+			origin: TVorigin,
+			original_lang: TVoriginal_lang,
+			name: TVname,
+			overview: TVoverview,
+			airdate: TVairdate
+		})
+		this.Details = new TMDB([], [], tv_results, [], []);
+		console.log(this.Details);
 	}
 
 }
