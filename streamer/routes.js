@@ -20,10 +20,6 @@ router.get('/', (req, res) =>{
 //looks for current files, if found resumes torrent
 //starts the download and waits for the video file to appear before returning json link back to client
 
-
-
-
-
 router.get('/api/movie/get/:hash', (req,res) =>{
 	console.log('==========================================================================GET MOVIE===================================================================================')
 	const downloadHash = req.params.hash;
@@ -371,32 +367,57 @@ router.get('/api/series/get/:page/:limit', (req, res) =>{
 	)
 })
 
-router.get('/api/series/get/all', (req, res) =>{
+router.get('/api/show/get/details/:id/:show/:slug', (req, res)=>{
+	console.log('getting show');
+	var err = null;
+	try {
+		decodeURIComponent(req.path);
+	}
+	catch(e) {
+		console.log(e)
+		err = e;
+	}
 
-	console.log('getting all shows');
-	seriesTorrent.getAllShows().then(
-		(resolve)=>{
-			res.json(resolve);
+	if (!err)
+	{
+		const id = req.params.id;
+		const show = req.params.show;
+		const slug = req.params.slug;
+
+		var arr = {
+			id: id,
+			show: show,
+			slug: slug
 		}
-	)
+		var ret;
+		seriesTorrent.getShowData(arr).then(
+			(resolve) =>{
+				if (resolve['imdb']){
+					ret = resolve;
+					return (seriesTorrent.getDetails(resolve['imdb'].slice(2, 9)))
+				}
+			}
+		)
+		//getting images
+		.then(
+			(data) =>{
+				ret['tmdb'] = data['tv_results'][0];
+				res.json(ret);
+			}
+			
+		).catch((err)=>{
+			res.json(err);
+		})
+	}
+	else
+		res.json({error: err})
 })
 
-router.get('/api/series/get/show/:id/:show/:slug', (req, res)=>{
-	console.log('getting show');
-	const id = req.params.id;
-	const show = req.params.show;
-	const slug = req.params.slug;
-
-	var arr = {
-		id: id,
-		show: show,
-		slug: slug
-	}
-	seriesTorrent.getShowData(arr).then(
-		(resolve) =>{
-			res.json(resolve);
-		}
-	)
+router.get('/api/show/get/list', (req, res)=>{
+	console.log('Fetching show list');
+	seriesTorrent.getAllShows().then((list)=>{
+		res.json({"index":list});
+	})
 })
 
 router.get('/api/series/search/:query', (req, res) =>{
