@@ -50,11 +50,10 @@ router.get('/api/movie/get/:hash/:imdb', (req, res) => {
 					return (torrent.movieFile(downloadHash));
 				}
 			})
-		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
-		//returning a watch link for the client based on whether or not the files where created;
+		//downloading subtitles
 		.then(
 			(resolve) => {
-				console.log('MOVIEFILE RESOLVE!')
+				// console.log('MOVIEFILE RESOLVE!')
 				console.log(resolve);
 				torrent.downloadSubtitles(downloadHash, req.params.imdb);
 
@@ -234,9 +233,13 @@ router.get('/api/series/get/detail/:imdb_code', (req, res) => {
 	)
 })
 
-router.get('/api/series/download/:series_hash/:filename', (req, res) => {
+router.get('/api/series/download/:series_hash/:filename/:imdbid', (req, res) => {
 	const filename = req.params.filename;
 	const downloadHash = req.params.series_hash;
+	const imdbid = req.params.imdbid;
+	console.log('************************************************************************* ');
+	console.log(imdbid);
+	// const hash = req.params.hash;
 	console.log(filename);
 	console.log(downloadHash);
 
@@ -265,6 +268,15 @@ router.get('/api/series/download/:series_hash/:filename', (req, res) => {
 					console.log('CLIENT ALREADY DOWNLOADING THE FILE');
 					return (torrent.seriesFile(20, downloadHash));
 				}
+			})
+		//downloading subtitles
+		.then(
+			(resolve) => {
+				console.log('Downloading subtitles =================================================================================================')
+				console.log(resolve);
+				torrent.downloadSubtitlesSeries(downloadHash, imdbid);
+
+
 			})
 		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
 		//returning a watch link for the client based on whether or not the files where created;

@@ -169,7 +169,7 @@ export class SeriesdetailsComponent implements OnInit {
 
 	// 1
 	downloadSeries() {
-		this.torrentService.downloadSeries(this.hash, this.filename, ).subscribe((data2: JSON) => {
+		this.torrentService.downloadSeries(this.hash, this.filename, this.seriesId).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
 			this.watchSeries(data2);

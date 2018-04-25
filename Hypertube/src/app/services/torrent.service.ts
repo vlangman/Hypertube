@@ -58,8 +58,9 @@ export class TorrentService {
 		})
 	}
 
-	downloadSeries(hash: string, filename: string): Observable<any> {
-		return this.http.get(this.api + 'series/download/' + hash + '/' + filename).map(
+	downloadSeries(hash: string, filename: string, id: string): Observable<any> {
+		console.log(id)
+		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/' + id).map(
 			(Response) => {
 				return Response;
 			})

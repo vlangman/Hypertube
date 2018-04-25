@@ -149,6 +149,36 @@ const downloadSubtitles = (hash, imdb) => {
 	})
 }
 
+const downloadSubtitlesSeries = (hash, imdb) => {
+	return new Promise((resolve) => {
+		// console.log('haosudhasofgaosgf');
+		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
+			OpenSubtitles.search({ imdbid: imdb, season: '1', episode: '1', sublanguageid: 'all' }).then((subtitles) => {
+				console.log(subtitles)
+				if (!subtitles['fr'] && !subtitles['en']) {
+					throw 'no subtitles found';
+				}
+				if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
+					if (subtitles['en']) {
+						request(subtitles['en'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'eng' + '.vtt'));
+						console.log(subtitles['en'].url);
+					}
+				}
+
+				if (!fs.existsSync(moviesDir + hash + '/fre.vtt')) {
+					if (subtitles['fr']) {
+						request(subtitles['fr'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'fre' + '.vtt'));
+						console.log(subtitles['fr'].url);
+					}
+				}
+			}).catch(err => {
+				console.log(err)
+			});
+		}
+		resolve(moviesDir + hash)
+	})
+}
+
 const subtitlesFile = (hash, lang) => {
 	return new Promise((resolve) => {
 		console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
@@ -274,4 +304,5 @@ module.exports = {
 	downloadSeries,
 	subtitlesFile,
 	seriesFile,
+	downloadSubtitlesSeries,
 }
