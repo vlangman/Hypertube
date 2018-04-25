@@ -5,7 +5,8 @@ import { SHOWS } from "../models/shows.model";
 import { SeriesService } from "../services/series.service";
 import { Subscription } from "rxjs/Subscription";
 import { Router,ActivatedRoute } from "@angular/router";
-
+import { Observable } from "rxjs/Rx";
+import 'rxjs/add/operator/map';
 
 
 @Component({
@@ -21,17 +22,22 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	hoverSeries: number;
 	imbdSearch: boolean;
 	page: number = 1;
-	AllShows: SHOWS[] = [];
-	loadedShows: SHOWS[] = [];
-	showIndex: number = 0;
 	Shows = [];
+	viewShows: boolean = false;
+	loadedShows: string[] = [];
+	bufferArr: string[] = [];
+	detailsIndex: number = 0;
+	indexChar:string = ""; 
+	filter: string[] = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 
 	//subscriptions
 	getSeriesSub: Subscription;
 	NextPageSub: Subscription;
 	getImdbSub: Subscription;
 	routerParamsSub: Subscription;
-	getAllShows :Subscription;
+	getShows :Subscription;
+	detailsSub: Subscription;
+	routerUrlSub: Subscription;
 
 	constructor(
 		private seriesService: SeriesService,
@@ -41,32 +47,77 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	}
 
 
-
 	ngOnInit() {
 		console.log('Create Series Component');
 		window.scrollTo(0, 0);
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
 		
-		this.routerParamsSub = this.route.url.subscribe((url)=>{
+		this.routerUrlSub = this.route.url.subscribe((url)=>{
 			console.log(url);
 			if (url[1])
 			{
-				if(url[1]['path'])
-				{
-					console.log('getting all shows!!');
-					this.getAllShows = this.seriesService.getAllShows().subscribe(
-						(data) =>{
-							console.log(data)
-							this.loadShows(data);
-							this.loadNext();
-							this.seriesService.getShowInfo(this.loadedShows);
+				if (url[1]['parameters']['index']){
+					this.viewShows = true;
+					console.log('GETING INDEX');
+					this.indexChar = url[1]['parameters']['index'];
+					if (this.detailsSub)
+						this.detailsSub.unsubscribe();
+					this.detailsSub = new Subscription;
+					if (!this.loadedShows[0]){
+						this.seriesService.getShowList().subscribe(
+							(shows)=>{
+								this.loadedShows = shows['index'];
+								console.log('SUCCESS: loaded full show list');
+							},(err)=>{
+								console.log('ERROR: Cannot fetch show List');
+							},()=>{
+								this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
+								this.Shows = [];
+								this.loadShowDetails();
+								this.displayLoad = false;
+								this.detailsIndex = this.detailsIndex + 20;
+							}
+						)
+						
+					}
+					else{
+						if (this.detailsSub)
+							this.detailsSub.unsubscribe();
+						this.detailsSub = new Subscription;
+						this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
+						this.Shows = [];
+						this.loadShowDetails();
+						this.detailsIndex = this.detailsIndex + 20;
+						this.displayLoad = false;
+					}
+						
+				}
+				else {
+					console.log('Getting All shows');
+					if (this.detailsSub)
+						this.detailsSub.unsubscribe();
+					this.detailsSub = new Subscription;
+					this.seriesService.getShowList().subscribe(
+						(shows)=>{
+							this.loadedShows = shows['index'];
+							console.log(this.loadedShows);
+						},(err)=>{
+							console.log('cant get show list');
+						}, ()=>{
+							console.log('complete');
+							this.loadShowDetails();
+							this.detailsIndex = this.detailsIndex + 20;
+							this.viewShows = true;
 							this.displayLoad = false;
+
 						}
 					)
 				}
+
 			}
 			else{
+				this.viewShows = false;
 				this.getSeriesSub = this.seriesService.getSeries().subscribe(
 					(data) => {
 						this.Series = [];
@@ -76,21 +127,61 @@ export class SeriesComponent implements OnInit, OnDestroy {
 				)
 			}
 		})
+	}
 
-		
+		//use for show details !
+	// getShowInfo(shows){
+	// 	shows.forEach((show)=>{
+	// 		this.detailsSub.add(this.seriesService.getShowInfo(show).subscribe(
+	// 			(data)=>{
+	// 				console.log('GOT DATA');
+	// 				if (data['tmdb'] && !data['err']){
+	// 					this.Shows.push(data);
+	// 				}
+	// 			},(err) =>{
+	// 				console.log(err);
+	// 			}
+	// 		))
+	// 	})
+	// 	return this.detailsSub;
+	// }
+
+	//increment index by 20 where u call it
+	loadShowDetails(){
+		console.log('getting list')
+		var limit = this.detailsIndex + 20;
+		var added = 0;
+		for (var i = this.detailsIndex; this.loadedShows[i] && i < limit; i++) {
+			if (this.loadedShows[i]['show'][0] == this.indexChar || this.indexChar == "")
+			{
+				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i]).subscribe(
+					(data)=>{
+						console.log(data);
+						if (data['tmdb'] && !data['err']){
+							this.Shows.push(data);
+							console.log('push')
+						}
+					}
+				))
+			}
+		}
+	}
+
+	loadIndex(char){
+		if (this.loadedShows)
+		{
+			var newArr = [];
+			for (var i = 0; this.loadedShows[i]; i++) {
+				if (this.loadedShows[i]['show'][0] == char) {
+					return (i);
+				}
+			}
+		}
 
 	}
 
-	//autoloading function called when scrollbar near bottom of page
-	onScrollDown() {
-		if (!this.imbdSearch) {
-			this.loadMore = true;
-			this.NextPageSub = this.seriesService.getNextPage(this.page += 1).subscribe(
-				(data) => {
-					this.Series = data;
-					this.loadMore = false;
-				})
-		}
+	switchIndex(Char){
+		this.router.navigate(["Series/AllShows", { index: Char }]);
 	}
 
 	//conversion of the series bytes to readable size
@@ -119,60 +210,34 @@ export class SeriesComponent implements OnInit, OnDestroy {
 				this.Series = data;
 				this.displayLoad = false
 			})
-
 	}
-
-
 
 	viewSeries(id: number, hash: string, filename: string){
 		console.log('view series: ' + id)
 		this.router.navigate(["Series/Details", id, hash, filename]);
 	}
 	
-	loadNext(){
-		var newArr = [];
-		if (this.AllShows == [])
+	//autoloading function called when scrollbar near bottom of page
+	onScrollDown() {
+		if (!this.displayLoad && !this.loadMore)
 		{
-			console.log('ARRAY IS EMPTY!!');
-			// getAllShows again
-		}
-		else{
-			for(var _i = this.showIndex; _i < this.showIndex + 30 && this.AllShows[_i]; _i++)
+			if (!this.imbdSearch && !this.viewShows) {
+				this.loadMore = true;
+				this.NextPageSub = this.seriesService.getNextPage(this.page += 1).subscribe(
+					(data) => {
+						this.Series = data;
+						this.loadMore = false;
+					})
+			}
+			if (this.viewShows && !this.imbdSearch)
 			{
-				newArr.push(this.AllShows[_i]);
+				this.loadMore = true;
+				this.loadShowDetails();
+				this.detailsIndex = this.detailsIndex + 20;
+				
+				this.loadMore = false;
 			}
-			this.loadedShows = newArr;
-		}
-	}
-
-	loadShows(shows){
-		var newArr = [];
-		var id: number;
-		var name: string;
-		var slug: string;
-
-		shows.forEach((show)=>{
-			// console.log(show)
-			if (show["id"]) {
-				id = show["id"];
-			} else{
-				id = null;
-			}
-
-			if (show["show"]) {
-				name = show["show"];
-			} else{
-				name = null;
-			}
-
-			if (show["slug"]) {
-				slug = show["slug"];
-			} else{
-				slug = null;
-			}
-			console.log('COUNT')
-			this.AllShows.push(new SHOWS(id, name, slug));
-		})
+		}		
 	}
 
 	ngOnDestroy(){ 
