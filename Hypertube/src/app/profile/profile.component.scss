@@ -1,15 +1,23 @@
 .profile-wrap {
+	padding: 10px;
+	margin-top: 20px;
 	display: flex;
 	flex-wrap: wrap;
 	width: 100%;
 	height: 100%;
 	/*justify-content: center;*/
-	background-color: white;
+	
 	color: black;
-	justify-content: space-around;
+	/*justify-content: space-around;*/
 }
-
+.register-buttons{
+	margin-top: 8px;
+}
+.nav{
+	background-color: #2e2e2e;
+}
 .profile-card{
+	margin-bottom: 10px;
 	margin-right: 5px;
 	height: 100%;
 	width: fit-content;
@@ -23,9 +31,11 @@
 }
 .register-form{
 	flex-shrink: 1;
-	color:black;
+	color:white;
+	background-color: rgba(1, 10, 25, 0.2);
 	/*border: 1px solid yellow;*/
 }
+
 .edit-profile{
 	padding: 10px;
 	display: flex;
@@ -75,14 +85,12 @@ progress::-webkit-progress-value {
 	color: grey;
 	font-size: 18px;
 }
-
+#search{
+	width: 100%;
+}
 .profile-card{
 	height: fit-content;
 }
-.register-buttons{
-	margin-top: auto;
-}
-
 .exampleModal {
 	display: block;
 	opacity: 1;
@@ -144,4 +152,11 @@ progress::-webkit-progress-value {
   75% {
     opacity: 0;
   }
+}
+
+@media (max-width: 1400px) {
+
+	.profile-wrap{
+		justify-content: center;
+	}
 }
