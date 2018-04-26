@@ -178,6 +178,8 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		this.movieService.getFilter(option).subscribe((filter) => {
 			this.Movies = filter;
 			this.movieType = 'Filtered by ' + option;
+			console.log(this.selectedGenre)
+			this.router.navigate(["Movies/Genre/" + this.selectedGenre, { Filter: option }]);
 		}, (err) => {
 			this.movieError = err['message'];
 			console.log(this.movieError);
