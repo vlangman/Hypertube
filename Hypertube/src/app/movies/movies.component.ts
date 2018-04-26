@@ -38,7 +38,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 	getNextMoviePageSub: Subscription;
 	routerSub: Subscription;
 
-
 	constructor(
 		private movieService: MovieService,
 		private route: ActivatedRoute,
@@ -129,7 +128,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		}
 	}
 
-
 	//autoloading function called when scrollbar near bottom of page
 	onScrollDown() {
 		if (!this.selectedGenre && !this.searchMode && !this.displayLoad) {
@@ -167,19 +165,10 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	onScrollUp() {
-		// console.log('scrolled up!!')
-		//don't delete it is need VAUGHAN
-	}
-
 	viewMovie(id: number) {
 		this.router.navigate(["Movies/Details", id]);
 	}
 
-	//adding the movie to the db for the user
-	// addMovieToUser(moviepic, movieTitle) {
-
-	// }
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
 	}

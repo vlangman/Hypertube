@@ -1,8 +1,14 @@
-<h1>Featured Series</h1>
-<p>
-	<kbd>Hover</kbd> on any series to view more details.</p>
+<h1 *ngIf="!viewShows ">Featured Series</h1>
+<h1 *ngIf="viewShows ">All Shows</h1>
+<p><kbd>Hover</kbd> on any series to view more details.</p>
+
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
+</div>
+
+<div *ngIf="!displayLoad && viewShows " class="show-sort">
+
+	<div [ngClass]="  indexChar == char ? 'active-index': '' " (click)="switchIndex(char)" class="show-filter" *ngFor="let char of filter">{{char}}</div>
 </div>
 
 <div *ngIf="!displayLoad" class="mainForm">
@@ -31,6 +37,34 @@
 		</div>
 	</div>
 </div>
+ 
+<div *ngIf="!displayLoad && viewShows " class="show-mainForm">
+	<div *ngFor="let show of Shows" class="show-card" id="{{show.id}}" (mouseover)="showContent(show.id)" (mouseleave)="showContent()">
+		<div>
+			<img *ngIf=" show.tmdb['poster_path'] != null " class="show-image" src="{{ 'https://image.tmdb.org/t/p/w400_and_h600_bestv2' + show.tmdb['poster_path'] }}">
+			<img class="show-image"  *ngIf=" show.tmdb['poster_path'] == null " src="../../assets/no-thumbnail.png">
+		</div>
+		
+		<div class="show-overlay">
+			<div class="show-header show-header">
+				<span class="author">Director</span>
+				<h1 class="lead show-title">
+					<a>{{ show.show }}</a>
+				</h1>
+				<span class="year"> Language: {{show.tmdb.original_language}}</span>
+				<br>
+				<hr style="background: white;" />
+			</div>
+			<div class="show-content">
+				<p [ngClass]=" (hoverSeries == show.id) ? 'show-summary-show': 'show-summary-hide'" class="show-summary">{{ show.tmdb.overview | ellipsis:350 }}</p>
+			</div>
+			<div class="show-footer">
+				<button class="btn btn-outline-primary" (click)="viewShow(show)">Watch Now!</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div *ngIf="loadMore" class="loading-container">
 	<div class="loading"></div>
 </div>

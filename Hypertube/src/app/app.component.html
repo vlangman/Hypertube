@@ -24,7 +24,7 @@
 
 
 				<ul [ngClass]=" movieToggle ? '' : 'submenu-closed' " class="list-unstyled movie-submenu">
-					<li routerLinkActive="movie-submenu-item-active" routerLink="/Movies" [routerLinkActiveOptions]="{exact: true}" class="movie-submenu-item">
+					<li routerLinkActive=" bg-primary" routerLink="/Movies" [routerLinkActiveOptions]="{exact: true}" class="movie-submenu-item">
 						<a>Featured Movies</a>
 					</li>
 
@@ -34,7 +34,7 @@
 							<i class="fas fa-caret-down"></i>
 						</a>
 						<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
-							<li routerLinkActive="genreActive" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
+							<li routerLinkActive="bg-primary" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
 						</ul>
 					</li>
 				</ul>
@@ -46,7 +46,7 @@
 
 					<i class="fas fa-caret-down"></i>
 				</a>
-				<ul [ngClass]=" seriesToggle ? '' : 'submenu-closed' " class="list-unstyled series-submenu">
+				<ul [ngClass]=" seriesToggle ? '' : 'submenu-closed' " class="list-unstyled  series-submenu">
 					<li class="series-submenu-item">
 						<a routerLink="/Series" routerLinkActive="series-submenu-item-active" [routerLinkActiveOptions]="{exact: true}" class="series-submenu-item">Featured Series</a>
 					</li>

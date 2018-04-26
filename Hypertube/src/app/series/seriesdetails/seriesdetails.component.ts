@@ -12,7 +12,7 @@ import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TMDB } from "../../models/tmdb.model";
-
+import { parseMagnet } from 'parse-magnet-uri';
 
 
 export interface SeriesComment {
@@ -48,7 +48,9 @@ export class SeriesdetailsComponent implements OnInit {
 	Details: TMDB;
 	hash: string;
 	filename: string;
-
+	episodesList: string[] = [];
+	showdetails: boolean = false;
+	seasonToggle:number;
 
 	constructor(
 		private seriesservice: SeriesService,
@@ -64,27 +66,84 @@ export class SeriesdetailsComponent implements OnInit {
 	ngOnInit() {
 		this.route.params.subscribe(
 			(params) => {
-				const id = params['series_id'];
-				this.hash = params['series_hash'];
-				this.filename = params['filename'];
-
-				console.log('getting details for: ' + id);
-				this.seriesId = id;
-				this.displayLoad = true;
-
-				this.seriesservice.findSeriesimdb(id).subscribe(
-					(ret) => {
-						this.loadDetailsSeries(ret);
-						this.displayLoad = false;
-					}, (Error) => {
-						console.log(Error);
+				console.log(params);
+				if (params['show'] && params['slug'])
+				{
+					var show = {
+						id: params['id'],
+						show: params['show'],
+						slug: params['slug'],
 					}
-				)
-
+					this.seriesservice.getShow(show).subscribe(
+						(data)=>{
+							if (data['tmdb'] && !data['err']){
+								this.showdetails = true;
+								console.log(data);
+								console.log('pushed reply');
+								
+								this.episodesList = Object.keys(data['episodes']).map(function(seasonsIndex){
+							    	data['episodes'][seasonsIndex] = Object.keys(data['episodes'][seasonsIndex]).map(
+							    	(episodeIndex)=>{
+							    		data['episodes'][seasonsIndex][episodeIndex] = Object.keys(data['episodes'][seasonsIndex][episodeIndex]).map(
+							    		(qualityIndex) =>{
+							    			data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['quality'] = qualityIndex;
+							    			data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['torrent']  =  parseMagnet(data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['url'])
+							    			let quality = data['episodes'][seasonsIndex][episodeIndex][qualityIndex];
+							    			return quality;
+							    		})
+							    		let episodes = data['episodes'][seasonsIndex][episodeIndex];
+							    		return episodes;
+							    	})
+								    let seasons = data['episodes'][seasonsIndex];
+								    return seasons;
+								});
+								console.log('EPISODEDS');
+								console.log(this.episodesList)
+								this.loadDetailsSeries(data['tmdb']);
+								this.displayLoad = false;
+							}
+							else{
+								console.log('Bad Reply');
+							}
+							
+						},(Error) => {
+							console.log(Error);
+						}
+					)
+				}
+				else{
+					const id = params['series_id'];
+					this.hash = params['series_hash'];
+					this.filename = params['filename'];
+				
+					console.log('getting details for: ' + id);
+					this.seriesId = id;
+					this.displayLoad = true;
+			
+					this.seriesservice.findSeriesimdb(id).subscribe(
+						(ret) => {
+							this.loadDetailsSeries(ret['tv_results'][0]);
+							this.displayLoad = false;
+						},(Error) => {
+							console.log(Error);
+						}
+					)
+				}
 			})
 
 	}
 
+
+	toggleSeason(season){
+		console.log('open season ' + season);
+		if (this.seasonToggle == season)
+		{
+			this.seasonToggle = -1;
+		}
+		else
+			this.seasonToggle = season;
+
+	}
 
 
 	loadComments() {
@@ -169,6 +228,7 @@ export class SeriesdetailsComponent implements OnInit {
 
 	// 1
 	downloadSeries() {
+		console.log(this.Series)
 		this.torrentService.downloadSeries(this.hash, this.filename, this.seriesId).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
@@ -208,55 +268,52 @@ export class SeriesdetailsComponent implements OnInit {
 	}
 
 
-	loadDetailsSeries(res) {
+	
+	loadDetailsSeries(tv_res){
 		console.log('LOADING DATA')
-		console.log(res);
-		var tv_res = res['tv_results'][0];
-		console.log(tv_res)
 		console.log(tv_res['name']);
 
+			var TVposter: string;
+			var TVvotes: number;
+			var TVid: number;
+			var TVbackdrop: string;
+			var TVvote_average: number;
+			var TVorigin: string[];
+			var TVoriginal_lang: string;
+			var TVname: string;
+			var TVtv_episodes: string[];
+			var TVoverview: string;
+			var TVairdate: string;
 
-		var TVposter: string;
-		var TVvotes: number;
-		var TVid: number;
-		var TVbackdrop: string;
-		var TVvote_average: number;
-		var TVorigin: string[];
-		var TVoriginal_lang: string;
-		var TVname: string;
-		var TVtv_episodes: string[];
-		var TVoverview: string;
-		var TVairdate: string;
-
-		TVposter = "https://image.tmdb.org/t/p/w400_and_h600_bestv2" + tv_res['poster_path'];
-		TVvotes = tv_res['vote_count'];
-		TVid = tv_res['id'];
-		TVbackdrop = "https://image.tmdb.org/t/p/original" + tv_res['backdrop_path'];
-		TVvote_average = tv_res['vote_average'];
-		TVorigin = tv_res['origin_country'];
-		TVoriginal_lang = tv_res['original_language'];
-		TVname = tv_res['name'];
-		TVtv_episodes = tv_res['tv_episodes'];
-		TVoverview = tv_res['overview'];
-		TVairdate = tv_res['first_air_date']
-
+			TVposter = "https://image.tmdb.org/t/p/w400_and_h600_bestv2"+  tv_res['poster_path'];
+			TVvotes = tv_res['vote_count'];
+			TVid = tv_res['id'];
+			TVbackdrop = "https://image.tmdb.org/t/p/original" + tv_res['backdrop_path'];
+			TVvote_average = tv_res['vote_average'];
+			TVorigin = tv_res['origin_country'];
+			TVoriginal_lang = tv_res['original_language'];
+			TVname = tv_res['name'];
+			TVtv_episodes = tv_res['tv_episodes'];
+			TVoverview = tv_res['overview'];
+			TVairdate = tv_res['first_air_date']
 
 
-		var tv_results = [];
-		tv_results.push({
-			poster: TVposter,
-			votes: TVvotes,
-			id: TVid,
-			backdrop: TVbackdrop,
-			rating: TVvote_average,
-			origin: TVorigin,
-			original_lang: TVoriginal_lang,
-			name: TVname,
-			overview: TVoverview,
-			airdate: TVairdate
-		})
-		this.Details = new TMDB([], [], tv_results, [], []);
-		console.log(this.Details);
+
+			var tv_results = [];
+			tv_results.push({
+				poster: TVposter, 
+				votes: TVvotes,
+				id: TVid,
+				backdrop: TVbackdrop,
+				rating: TVvote_average,
+				origin: TVorigin,
+				original_lang :TVoriginal_lang,
+				name: TVname,
+				overview: TVoverview,
+				airdate: TVairdate
+			})
+			this.Details = new TMDB([], [], tv_results, [], []);
+			console.log(this.Details);
 	}
 
 }

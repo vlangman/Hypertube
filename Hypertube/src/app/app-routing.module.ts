@@ -22,6 +22,7 @@ const appRoutes: Routes = [
 	{ path: 'Movies/Details/:movie_id', pathMatch: 'full', component: MoviedetailsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Series', pathMatch: "full", component: SeriesComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Series/AllShows', pathMatch: "full", component: SeriesComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+	{ path: 'Series/Details/Show/:id/:show/:slug', pathMatch: "full", component: SeriesdetailsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Series/Details/:series_id/:series_hash/:filename', pathMatch: 'full', component: SeriesdetailsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Profile', pathMatch: "full", component: ProfileComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
 	{ path: 'Login', pathMatch: "full", component: LoginComponent },

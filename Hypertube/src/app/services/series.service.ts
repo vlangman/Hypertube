@@ -45,45 +45,36 @@ export class SeriesService {
 		)
 	}
 
-
-	findSeriesimdb(imdb: number): Observable<any> {
-		return this.http.get(this.api + 'series/get/detail/' + imdb).map(
-			(res) => {
-				console.log('FINDSERIESIMDB returns ====================================');
-				console.log(res);
-				return (res)
-			})
-
-	}
-
-	getAllShows(): Observable<any> {
-		return this.http.get(this.api + 'series/get/all').map(
-			(res) => {
+	// getIndex(index){
+	// 	return this.http.get(this.api + 'show/get/index/' + index).map(
+	// 		(res)=>{
+	// 			return(res['index']);
+	// 	})
+	// }
+	getShowList():Observable<any>{
+		return this.http.get(this.api + 'show/get/list').map(
+			(res)=>{
 				return (res);
 			}
 		)
 	}
 
-	getShowInfo(shows) {
-		console.log(shows);
-		var newArr = [];
-		shows.forEach((show) => {
-			console.log(show);
-			this.getShow(show).subscribe(
-				(res) => {
-					newArr.push(res);
-				}
-			)
-		})
-		console.log(newArr);
+	getShow(Show):Observable<any>
+	{
+		return this.http.get(this.api + 'show/get/details/' + Show.id + '/' + Show.show +'/'+Show.slug).map(
+			(res)=>{
+				return(res);
+			}
+		);
 	}
 
-	getShow(show) {
-		return this.http.get(this.api + 'series/get/show/' + show['id'] + '/' + show['show'] + '/' + show['slug']).map(
-			(res) => {
-				return (res);
-			}
-		)
+	findSeriesimdb(imdb: number): Observable<any>{
+			return this.http.get(this.api + 'series/get/detail/' + imdb).map(
+				(res)=>{
+					console.log('FINDSERIESIMDB returns ====================================');
+					console.log(res);
+					return(res)
+			})	
 	}
 
 	loadSeries(res) {

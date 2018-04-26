@@ -53,7 +53,6 @@ router.get('/api/movie/get/:hash/:imdb', (req, res) => {
 		//downloading subtitles
 		.then(
 			(resolve) => {
-				// console.log('MOVIEFILE RESOLVE!')
 				console.log(resolve);
 				torrent.downloadSubtitles(downloadHash, req.params.imdb);
 
@@ -79,6 +78,21 @@ router.get('/api/movie/get/:hash/:imdb', (req, res) => {
 				res.json(obj);
 			})
 })
+
+router.get('/api/movie/get/cast/:name', (req, res)=>{
+	const name = req.params.name;
+
+	seriesTorrent.getCast().then(
+		(details)=>{
+			res.json({details})
+		}
+	).catch((err)=>{
+		console.log('FAILED: Cant fetch actor details: ' + name);
+		res.json(err);
+	})
+
+})
+
 router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
 	console.log('==========================================================================CHECK Subtitles===================================================================================');
 	const movieHash = req.params.hash;
@@ -158,9 +172,9 @@ router.get('/api/movie/check/:hash', (req, res) => {
 		})
 })
 
+
 router.get('/api/movie/watch/:hash', (req, res) => {
 	console.log('==========================================================================WATCH MOVIE===================================================================================')
-
 
 	const hash = req.params.hash;
 	//5 attemps to check for file
@@ -418,33 +432,65 @@ router.get('/api/series/get/:page/:limit', (req, res) => {
 	)
 })
 
-router.get('/api/series/get/all', (req, res) => {
-
-	console.log('getting all shows');
-	seriesTorrent.getAllShows().then(
-		(resolve) => {
-			res.json(resolve);
-		}
-	)
-})
-
-router.get('/api/series/get/show/:id/:show/:slug', (req, res) => {
+router.get('/api/show/get/details/:id/:show/:slug', (req, res)=>{
 	console.log('getting show');
-	const id = req.params.id;
-	const show = req.params.show;
-	const slug = req.params.slug;
-
-	var arr = {
-		id: id,
-		show: show,
-		slug: slug
+	var err = null;
+	try {
+		decodeURIComponent(req.path);
 	}
-	seriesTorrent.getShowData(arr).then(
-		(resolve) => {
-			res.json(resolve);
+	catch(e) {
+		console.log(e)
+		err = e;
+	}
+
+	if (!err)
+	{
+		const id = req.params.id;
+		const show = req.params.show;
+		const slug = req.params.slug;
+
+		var arr = {
+			id: id,
+			show: show,
+			slug: slug
 		}
-	)
+		var ret;
+		seriesTorrent.getShowData(arr).then(
+			(resolve) =>{
+				if (resolve['imdb']){
+					ret = resolve;
+					return (seriesTorrent.getDetails(resolve['imdb'].slice(2, 9)))
+				}
+				else{
+					return new Error('Failed to get imdb reference');
+				}
+			}
+		)
+		//getting images
+		.then(
+			(data) =>{
+				ret['tmdb'] = data['tv_results'][0];
+				// ret['episodes'] = episodes;
+				res.json(ret);
+			}
+			
+		).catch((err)=>{
+			res.json(err);
+		})
+	}
+	else
+		res.json({error: err})
 })
+
+
+router.get('/api/show/get/list', (req, res)=>{
+	console.log('Fetching show list');
+	seriesTorrent.getAllShows().then((list)=>{
+		res.json({"index":list});
+	})
+})
+
+
 
 router.get('/api/series/search/:query', (req, res) => {
 	console.log('Searching for a Series')

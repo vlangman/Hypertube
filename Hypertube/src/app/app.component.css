@@ -1,4 +1,9 @@
 
+
+
+
+
+
 .genreActive{
   background-color: rgba(255, 255, 255, 0.5);
 	color: white;
@@ -21,10 +26,7 @@
 /*.movie-submenu-item{
   border-bottom: 0.75px solid rgba(50, 115, 219, 0.3);
 }*/
- 
-.movie-submenu-item:hover{
-  background-color: rgba(255, 255, 255, 0.5);
-}
+
 .movie-submenu-item-active{
   background-color: rgba(50, 115, 219, 0.5);
 }
@@ -107,7 +109,8 @@
 
 #page-content-wrapper {
   width: 100%;
-  position: absolute;
+  /*position: absolute;*/
+  max-height: 100vh;
   padding: 15px;
 }
 
@@ -154,8 +157,11 @@
   background: rgba(255, 255, 255, 0.35);
 }
 .active{
-  background-color: rgba(50, 115, 219, 0.8); /* For browsers that do not support gradients */
-  background: linear-gradient(to right, rgba(50, 115, 219, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
+
+  /*bg-primary: (0, 123, 255)*/
+
+  background-color: rgba(0, 123, 255, 0.8); /* For browsers that do not support gradients */
+  background: linear-gradient(to right, rgba(0, 123, 255, 0.8) , #2e2e2e); /* Standard syntax (must be last) */
   border-bottom: 1px solid cornflowerblue;
 }
 .seriesActive{

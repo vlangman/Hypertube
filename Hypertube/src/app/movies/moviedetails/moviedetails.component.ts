@@ -11,6 +11,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subscription } from "rxjs/Subscription";
 
 
 
@@ -52,6 +53,10 @@ export class MoviedetailsComponent implements OnInit {
 	movieTitle: string;
 	subtitlesStreameng: string;
 	subtitlesStreamfre: string;
+	imageref: string[] = [];
+	selectedCover: string = null;
+
+	getCastSub: Subscription;
 
 	constructor(
 		private movieservice: MovieService,
@@ -67,6 +72,8 @@ export class MoviedetailsComponent implements OnInit {
 	ngOnInit() {
 		this.route.params.subscribe(
 			(params) => {
+				if (this.getCastSub)
+					this.getCastSub.unsubscribe();
 				const id = params['movie_id'];
 				this.movieId = id;
 				this.displayLoad = true;
@@ -75,12 +82,12 @@ export class MoviedetailsComponent implements OnInit {
 						this.loadMovie(ret);
 						this.movieTitle = this.Movie.title;
 						this.moviePic = this.Movie.image;
-						console.log(this.Movie.torrents);
 						this.displayLoad = false;
 					}, (Error) => {
 						console.log(Error);
 					}
 				)
+				
 			})
 	}
 
@@ -237,6 +244,9 @@ export class MoviedetailsComponent implements OnInit {
 
 	}
 
+	selectCover(cover){
+		this.selectedCover = cover;
+	}
 	loadMovie(data) {
 		var id: number;
 		var title: string;
@@ -308,6 +318,19 @@ export class MoviedetailsComponent implements OnInit {
 			cast = data['cast'];
 		else
 			cast = [];
+
+		//getting large cover images
+		if (data['large_screenshot_image1'])
+		{
+			this.imageref.push(data['large_screenshot_image1'])
+			this.selectedCover = this.imageref[0];
+		}
+		if (data['large_screenshot_image2'])
+			this.imageref.push(data['large_screenshot_image2'])
+		if(data['large_screenshot_image3'])
+			this.imageref.push(data['large_screenshot_image3'])
+
+		
 
 		if (data['yt_trailer_code'])
 			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);

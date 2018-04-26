@@ -2,9 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { TORRENT } from '../models/torrent.model';
 import { HttpClient } from '@angular/common/http';
-// import { FilesService } from '../services/files.service';
-import * as WebTorrent from 'webtorrent-hybrid';
-
 import { MOVIES } from "../models/movies.model";
 
 @Injectable()
@@ -12,7 +9,6 @@ export class TorrentService {
 
 	video: any;
 	torrent: any;
-	client = new WebTorrent();
 	download: boolean = false;
 	Magnet: string = null;
 	api: string = 'http://localhost:3000/api/';
@@ -20,16 +16,21 @@ export class TorrentService {
 	constructor(
 		private http: HttpClient,
 	) {
-		if (WebTorrent.WEBRTC_SUPPORT) {
-			console.log('WEBRTC SUPPORTED!');
-		} else {
-			console.log('WEBRTC NOT SUPPORTED!');
-		}
+		
 	}
 
-
-	getSpeed() {
-		return this.client.downloadSpeed;
+	getCast(actor): Observable<any>{
+		if (actor['name'])
+		{
+			return this.http.get(this.api + 'movie/get/cast/' + actor['name']).map(
+				(details) =>{
+					return (details);
+				}
+			)
+		}
+		else{
+			throw new Error('no name');
+		}
 	}
 
 	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {

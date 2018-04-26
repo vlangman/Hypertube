@@ -140,7 +140,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.searchButton = false;
 			this.editEmailButton = false;
 			this.editButton = false;
-			this.displayProfile = true;
+			this.displayProfile = false;
 		}
 		this.getMoviesWatched(this.userid)
 	}
@@ -164,7 +164,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.editEmailButton = true;
 			this.editButton = false;
 			this.searchButton = false;
-			this.displayProfile = true;
+			this.displayProfile = false;
 		} else {
 			this.editEmailButton = false;
 		}

@@ -6,7 +6,7 @@
 <!-- new alert -->
 
 
-<ul *ngIf="!displayLoad" class="nav nav-tabs" id="myTab" role="tablist">
+<ul *ngIf="!displayLoad" class="nav nav-pills nav-justified" id="myTab" role="tablist">
 	<li class="nav-item">
 		<a href="#profile" class="nav-link " id="profile-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="profile"
 		 aria-selected="true" (click)="editProfile()">Edit Profile</a>
@@ -89,10 +89,6 @@
 				</div>
 				<div *ngIf="snapshot | async as snap">
 					{{ snap.bytesTransferred | fileSize }} of {{ snap.totalBytes | fileSize }}
-
-					<!-- <button (click)="task.pause()" class="btn btn-outline-warning api-button" [disabled]="!isActive(snap)">Pause</button>
-					<button (click)="task.cancel()" class="btn btn-danger" [disabled]="!isActive(snap)">Cancel</button>
-					<button (click)="task.resume()" class="btn btn-success" [disabled]="!(snap?.state === 'paused')">Resume</button> -->
 				</div>
 				<div class="register-buttons form-group">
 					<button class="btn btn-outline-success" type="Submit" [disabled]="!form.valid">Update</button>
@@ -127,7 +123,7 @@
 					<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
 				</div>
 			</div>
-			<form #searchform="ngForm" (ngSubmit)="onSearchProfile(searchform)" class="register-form">
+			<form #searchform="ngForm" (ngSubmit)="onSearchProfile(searchform)" class="search-form">
 				<h3>search:</h3>
 				<input type="search" class="form-control" name="search" ngModel required #search="ngModel">
 				<div class="register-buttons form-group">

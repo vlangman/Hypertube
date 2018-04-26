@@ -39,8 +39,8 @@
 					<div class="cast-wrap">
 						<div *ngFor="let cast of Movie.cast" class="card cast-card">
 							<div class="cast">
-								<img class="cast-image img-thumbnail" *ngIf="cast.url_small_image" src="{{cast.url_small_image}}">
-								<img class="cast-image img-thumbnail" *ngIf="!cast.url_small_image" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png">
+								<img class="cast-image" *ngIf="cast.url_small_image" src="{{cast.url_small_image}}">
+								<img class="cast-image" *ngIf="!cast.url_small_image" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png">
 								<p class="cast-name"> {{ cast.name }} </p>
 							</div>
 						</div>
@@ -49,61 +49,7 @@
 
 
 
-				<!-- comments section -->
-				<div>
-					<h2>Comments</h2>
 
-					<button (click)="loadComments()" class="btn btn-success">Load Comments</button>
-					<div *ngIf="!commentsFound">
-						<h3>Be the first to comment on this movie</h3>
-					</div>
-
-
-					<div *ngFor="let comments of loadedCommentsdb | async" style="border: 2px solid rgb(78, 71, 71);">
-						<br>
-						<ul style="list-style-type: none;">
-							<li>
-								<div class="l-media">
-									<div class="l-media__figure">
-										<div class="comment-profile-pic">
-											<img *ngIf="comments.Photo" src='{{comments.Photo}}' style="width: 48px;
-											height: 48px;" align="left">
-											<img *ngIf="!comments.Photo" src="../../assets/no-thumbnail.png" style="width: 48px;
-											height: 48px;" align="left">
-
-											<h1 class="comment-user-name">
-												{{comments.userName}}
-											</h1>
-
-										</div>
-									</div>
-									<div class="l-media__body">
-
-										<h5>{{comments.Dateadded}}</h5>
-										<div class="vjs-comment-list">
-											<p>{{comments.Comments}}</p>
-										</div>
-									</div>
-								</div>
-							</li>
-						</ul>
-					</div>
-
-
-					<button (click)="addCommentButton()" class="btn btn-dark">Add A Comment</button>
-					<div *ngIf="editButton">
-						<form #commentform="ngForm" (ngSubmit)="addComments(commentform)" class="login-form">
-							<div class="form-group">
-								<h3>Add A Comment:</h3>
-								<input type="text" id="comment" class="form-control" ngModel name="comment" required minlength="3" maxlength="300" comment
-								 #comment="ngModel">
-								<span class="help-block" *ngIf="!comment.valid && comment.touched">Please enter a comment to submit between 3 and 300 characters</span>
-							</div>
-							<button class="btn btn-outline-success" [disabled]="!commentform.valid">Submit Comment</button>
-						</form>
-					</div>
-
-				</div>
 
 			</div>
 
@@ -141,4 +87,53 @@
 			</vg-controls>
 
 		</vg-player>
+
+		<div class="bottom-details">
+
+			<!-- comments section -->
+			<div class="comment-section">
+				<h2>Comments</h2>
+
+				<button (click)="loadComments()" class="btn btn-success">Load Comments</button>
+				<div *ngIf="!commentsFound">
+					<h3>Be the first to comment on this movie</h3>
+				</div>
+
+				<button (click)="addCommentButton()" class="btn btn-dark">Add A Comment</button>
+				<div *ngIf="editButton">
+					<form #commentform="ngForm" (ngSubmit)="addComments(commentform)" class="comment-form">
+						<div class="form-group">
+							<h3>Add A Comment:</h3>
+							<input type="text" id="comment" class="form-control" ngModel name="comment" required minlength="3" maxlength="300" comment
+							 #comment="ngModel">
+							<span class="help-block" *ngIf="!comment.valid && comment.touched">Please enter a comment to submit between 3 and 300 characters</span>
+						</div>
+						<button class="btn btn-outline-success" [disabled]="!commentform.valid">Submit Comment</button>
+					</form>
+				</div>
+
+				<div *ngFor="let comments of loadedCommentsdb | async" class="comment">
+					<img *ngIf="comments.Photo" src='{{comments.Photo}}' class="comment-image">
+					<img *ngIf="!comments.Photo" class="comment-image" src="../../assets/no-thumbnail.png">
+					<div class="alert alert-dark comment-body bg-dark" role="alert">
+						<p>{{comments.Comments}}</p>
+						<hr>
+						<small class="mb-0 text-muted">{{comments.userName}} - {{comments.Dateadded}}</small>
+					</div>
+				</div>
+			</div>
+			<!-- //end of comments -->
+
+			<div class="cover-container">
+				<div>
+					<img class="cover-image" [src]=" selectedCover ">
+				</div>
+				<div class="cover-selector-container">
+					<div [ngClass]=" selectedCover == cover ? 'active-cover' : ''" class="cover" (click)="selectCover(cover)" *ngFor="let cover of imageref">
+						<img class="cover-tiny img-responsive" [src]=" cover ">
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+</div>
