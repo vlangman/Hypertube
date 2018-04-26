@@ -24,17 +24,17 @@
 
 
 				<ul [ngClass]=" movieToggle ? '' : 'submenu-closed' " class="list-unstyled movie-submenu">
-					<li routerLinkActive="movie-submenu-item-active" routerLink="/Movies" [routerLinkActiveOptions]="{exact: true}" class="movie-submenu-item">
+					<li routerLinkActive=" bg-primary" routerLink="/Movies" [routerLinkActiveOptions]="{exact: true}" class="movie-submenu-item">
 						<a>Featured Movies</a>
 					</li>
-					
+
 					<li>
 						<a class="movie-submenu-item" [ngClass]=" genreToggle ? 'genreSubmenuToggle' : '' " (click)="toggleGenreDropdown()">
-							Genres 
+							Genres
 							<i class="fas fa-caret-down"></i>
 						</a>
 						<ul [ngClass]=" genreToggle ? '': 'submenu-closed'" class="list-unstyled submenu">
-							<li routerLinkActive="genreActive" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
+							<li routerLinkActive="bg-primary" [routerLink]="['Movies', 'Genre', genre]" class="genre" *ngFor="let genre of genres">{{genre}}</li>
 						</ul>
 					</li>
 				</ul>
@@ -46,7 +46,7 @@
 
 					<i class="fas fa-caret-down"></i>
 				</a>
-				<ul [ngClass]=" seriesToggle ? '' : 'submenu-closed' "  class="list-unstyled series-submenu">
+				<ul [ngClass]=" seriesToggle ? '' : 'submenu-closed' " class="list-unstyled  series-submenu">
 					<li class="series-submenu-item">
 						<a routerLink="/Series" routerLinkActive="series-submenu-item-active" [routerLinkActiveOptions]="{exact: true}" class="series-submenu-item">Featured Series</a>
 					</li>
@@ -56,18 +56,15 @@
 					</li>
 				</ul>
 			</li>
-		
-		
-
 			<hr style="background-color: white; width: 90%">
-				<li>
-					<a class="sidebar-navbutton" (click)="toggleLanguageDrop()">Change Language</a>
-					<ul [ngClass]=" languageToggle ? '': 'submenu-closed'" class="list-unstyled submenu ">
-						<li class="movie-submenu-item" (click)="languageIs('fr')">French</li>
-						<li  class="movie-submenu-item" (click)="languageIs('en')">English</li>
-					</ul>
-				</li>
-			
+			<li>
+				<a class="sidebar-navbutton" (click)="toggleLanguageDrop()">Change Language</a>
+				<ul [ngClass]=" languageToggle ? '': 'submenu-closed'" class="list-unstyled submenu ">
+					<li class="movie-submenu-item" (click)="languageIs('fr')">French</li>
+					<li class="movie-submenu-item" (click)="languageIs('en')">English</li>
+				</ul>
+			</li>
+
 			<ng-template [ngIf]="!authService.isLoggedIn()">
 				<li class="user-login">
 					<button class="btn btn-outline-warning" routerLink="/Login">Login</button>

@@ -1,4 +1,4 @@
-import { SafeResourceUrl  } from '@angular/platform-browser';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
 export class MOVIES {
 
@@ -14,22 +14,24 @@ export class MOVIES {
 	public trailer: SafeResourceUrl;
 	public cast = [];
 	public magnet: string;
+	public imdb_code: string;
 
 
 	constructor(
-			movieId: number, 
-			movieTitle: string,
-			movieSummary: string,
-			movieImage: string,
-			movieBackroundImage: string,
-			movieRating: number,
-			movieYear: number,
-			movieGenres: string[],
-			movieTorrents: string[],
-			movieYoutube: SafeResourceUrl,
-			movieCast,
-			magnet: string
-		) {
+		movieId: number,
+		movieTitle: string,
+		movieSummary: string,
+		movieImage: string,
+		movieBackroundImage: string,
+		movieRating: number,
+		movieYear: number,
+		movieGenres: string[],
+		movieTorrents: string[],
+		movieYoutube: SafeResourceUrl,
+		movieCast,
+		magnet: string,
+		imdb_code: string
+	) {
 
 		this.id = movieId;
 		this.title = movieTitle;
@@ -43,5 +45,6 @@ export class MOVIES {
 		this.trailer = movieYoutube;
 		this.cast = movieCast;
 		this.magnet = magnet;
+		this.imdb_code = imdb_code;
 	}
 }

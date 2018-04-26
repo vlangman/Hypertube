@@ -1,12 +1,24 @@
-<h1>{{movieType}} Movies</h1>
-<p>
-	<kbd>Hover</kbd> on any movie to view more details.</p>
-<p>{{message}}</p>
+<div style="display: flex; flex-direction: column">
+	<h1>{{movieType}} Movies List</h1>
+	<p style="flex-wrap: wrap">
+		<kbd>Hover</kbd> on any movie to view more details.</p>
+	<p>{{message}}</p>
+	<button type="button" class="btn btn-outline-info btn-lg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		Filter</button>
+	<div class="dropdown-menu filterDrop" aria-labelledby="btnGroupDrop1">
+		<a class="dropdown-items" (click)="onFilter('title')">title</a>
+		<a class="dropdown-items" (click)="onFilter('year')">year</a>
+		<a class="dropdown-items" (click)="onFilter('rating')">rating</a>
+		<a class="dropdown-items" (click)="onFilter('download_count')">download_count</a>
+		<a class="dropdown-items" (click)="onFilter('like_count')">like_count</a>
+	</div>
+</div>
 <div *ngIf="movieError" class="Error Display">
 	<h3>
 		{{movieError}}
 	</h3>
 </div>
+
 <div *ngIf="displayLoad" class="loading-container">
 	<div class="loading"></div>
 </div>
@@ -17,7 +29,7 @@
 		<div>
 			<img class="movie-image" src="{{ movie.image }}">
 		</div>
-		
+
 		<div class="overlay">
 			<div class="header movie-header">
 				<span class="author">Director</span>
@@ -42,5 +54,5 @@
 	<div class="loading"></div>
 </div>
 <div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
-		(scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
+ (scrolled)="onScrollDown()" (scrolledUp)="onScrollUp()">
 </div>

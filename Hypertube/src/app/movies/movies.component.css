@@ -1,3 +1,26 @@
+.filterDrop{
+	width: 100%;
+	background-color: rgba(58, 58, 58, 0.5);
+	text-align: center;
+	color: white;
+}
+.filterDrop:hover{
+	background-color: rgba(22, 22, 22, 0.5);
+}
+.dropdown-items{
+	display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.dropdown-items:hover{
+	background-color: rgba(2, 1, 1, 0.5);
+	cursor: pointer;
+}
 .mainForm{
 	display: flex;
 	flex-wrap: wrap;

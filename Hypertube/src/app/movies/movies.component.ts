@@ -85,6 +85,7 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					}
 				)
 			} else if (params['genreId']) {
+				window.scrollTo(0, 0);
 				console.log('loading Movies by Genre');
 				this.displayLoad = true;
 				this.Movies = [];
@@ -170,6 +171,20 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;
+	}
+
+	onFilter(option) {
+		this.displayLoad = true;
+		this.movieService.getFilter(option).subscribe((filter) => {
+			this.Movies = filter;
+			this.movieType = 'Filtered by ' + option;
+		}, (err) => {
+			this.movieError = err['message'];
+			console.log(this.movieError);
+			this.displayLoad = false;
+		}, () => {
+			this.displayLoad = false;
+		})
 	}
 
 	ngOnDestroy() {

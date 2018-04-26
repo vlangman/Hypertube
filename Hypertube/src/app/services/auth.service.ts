@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from "../../environments/environment";
 import { timer } from 'rxjs/observable/timer';
 import { take, map } from 'rxjs/operators';
+import { UUID } from 'angular2-uuid';
 
 export interface User {
 	username: string;
@@ -309,16 +310,25 @@ export class AuthService {
 
 	//adding movie details to profile
 	addMovieToDb(moviepic, movieTitle, movieId, movieHash) {
+		var date = new Date();
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		const year = date.getFullYear();
+		const todaydate = day + '/' + month + '/' + year;
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('movieTitle', '==', movieTitle).orderBy('userId').startAt(this.userid));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((movies) => {
 			if (movies.length == 0) {
 				console.log('here')
-				this.db.collection("MoviesWatched").add({
+				let uuid = UUID.UUID();
+				console.log('new uid', uuid);
+				this.db.collection("MoviesWatched").doc(uuid).set({
 					userId: this.userid,
 					movieTitle: movieTitle,
 					moviepic: moviepic,
 					movieId: movieId,
+					lastWatched: todaydate,
+					uniqueID: uuid,
 					movieHash: movieHash,
 				})
 			}
@@ -327,6 +337,33 @@ export class AuthService {
 
 	}
 
+	addSeriesToDb(seriespic, seriesTitle, seriesId, seriesHash) {
+		var date = new Date();
+		const day = date.getDate();
+		const month = date.getMonth() + 1;
+		const year = date.getFullYear();
+		const todaydate = day + '/' + month + '/' + year;
+		this.usersCollection = this.db.collection('SeriesWatched', ref => ref.where('seriesTitle', '==', seriesTitle).orderBy('userId').startAt(this.userid));
+		this.usersdb = this.usersCollection.valueChanges().first();
+		this.usersdb.subscribe((series) => {
+			if (series.length == 0) {
+				console.log('here')
+				let uuid = UUID.UUID();
+				console.log('new uid', uuid);
+				this.db.collection("SeriesWatched").doc(uuid).set({
+					userId: this.userid,
+					seriesTitle: seriesTitle,
+					seriespic: seriespic,
+					seriesId: seriesId,
+					lastWatched: todaydate,
+					uniqueID: uuid,
+					seriesHash: seriesHash,
+				})
+			}
+			console.log(series.length)
+		})
+
+	}
 
 	changeEmail(email, username) {
 		this.email = email;

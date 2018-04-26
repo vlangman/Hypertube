@@ -6,6 +6,10 @@
 /tmp
 /out-tsc
 
+# downloaded files
+src/downloads/*
+!src/downloads/.gitkeep
+
 # dependencies
 /node_modules
 

@@ -7,10 +7,10 @@ import { NgForm } from '@angular/forms';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs/Observable';
-import { DomSanitizer , SafeResourceUrl  } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { VgBufferingModule } from 'videogular2/buffering';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TMDB } from "../../models/tmdb.model";
 import { parseMagnet } from 'parse-magnet-uri';
 
@@ -24,9 +24,9 @@ export interface SeriesComment {
 }
 
 @Component({
-  selector: 'app-seriesdetails',
-  templateUrl: './seriesdetails.component.html',
-  styleUrls: ['./seriesdetails.component.css']
+	selector: 'app-seriesdetails',
+	templateUrl: './seriesdetails.component.html',
+	styleUrls: ['./seriesdetails.component.css']
 })
 export class SeriesdetailsComponent implements OnInit {
 
@@ -133,6 +133,7 @@ export class SeriesdetailsComponent implements OnInit {
 
 	}
 
+
 	toggleSeason(season){
 		console.log('open season ' + season);
 		if (this.seasonToggle == season)
@@ -143,6 +144,7 @@ export class SeriesdetailsComponent implements OnInit {
 			this.seasonToggle = season;
 
 	}
+
 
 	loadComments() {
 		// , ref => ref.where('SeriesID', '==', this.seriesId)
@@ -217,7 +219,7 @@ export class SeriesdetailsComponent implements OnInit {
 		console.log("VG PLAYER ready");
 		this.api = api;
 		console.log(this.api);
-		
+
 		// this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe((data)=>{
 		// 	console.log(data);
 		// })
@@ -225,33 +227,35 @@ export class SeriesdetailsComponent implements OnInit {
 	}
 
 	// 1
-	downloadSeries(){
-		this.torrentService.downloadSeries(this.hash, this.filename,).subscribe((data2: JSON) =>{
+	downloadSeries() {
+		console.log(this.Series)
+		this.torrentService.downloadSeries(this.hash, this.filename, this.seriesId).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
 			this.watchSeries(data2);
 		});
 	}
-	
+
 	//2
-	watchSeries(data){
+	watchSeries(data) {
 		console.log(data);
 		console.log('SERIES IS DOWLOADING')
 		this.torrentService.watchSeries(data['data']['hash']).subscribe(
-			(response: JSON) =>{
+			(response: JSON) => {
+				// this.authService.addSeriesToDb(this.Series.image, this.Series.title, this.Series.id, data['data']['hash']); waiting for merge to sort out
 				console.log('SERIES CHECKED AND IS READY TO STREAM')
 				console.log(response);
 				this.startStream(data['data']['link'], response['data']['format']);
-				
-		})
+
+			})
 	}
 
 	//3
-	startStream(link, format){
+	startStream(link, format) {
 
 		var headers = new HttpHeaders()
-		.set('Content-Type', 'video/mkv')
-	
+			.set('Content-Type', 'video/mkv')
+
 		console.log('STARTING STREAM!!');
 		console.log(link);
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
@@ -262,6 +266,7 @@ export class SeriesdetailsComponent implements OnInit {
 		// 	this.watch = true;
 		// })
 	}
+
 
 	
 	loadDetailsSeries(tv_res){
