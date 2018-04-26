@@ -114,7 +114,7 @@ export class AuthService {
 				console.log('completed')
 				if (this.userExist > 0) {
 					// this.errormsg = 'this username is already in use'
-					// this.router.navigate(['/Profile']);
+					this.router.navigate(['/Profile']);
 				} else {
 					this.updateProfile(username, photo)
 					console.log(res);
@@ -233,20 +233,16 @@ export class AuthService {
 		this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', username));
 		this.usersdb = this.usersCollection.valueChanges().first();
 		this.usersdb.subscribe((users) => {
-			console.log(users)
 			if (users.length > 0) {
 				this.email = users['0']['email'];
-				console.log(this.email);
 				this.Firstname = users['0']['Firstname'];
 				this.Lastname = users['0']['Lastname'];
 			}
 		}, err => {
 			console.log(err)
 		}, () => {
-			console.log('completed')
-			console.log(this.email);
 			if (this.email == null || this.email == '') {
-				return window.alert('no User found');
+				return window.alert('no User with those credentials found');
 
 			}
 			this._firebaseAuth.auth.signInWithEmailAndPassword(this.email, password).then((res) => {

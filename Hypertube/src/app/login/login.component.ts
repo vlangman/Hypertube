@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 					this.authService._firebaseAuth.auth.fetchProvidersForEmail(this.email42).then((providers) => {
 						if (providers.length > 0) {
-							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
+							this.authService.signInWithEmailAndPassword(this.username42, this.pass42)
 						} else {
 							this.authService.login42(this.email42, this.pass42, data, this.username42, this.photo42)
 						}

@@ -76,6 +76,7 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		AppRoutingModule,
 		InfiniteScrollModule,
 		AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
+		// AngularFirestoreModule.enablePersistence(),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule,
 		VgCoreModule,
@@ -84,6 +85,7 @@ import { DropZoneDirective } from './services/drop-zone.directive';
 		VgBufferingModule,
 		AngularFirestoreModule,
 		AngularFireStorageModule,
+
 	],
 	providers: [
 		MovieService,
