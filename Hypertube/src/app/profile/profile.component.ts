@@ -10,6 +10,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs';
 import { LoginComponent } from '../login/login.component';
+import { Router } from '@angular/router';
 
 export interface User {
 	username: string;
@@ -61,7 +62,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	searchVerify: boolean = true;
 	errorSearchmsg: string;
 	movieError: string;
+	seriesError: string;
 	watchedMovies = [];
+	watchedSeries = [];
 	movieImage: string;
 	movieTitle: string;
 	userExist: string;
@@ -76,7 +79,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		private authService: AuthService,
 		private photoUpload: FileuploadService,
 		private storage: AngularFireStorage,
-		private db: AngularFirestore
+		private db: AngularFirestore,
+		// private route: ActivatedRoute,
+		private router: Router,
 	) { }
 
 
@@ -90,7 +95,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.userid = this.authService.userid;
 		this.getUserInfo(this.username);
 		// this.getMoviesWatched(this.userid);
-		this.displayLoad = false;
+
 		// this.tempUsername = this.username;
 		console.log(this.authService.userid);
 	}
@@ -140,6 +145,18 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.getMoviesWatched(this.userid)
 	}
 
+	seriesWatched() {
+		// if (this.tempUsername != this.username)
+		// 	this.getUserInfo(this.tempUsername)
+		if (!this.displayProfile) {
+			this.searchButton = false;
+			this.editEmailButton = false;
+			this.editButton = false;
+			this.displayProfile = true;
+		}
+		this.getSeriesWatched(this.userid)
+	}
+
 	editEmail() {
 		// if (this.tempUsername != this.username)
 		// 	this.getUserInfo(this.tempUsername)
@@ -169,10 +186,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			console.log(this.email);
 			this.Firstname = users['0']['Firstname'];
 			this.Lastname = users['0']['Lastname'];
+			this.displayLoad = false;
 		})
+
 	}
 
 	getMoviesWatched(userid) {
+		this.watchedSeries = [];
 		this.watchedMovies = [];
 		this.movieError = '';
 		this.usersCollection = this.db.collection('MoviesWatched', ref => ref.where('userId', '==', userid));
@@ -180,6 +200,27 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			if (users.length == 0) {
 				this.movieError = 'You have no watched movies yet';
+				console.log(this.movieError)
+			} else {
+				users.forEach((movies) => {
+					console.log(movies)
+					this.watchedMovies.push(movies);
+				})
+			}
+
+		})
+		this.searchButton = false;
+	}
+
+	getSeriesWatched(userid) {
+		this.watchedMovies = [];
+		this.watchedSeries = [];
+		this.seriesError = '';
+		this.usersCollection = this.db.collection('SeriesWatched', ref => ref.where('userId', '==', userid));
+		this.usersdb = this.usersCollection.valueChanges();
+		this.usersdbsub = this.usersdb.subscribe((users) => {
+			if (users.length == 0) {
+				this.movieError = 'You have no watched series yet';
 				console.log(this.movieError)
 			} else {
 				users.forEach((movies) => {
@@ -225,6 +266,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 	}
 
+	viewMovie(id: number) {
+		console.log(id);
+		this.router.navigate(["Movies/Details", id]);
+	}
 
 	onEditProfile(form: NgForm) {
 		// if (form.value.length < 5) {

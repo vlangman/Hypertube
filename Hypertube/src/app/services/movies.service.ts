@@ -37,7 +37,7 @@ export class MovieService {
 	];
 
 
- 	trackers = [
+	trackers = [
 		"udp://open.demonii.com:1337/announce",
 		"udp://tracker.openbittorrent.com:80",
 		"udp://tracker.coppersurfer.tk:6969",
@@ -87,15 +87,14 @@ export class MovieService {
 			.map(res => {
 				console.log(res);
 				this.Movies = [];
-				
-				if (res['data']['movies'])
-				{
+
+				if (res['data']['movies']) {
 					this.loadMovies(res);
 					return this.Movies;
 				} else {
-					throw new Error("Api returned empty array");	
+					throw new Error("Api returned empty array");
 				}
-				
+
 			})._catch((err) => {
 				console.log("Failed to get movies");
 				console.log(Observable.throw(err))
@@ -135,18 +134,31 @@ export class MovieService {
 
 	getNextPage(page: number): Observable<MOVIES[]> {
 		return this.http.get<YTS>(this.api + '?limit=20&page=' + page)
-		.map((res) => {
+			.map((res) => {
+				this.loadMovies(res);
+				return this.Movies;
+			})
+			._catch(
+				(err) => {
+					return Observable.throw(err);
+				})
+	}
+
+	getFilter(option): Observable<MOVIES[]> {
+		// console.log(this.http.get<YTS>(this.api + '?sort_by=' + option))
+		return this.http.get<YTS>(this.api + '?sort_by=' + option).map((res) => {
+			this.Movies = [];
+			console.log(res)
 			this.loadMovies(res);
 			return this.Movies;
 		})
-		._catch(
-			(err) =>{
-				console.log("Failed to get next page");
-				console.log(Observable.throw(err))
-				return Observable.throw(err);
-		})
+			._catch(
+				(err) => {
+					console.log("Failed to get next page");
+					console.log(Observable.throw(err))
+					return Observable.throw(err);
+				})
 	}
-
 
 	// getMovieComments(id): Observable<any> {
 	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
@@ -158,7 +170,7 @@ export class MovieService {
 		return this.http.get<YTS>(this.apiDetail + '?movie_id=' + id + '&with_images=true&with_cast=true').map(
 			(res) => {
 				console.log(res);
-				if (res['data']['movie']){
+				if (res['data']['movie']) {
 					return (res['data']['movie']);
 				}
 				else {
@@ -181,6 +193,7 @@ export class MovieService {
 			var image: string;
 			var rating: number;
 			var year: number;
+			var imbd_code: string;
 			var genres: string[];
 			var torrents: string[];
 			var cast = [];
@@ -189,7 +202,10 @@ export class MovieService {
 				id = data['id']
 			else
 				id = NaN;
-
+			if (data['imdb_code'])
+				imbd_code = data['imdb_code']
+			else
+				imbd_code = '';
 			if (data['title'])
 				title = data['title'];
 			else
@@ -229,13 +245,12 @@ export class MovieService {
 			else
 				genres = [];
 
-			if (data['torrents'])
-			{
+			if (data['torrents']) {
 				torrents = data['torrents']
 			} else {
 				torrents = [];
 			}
-			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null , cast, ''));
+			this.Movies.push(new MOVIES(id, title, summary, image, backround_image, rating, year, genres, torrents, null, cast, '', imbd_code));
 		})
 		console.log(this.Movies)
 	}

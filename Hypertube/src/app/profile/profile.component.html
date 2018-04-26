@@ -8,7 +8,7 @@
 
 <ul *ngIf="!displayLoad" class="nav nav-tabs" id="myTab" role="tablist">
 	<li class="nav-item">
-		<a href="#profile" class="nav-link active" id="profile-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="profile"
+		<a href="#profile" class="nav-link " id="profile-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="profile"
 		 aria-selected="true" (click)="editProfile()">Edit Profile</a>
 	</li>
 	<li class="nav-item">
@@ -23,20 +23,25 @@
 		<a href="#watched" class="nav-link" id="watched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="watched"
 		 aria-selected="false" (click)="moviesWatched()">Movies Watched</a>
 	</li>
+	<li class="nav-item">
+		<a href="#Swatched" class="nav-link" id="watched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="swatched"
+		 aria-selected="false" (click)="seriesWatched()">Series Watched</a>
+	</li>
 </ul>
 
 <div class="profile-wrap" *ngIf="!displayLoad">
 	<div class="alert alert-info" *ngIf="!verified" style="width: 100%">
 		<strong>Info!</strong>
 		<em> will need to reload the page if you have verified your email for the changes to take effect and have access to the full
-			website</em>
+			website
+		</em>
 	</div>
 	<div *ngIf="displayProfile" class="profile-card ">
 		<img *ngIf="photo" class="profile-image" src="{{photo}}">
 		<img *ngIf="!photo" class="profile-image" src="../../assets/no-thumbnail.png">
 		<div class="card-body">
 			<h4 class="card-title" *ngIf="username">{{username}}</h4>
-			<p class="card-text" *ngIf="searchButton">{{email}}</p>
+			<p class="card-text">{{email}}</p>
 			<p class="card-text"> {{Firstname}} : {{Lastname}}</p>
 			<p *ngIf="!verified" class="title text-danger animate-flash">Not verified!</p>
 			<p *ngIf="verified" class="title lead text-success">verified</p>
@@ -45,7 +50,7 @@
 
 
 	<div class="tab-content" id="myTabContent">
-		<div class="tab-pane show active animate-right" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+		<div class="tab-pane show  animate-right" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
 			<form #form="ngForm" (ngSubmit)="onEditProfile(form)" class="register-form">
 				<div class="form-group">
@@ -115,7 +120,7 @@
 					<p *ngIf="verified" class="title lead text-success">verified</p>
 				</div>
 			</div>
-			<div *ngIf="!searchButton" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+			<div *ngIf="!searchButton">
 				<div *ngIf="movieError">They have not watched any movies</div>
 				<div *ngFor="let movie of watchedMovies">
 					<img src="{{movie.moviepic}}" class="items">
@@ -183,12 +188,26 @@
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
 				<div *ngIf="movieError">{{movieError}}</div>
 				<div *ngFor="let movie of watchedMovies">
-					<img src="{{movie.moviepic}}" class="items">
-					<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					<a (click)="viewMovie(movie.movieId)" style="cursor: pointer;">
+						<img src="{{movie.moviepic}}" class="items">
+						<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					</a>
 				</div>
 			</div>
 		</div>
 
+		<div class="tab-pane animate-zoom" id="Swatched" role="tabpanel" aria-labelledby="watched-tab">
+			<!-- new movies watched -->
+			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+				<div *ngIf="movieError">{{movieError}}</div>
+				<div *ngFor="let movie of watchedMovies">
+					<a (click)="viewMovie(movie.movieId)" style="cursor: pointer;">
+						<img src="{{movie.moviepic}}" class="items">
+						<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" [ngClass]="reauth ? 'exampleModal' : '' " tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"

@@ -224,7 +224,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						this.loadMore = false;
 					})
 			}
-			if (this.viewShows && !this.imbdSearch)
+			if (this.viewShows && !this.imbdSearch && !this.loadMore && !this.displayLoad)
 			{
 				this.loadMore = true;
 				this.loadShowDetails();
