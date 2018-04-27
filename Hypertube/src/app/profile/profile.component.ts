@@ -140,7 +140,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.searchButton = false;
 			this.editEmailButton = false;
 			this.editButton = false;
-			this.displayProfile = false;
+			this.displayProfile = true;
 		}
 		this.getMoviesWatched(this.userid)
 	}
