@@ -181,7 +181,7 @@ export class MoviedetailsComponent implements OnInit {
 		//reset video player
 		this.source = [];
 
-		this.dowloadMessage = "Downloading the file on server: "  + this.Movie.title;
+		this.dowloadMessage = "Downloading the file on server"
 		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
@@ -209,7 +209,7 @@ export class MoviedetailsComponent implements OnInit {
 			//408 timeout
 			else if(data2['request'] == 408){
 				this.currDownload = false;
-				this.dowloadMessage = "CHECKING FILE: request timed out...";
+				this.dowloadMessage = "CHECKING FILE: request timed out...try again later";
 				console.log('timeout');
 			}
 			//206 partial content
@@ -240,10 +240,10 @@ export class MoviedetailsComponent implements OnInit {
 
 
 				if (response['request'] == 200){
-					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+					this.dowloadMessage = "Preparing your movie file";
 					this.startStream(response['data']['link']);
 				} else if(response['request'] == 404){
-					this.dowloadMessage = "SERVER ERROR: Restart the download please!";
+					this.dowloadMessage = "SERVER ERROR: Restart the download";
 					this.checkDownload = false;
 				}
 				else if (response['request'] == 204){

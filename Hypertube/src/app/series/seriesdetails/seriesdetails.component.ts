@@ -59,6 +59,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 	dowloadMessage: string = null;
 	subtitlesStreameng: string;
 	subtitlesStreamfre: string;
+	downloadButton: number = 0;
 
 	downloadSub: Subscription;
 	checkSub:Subscription;
@@ -279,6 +280,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 				else{
 					this.dowloadMessage = "Download is taking some time to start... Please try again";
 					this.downloadSub.unsubscribe();
+					this.downloadButton = 2;
 					this.currDownload = false;
 				}
 			}
@@ -293,12 +295,14 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			else if (data2['request'] == 200){
 				this.currDownload = false;
 				this.downloadSub.unsubscribe();
+				this.downloadButton = 2;
 				this.checkSeries(data2, 0);
 			}
 			//408 timeout
 			else if(data2['request'] == 408){
 				this.currDownload = false;
 				this.dowloadMessage = "Download request timed out...";
+				this.downloadButton = 0;
 				this.downloadSub.unsubscribe();
 				console.log('timeout');
 
@@ -307,6 +311,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			else if (data2['request'] == 206){
 				this.currDownload = false;
 				console.log('subtitles could not be found');
+				this.downloadButton = 2;
 				this.downloadSub.unsubscribe();
 				this.checkSeries(data2, 0);
 			}
@@ -335,28 +340,33 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 				}
 				else{
 					this.dowloadMessage = "Download is taking some time to start... Please try again";
+					this.downloadButton = 2;
 					this.currDownload = false;
 				}
 			}
 			//500 internal error
 			else if(data2['request'] == 500){
+				this.downloadButton = 0;
 				this.dowloadMessage = "Fatal download error occured please try again later";
 				this.currDownload = false;
 			}
 			//200 successful
 			else if (data2['request'] == 200){
+				this.downloadButton = 2;
 				this.dowloadMessage = "CHECKING FILE: " + name;
 				this.checkSeries(data2, 0);
 			}
 			//408 timeout
 			else if(data2['request'] == 408){
 				this.currDownload = false;
+				this.downloadButton = 0;
 				this.dowloadMessage = "CHECKING FILE: request timed out...";
 				console.log('timeout');
 			}
 			//206 partial content
 			else if (data2['request'] == 206){
 				this.currDownload = false;
+				this.downloadButton = 2;
 				console.log('subtitles could not be found');
 				this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
 				this.checkSeries(data2, 0);
@@ -377,14 +387,17 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			(response: JSON) => {
 				this.authService.addSeriesToDb( this.Details.tv_results[0]['poster'], this.Details.tv_results[0]['name']);
 				if (response['request'] == 200){
+					this.downloadButton = 3;
 					console.log('streaming bitch');
 					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
 					this.startStream(response['data']['link']);
 				} else if(response['request'] == 404){
+					this.downloadButton = 0;
 					this.dowloadMessage = "SERVER ERROR: Restart the download please!";
 					this.checkDownload = false;
 				}
 				else if (response['request'] == 204){
+					this.downloadButton = 3;
 					this.dowloadMessage = "Preparing file " + data['data']['hash'];
 					console.log('file not ready');
 					if (count < 5)

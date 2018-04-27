@@ -123,6 +123,7 @@
 	max-height: 100px;
 }
 .watchbtn{
+	align-self: flex-start;
 	padding: 10px;
 	width: 100%;
 	height: 100%;
