@@ -104,7 +104,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 			.catch((err) => console.log(err));
 	}
 	emailAndPasswordLogin(f: NgForm) {
-		this.errormsg = '';
+      /*
+    this.errormsg = '';
 		if (!f.value.username.match(this.usernameInputPattern)) {
 			window.alert("this username does not meet the requirements")
 		} else if (!f.value.password.match(this.passwordPattern)) {
@@ -112,8 +113,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 		} else {
 			const value = f.value;
 			this.authService.signInWithEmailAndPassword(value.username, value.password)
-		}
+    }*/
 
+      this.authService.signInWithEmailAndPassword(f.value.username, f.value.password);
 	}
 	emailReset(emailform: NgForm) {
 		const value = emailform.value

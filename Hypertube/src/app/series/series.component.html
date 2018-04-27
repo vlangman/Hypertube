@@ -42,7 +42,7 @@
 	<div *ngFor="let show of Shows" class="show-card" id="{{show.id}}" (mouseover)="showContent(show.id)" (mouseleave)="showContent()">
 		<div>
 			<img *ngIf=" show.tmdb['poster_path'] != null " class="show-image" src="{{ 'https://image.tmdb.org/t/p/w400_and_h600_bestv2' + show.tmdb['poster_path'] }}">
-			<img class="show-image"  *ngIf=" show.tmdb['poster_path'] == null " src="../../assets/no-thumbnail.png">
+			<img class="show-image"  *ngIf=" show.tmdb['poster_path'] == null " src="../../assets/no_image.png">
 		</div>
 		
 		<div class="show-overlay">

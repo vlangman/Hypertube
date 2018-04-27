@@ -246,14 +246,14 @@ export class AuthService {
 			console.log('completed')
 			console.log(this.email);
 			if (this.email == null || this.email == '') {
-				return window.alert('no User found');
+				return window.alert('No user found with that username.');
 
 			}
 			this._firebaseAuth.auth.signInWithEmailAndPassword(this.email, password).then((res) => {
 				this.router.navigate(['/Profile']);
 			}).catch((err) => {
 				if (err.code === 'auth/user-not-found') {
-					window.alert('No user account found with the username and password entered')
+					window.alert('No user account found with the username and password entered.')
 				}
 				console.log(err);
 			});

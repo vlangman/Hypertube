@@ -154,9 +154,15 @@ progress::-webkit-progress-value {
   }
 }
 
-@media (max-width: 1400px) {
+hr {
+  border-color: #93b5d8;
+}
 
-	.profile-wrap{
-		justify-content: center;
-	}
+
+.profile-wrap {
+  justify-content: center;
+}
+
+.search-form{
+  margin: auto auto;
 }
