@@ -220,12 +220,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdb = this.usersCollection.valueChanges();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			if (users.length == 0) {
-				this.movieError = 'You have no watched series yet';
-				console.log(this.movieError)
+				this.seriesError = 'You have no watched series yet';
+				console.log(this.seriesError)
 			} else {
-				users.forEach((movies) => {
-					console.log(movies)
-					this.watchedMovies.push(movies);
+				users.forEach((series) => {
+					console.log(series)
+					this.watchedMovies.push(series);
 				})
 			}
 

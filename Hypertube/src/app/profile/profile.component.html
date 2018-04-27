@@ -195,11 +195,11 @@
 		<div class="tab-pane animate-zoom" id="Swatched" role="tabpanel" aria-labelledby="watched-tab">
 			<!-- new movies watched -->
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-				<div *ngIf="movieError">{{movieError}}</div>
-				<div *ngFor="let movie of watchedMovies">
-					<a (click)="viewMovie(movie.movieId)" style="cursor: pointer;">
-						<img src="{{movie.moviepic}}" class="items">
-						<h3>{{movie.movieTitle | ellipsis: 15}}</h3>
+				<div *ngIf="seriesError">{{seriesError}}</div>
+				<div *ngFor="let series of watchedSeries">
+					<a (click)="viewMovie(series.movieId)" style="cursor: pointer;">
+						<img src="{{series.moviepic}}" class="items">
+						<h3>{{series.movieTitle | ellipsis: 15}}</h3>
 					</a>
 				</div>
 			</div>
