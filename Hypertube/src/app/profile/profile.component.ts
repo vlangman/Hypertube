@@ -461,7 +461,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									email: this.email,
 									photo: value.photo.value,
 									providerId: this.authService.providerId,
-									UserId: this.authService.userid
+									userId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
@@ -483,7 +483,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									email: this.email,
 									photo: value.photoInput,
 									providerId: this.authService.providerId,
-									UserId: this.authService.userid
+									userId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
