@@ -12,7 +12,7 @@ export class SeriesService {
 
 
 	Series: SERIES[] = [];
-	api = 'http://localhost:3000/api/';
+	api = 'http://192.168.88.216:3000/api/';
 
 	constructor(private http: HttpClient) { }
 

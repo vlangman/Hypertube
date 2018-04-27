@@ -4,7 +4,7 @@ const path = require('path');
 const routes = require('./routes.js');
 const seriesTorrent = require('./seriesTorrent.js');
 const cron = require('./cron.js');
-require('events').EventEmitter.prototype._maxListeners = 200;
+require('events').EventEmitter.prototype._maxListeners = 400;
 
 const app = express();
 
@@ -36,6 +36,6 @@ app.use(function(err, req, res, next) {
 app.listen(3000, function () {
 	cron.start();
 	console.log('Listening on port 3000!');
-    console.log('Starting show cache...');
+    // console.log('Starting show cache...');
     // seriesTorrent.cacheShows();
 })

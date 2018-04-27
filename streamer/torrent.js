@@ -248,7 +248,7 @@ const subtitlesFile = (hash, lang) => {
 
 //looks in a hash folder for a playable video file
 //resolve with file location(path)
-//reject with 204
+//reject with 204 
 const movieFile = (hash) => {
 	console.log(1);
 	const moviePath = moviesDir + hash;

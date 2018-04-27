@@ -11,7 +11,7 @@ export class TorrentService {
 	torrent: any;
 	download: boolean = false;
 	Magnet: string = null;
-	api: string = 'http://localhost:3000/api/';
+	api: string = 'http://192.168.88.216:3000/api/';
 
 	constructor(
 		private http: HttpClient,

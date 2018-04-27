@@ -280,7 +280,7 @@ export class MoviedetailsComponent implements OnInit {
 		if (this.subtitlesStreamfre == '') {
 			console.log('oh hello fre');
 			console.log(hash['data']['hash']);
-			this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
+			this.subtitlesStreamfre = 'http://192.168.88.216:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
 			console.log(this.subtitlesStreamfre)
 			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
 				console.log('heree')
@@ -294,7 +294,7 @@ export class MoviedetailsComponent implements OnInit {
 		if (this.subtitlesStreameng == '') {
 			console.log('oh hello eng');
 			console.log(hash['data']['hash']);
-			this.subtitlesStreameng = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
+			this.subtitlesStreameng = 'http://192.168.88.216:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
 			console.log(this.subtitlesStreameng)
 			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
 				console.log('work')
