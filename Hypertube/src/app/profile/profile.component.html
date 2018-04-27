@@ -28,7 +28,7 @@
 		 aria-selected="false" (click)="seriesWatched()">Series Watched</a>
 	</li>
 </ul>
-
+<hr />
 <div class="profile-wrap" *ngIf="!displayLoad">
 	<div class="alert alert-info" *ngIf="!verified" style="width: 100%">
 		<strong>Info!</strong>
@@ -142,6 +142,7 @@
 				<strong>Error!</strong> {{errormsg}}
 			</div>
 		</div>
+
 
 
 		<div class="tab-pane animate-right" id="email" role="tabpanel" aria-labelledby="email-tab">

@@ -8,39 +8,39 @@
 
 <div class="row">
 	<div class="flex" *ngIf="!editButton">
-		<form #f="ngForm" (ngSubmit)="emailAndPasswordLogin(f)" class="login-form">
-			<div class="form-group">
-				<h3>Username:</h3>
-				<input type="text" class="form-control" ngModel name="username" required [pattern]="usernameInputPattern" #username="ngModel">
-				<span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid username minimum characters allowed is 6 E.G: exampl</span>
-				<!-- <span class="help-block" *ngIf="errormsg || userfound && username.touched">This username is already in use</span> -->
-				<!-- <span *ngFor="let user of usersdb | async">This username @{{user.username}} is already in use.</span> -->
-			</div>
-			<div class="form-group">
-				<h3>Password:</h3>
-				<input type="password" class="form-control" ngModel name="password" required [pattern]="passwordPattern" #confirmpassword="ngModel">
-				<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Must contain at least one UpperCase letter, one LowerCase letter, one special character, a Number and longer than 8</span>
-			</div>
+    <form #f="ngForm" (ngSubmit)="emailAndPasswordLogin(f)" class="login-form">
+      <div class="form-group">
+        <h5>Username:</h5>
+        <input type="text" class="form-control" ngModel name="username" required [pattern]="usernameInputPattern" #username="ngModel">
+        <!-- <span class="help-block" *ngIf="!username.valid && username.touched">Please enter a valid username minimum characters allowed is 6 E.G: exampl</span>-->
+        <!-- <span class="help-block" *ngIf="errormsg || userfound && username.touched">This username is already in use</span> -->
+        <!-- <span *ngFor="let user of usersdb | async">This username @{{user.username}} is already in use.</span> -->
+      </div>
+      <div class="form-group">
+        <h5>Password:</h5>
+        <input type="password" class="form-control" ngModel name="password" required [pattern]="passwordPattern" #confirmpassword="ngModel">
+        <!--<span class="help-block" *ngIf="!confirmpassword.valid && confirmpassword.touched">Must contain at least one UpperCase letter, one LowerCase letter, one special character, a Number and longer than 8</span>-->
+      </div>
+      <div class="login-buttons form-group">
+        <button class="btn btn-outline-success">Login</button>
+      </div>
+      <br /><hr id="special-hr"/>
+    </form>
 
-			<div class="login-buttons form-group">
-				<button class="btn btn-outline-success" [disabled]="!f.valid">Login</button>
-				<button class="btn btn-outline-default">Cancel</button>
-
-			</div>
-
-		</form>
 
 		<div *ngIf="errormsg" class="alert alert-success alert-dismissible fade show" style="width: 100%">{{errormsg}}</div>
-		<div style="display: flex; 
-		flex-direction: column; width: 100%">
-			<h3>Alternate Login</h3>
-			<div class="alert alert-info alert-dismissible fade show">
-				<strong>Info!</strong> Please Note since this hasn't been released the facebook login with only currently work with the facebook
-				developer!.
+		<div class="alternative-login-container">
+			<h5 class="alternative-login-header">Alternative Login</h5>
+			<div class="alert alert-info alert-dismissible fade show info-message">
+				<strong>Info!</strong> Facebook Sign-in will only work with the developers credentials because the app has not been released
+        on the Facebook platform.
 			</div>
-			<button class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
-			<button class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
-			<button class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()">Google</button>
+
+      <div class="column-buttons">
+			  <button id="button-facebook" class="btn btn-outline-warning api-button" (click)="facebookLogin()">Facebook</button>
+			  <button id="button-42" class="btn btn-outline-warning api-button" (click)="is42Login()">42</button>
+			  <button id="button-google" class="btn btn-outline-warning api-button" type="button" (click)="googleLogin()"><img id="google-logo"src="../../assets/google.jpg"/>Google</button>
+      </div>
 		</div>
 
 	</div>
