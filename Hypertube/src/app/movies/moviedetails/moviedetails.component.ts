@@ -277,34 +277,36 @@ export class MoviedetailsComponent implements OnInit {
 	subtitlesLink(hash) {
 		this.subtitlesStreameng = '';
 		this.subtitlesStreamfre = '';
-		if (this.subtitlesStreamfre == '') {
-			console.log('oh hello fre');
-			console.log(hash['data']['hash']);
-			this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
-			console.log(this.subtitlesStreamfre)
-			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
-				console.log('heree')
-				console.log(data['request']);
-				if (data['request'] == 404) {
-					this.subtitlesStreamfre = '';
-				}
-			})
-			console.log(this.subtitlesStreamfre)
-		}
-		if (this.subtitlesStreameng == '') {
-			console.log('oh hello eng');
-			console.log(hash['data']['hash']);
-			this.subtitlesStreameng = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
-			console.log(this.subtitlesStreameng)
-			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
-				console.log('work')
-				console.log(data['request']);
-				if (data['request'] == 404) {
-					this.subtitlesStreameng = '';
-				}
-			})
-			console.log(this.subtitlesStreameng)
-		}
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+			if (this.subtitlesStreamfre == '') {
+				console.log('oh hello fre');
+				console.log(hash['data']['hash']);
+				this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre' + '/' + token;
+				console.log(this.subtitlesStreamfre)
+				this.torrentService.getSubtitles(hash['data']['hash'], 'fre', token).subscribe((data) => {
+					console.log('heree')
+					console.log(data['request']);
+					if (data['request'] == 404) {
+						this.subtitlesStreamfre = '';
+					}
+				})
+				console.log(this.subtitlesStreamfre)
+			}
+			if (this.subtitlesStreameng == '') {
+				console.log('oh hello eng');
+				console.log(hash['data']['hash']);
+				this.subtitlesStreameng = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng' + '/' + token;
+				console.log(this.subtitlesStreameng)
+				this.torrentService.getSubtitles(hash['data']['hash'], 'eng', token).subscribe((data) => {
+					console.log('work')
+					console.log(data['request']);
+					if (data['request'] == 404) {
+						this.subtitlesStreameng = '';
+					}
+				})
+				console.log(this.subtitlesStreameng)
+			}
+		})
 	}
 
 	selectCover(cover) {

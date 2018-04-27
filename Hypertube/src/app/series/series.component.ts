@@ -7,6 +7,7 @@ import { Subscription } from "rxjs/Subscription";
 import { Router,ActivatedRoute } from "@angular/router";
 import { Observable } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -43,6 +44,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		private seriesService: SeriesService,
 		private router: Router,
 		private route: ActivatedRoute,
+		private authService: AuthService,
 	) {
 	}
 
@@ -65,7 +67,8 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						this.detailsSub.unsubscribe();
 					this.detailsSub = new Subscription;
 					if (!this.loadedShows[0]){
-						this.seriesService.getShowList().subscribe(
+						this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+						this.seriesService.getShowList(token).subscribe(
 							(shows)=>{
 								this.loadedShows = shows['index'];
 								console.log('SUCCESS: loaded full show list');
@@ -79,6 +82,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 								this.detailsIndex = this.detailsIndex + 20;
 							}
 						)
+					})
 						
 					}
 					else{
@@ -98,7 +102,8 @@ export class SeriesComponent implements OnInit, OnDestroy {
 					if (this.detailsSub)
 						this.detailsSub.unsubscribe();
 					this.detailsSub = new Subscription;
-					this.seriesService.getShowList().subscribe(
+					this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+					this.seriesService.getShowList(token).subscribe(
 						(shows)=>{
 							this.loadedShows = shows['index'];
 							console.log(this.loadedShows);
@@ -113,18 +118,21 @@ export class SeriesComponent implements OnInit, OnDestroy {
 
 						}
 					)
+				})
 				}
 
 			}
 			else{
 				this.viewShows = false;
-				this.getSeriesSub = this.seriesService.getSeries().subscribe(
+				this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+				this.getSeriesSub = this.seriesService.getSeries(token).subscribe(
 					(data) => {
 						this.Series = [];
 						this.Series = data;
 						this.displayLoad = false;
 					}
 				)
+			})
 			}
 		})
 	}
@@ -137,7 +145,8 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		for (var i = this.detailsIndex; this.loadedShows[i] && i < limit; i++) {
 			if (this.loadedShows[i]['show'][0] == this.indexChar || this.indexChar == "")
 			{
-				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i]).subscribe(
+				this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i], token).subscribe(
 					(data)=>{
 						if (data['tmdb'] && !data['err']){
 							this.Shows.push(data);
@@ -148,6 +157,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						}
 					}
 				))
+			})
 			}
 
 		}
@@ -198,12 +208,14 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	getRating(code: number) {
 		this.imbdSearch = true;
 		this.displayLoad = true;
-		this.getImdbSub = this.seriesService.getImdb(code).subscribe(
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+		this.getImdbSub = this.seriesService.getImdb(code, token).subscribe(
 			(data) => {
 				this.Series = [];
 				this.Series = data;
 				this.displayLoad = false
 			})
+		})
 	}
 
 	viewSeries(id: number, hash: string, filename: string){
@@ -217,11 +229,13 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		{
 			if (!this.imbdSearch && !this.viewShows) {
 				this.loadMore = true;
-				this.NextPageSub = this.seriesService.getNextPage(this.page += 1).subscribe(
+				this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+				this.NextPageSub = this.seriesService.getNextPage(this.page += 1, token).subscribe(
 					(data) => {
 						this.Series = data;
 						this.loadMore = false;
 					})
+				})
 			}
 			if (this.viewShows && !this.imbdSearch && !this.loadMore && !this.displayLoad)
 			{
