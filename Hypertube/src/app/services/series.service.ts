@@ -12,7 +12,7 @@ export class SeriesService {
 
 
 	Series: SERIES[] = [];
-	api = 'http://192.168.88.216:3000/api/';
+	api = 'http://localhost:3000/api/';
 
 	constructor(private http: HttpClient) { }
 
@@ -51,30 +51,29 @@ export class SeriesService {
 	// 			return(res['index']);
 	// 	})
 	// }
-	getShowList():Observable<any>{
+	getShowList(): Observable<any> {
 		return this.http.get(this.api + 'show/get/list').map(
-			(res)=>{
+			(res) => {
 				return (res);
 			}
 		)
 	}
 
-	getShow(Show):Observable<any>
-	{
-		return this.http.get(this.api + 'show/get/details/' + Show.id + '/' + Show.show +'/'+Show.slug).map(
-			(res)=>{
-				return(res);
+	getShow(Show): Observable<any> {
+		return this.http.get(this.api + 'show/get/details/' + Show.id + '/' + Show.show + '/' + Show.slug).map(
+			(res) => {
+				return (res);
 			}
 		);
 	}
 
-	findSeriesimdb(imdb: number): Observable<any>{
-			return this.http.get(this.api + 'series/get/detail/' + imdb).map(
-				(res)=>{
-					console.log('FINDSERIESIMDB returns ====================================');
-					console.log(res);
-					return(res)
-			})	
+	findSeriesimdb(imdb: number): Observable<any> {
+		return this.http.get(this.api + 'series/get/detail/' + imdb).map(
+			(res) => {
+				console.log('FINDSERIESIMDB returns ====================================');
+				console.log(res);
+				return (res)
+			})
 	}
 
 	loadSeries(res) {
