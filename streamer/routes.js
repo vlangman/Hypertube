@@ -13,7 +13,7 @@ var apiRequest = 'FAILED';
 
 
 router.get('/', (req, res) => {
-	console.log('hhhm')
+	console.log('hhhhhhhhhhmmmmm')
 	res.json('We workign baby!');
 })
 
@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
 
 
 router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
-	console.log('==========================================================================CHECK Subtitles===================================================================================');
+	console.log('Looking for Subtitles');
 	const movieHash = req.params.hash;
 	var path = null;
 	console.log(movieHash);
@@ -185,7 +185,7 @@ router.get('/api/movie/check/:hash', (req, res) => {
 				const obj = { request: 404, data: { hash: "404", link: "404" } }
 				res.json(obj);
 			} else if (err == 204){
-				console.log('series file NOT playable')
+				console.log('movie file NOT playable')
 				const obj = { request: 204, data: { hash: hash, link: "204" } }
 				res.json(obj);
 			}
@@ -198,8 +198,9 @@ router.get('/api/movie/check/:hash', (req, res) => {
 })
 //Stream movie
 router.get('/api/movie/watch/:hash', (req, res) => {
-	console.log('==========================================================================WATCH MOVIE===================================================================================');
+	
 	const hash = req.params.hash;
+	console.log('WATCH MOVIE: ---------------  New movie: ' + hash +'------------------------');
 	torrent.movieFile(hash).then(
 		(path) => {
 			console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
@@ -435,8 +436,9 @@ router.get('/api/series/check/:hash', (req, res) => {
 })
 //Stream Series
 router.get('/api/series/watch/:hash', (req, res) => {
-	console.log('========================================================================== WATCH SERIES ==========================================================================')
+
 	const hash = req.params.hash;
+	console.log('WATCH SERIES: ---------------  New series: ' + hash +'------------------------');
 	// 5 attemps to check for file Should already exist;
 	torrent.seriesFile(hash).then( 
 		(path) => {

@@ -229,13 +229,13 @@ export class MoviedetailsComponent implements OnInit {
 		console.log(data);
 		this.checkDownload = true;
 		this.currDownload = false;
-		this.dowloadMessage = "Preparing your Movie";
+		this.dowloadMessage = "Preparing your movie file";
 
 		this.subtitlesLink(data);
 		this.torrentService.checkMovie(data['data']['hash']).subscribe(
 			(response: JSON) => {
 				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-				this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+				this.dowloadMessage = "Preparing your movie file";
 				console.log(response);
 
 
@@ -247,13 +247,12 @@ export class MoviedetailsComponent implements OnInit {
 					this.checkDownload = false;
 				}
 				else if (response['request'] == 204){
-					this.dowloadMessage = "STREAMING file " + data['data']['hash'];
 					console.log('file not ready');
 					if (count < 5)
 					{
 						setTimeout(()=>{this.checkMovie(data, ++count);},5000);
 					} else {
-						this.dowloadMessage = "Download is slow, try again some other time";
+						this.dowloadMessage = "Download is slow, come back some other time";
 						this.checkDownload = false;
 					}
 				}
@@ -264,7 +263,7 @@ export class MoviedetailsComponent implements OnInit {
 	startStream(link) {
 		this.checkDownload = false;
 		this.currDownload = false;
-		console.log('STARTING STREAM!!');
+		this.dowloadMessage = "Starting stream";
 		console.log(link);
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;

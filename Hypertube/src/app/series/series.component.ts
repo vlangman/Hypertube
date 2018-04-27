@@ -38,6 +38,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	getShows :Subscription;
 	detailsSub: Subscription;
 	routerUrlSub: Subscription;
+	getShowListSub: Subscription;
 
 	constructor(
 		private seriesService: SeriesService,
@@ -98,7 +99,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 					if (this.detailsSub)
 						this.detailsSub.unsubscribe();
 					this.detailsSub = new Subscription;
-					this.seriesService.getShowList().subscribe(
+					this.getShowListSub = this.seriesService.getShowList().subscribe(
 						(shows)=>{
 							this.loadedShows = shows['index'];
 							console.log(this.loadedShows);
@@ -167,7 +168,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	}
 
 	viewShow(obj){
-
 		var id = obj['id'];
 		var show = obj['show'];
 		var slug = obj['slug']
@@ -180,7 +180,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 
 	//conversion of the series bytes to readable size
 	bytesToSize(bytes: number) {
-
 		var sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 		var i: number = 0;
 		if (bytes == 0) return 'Unknown';
@@ -242,5 +241,13 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			this.NextPageSub.unsubscribe();
 		else if (this.getImdbSub)
 			this.getImdbSub.unsubscribe();
+		else if (this.routerParamsSub)
+			this.routerParamsSub.unsubscribe();
+		else if (this.getShows)
+			this.getShows.unsubscribe();
+		else if(this.routerUrlSub)
+			this.routerUrlSub.unsubscribe();
+		else if(this.getShowListSub)
+			this.getShowListSub.unsubscribe()
 	}
 }
