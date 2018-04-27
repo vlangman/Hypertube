@@ -366,7 +366,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 		this.dowloadMessage = "Preparing your file";
 	 	this.checkSub = this.torrentService.checkSeries(data['data']['hash']).subscribe(
 			(response: JSON) => {
-				// this.authService.addSeriesToDb(this.Series.image, this.Series.title, this.Series.id, data['data']['hash']); waiting for merge to sort out
+				this.authService.addSeriesToDb(this.Series.image, this.Series.title);
 				if (response['request'] == 200){
 					console.log('streaming bitch');
 					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
