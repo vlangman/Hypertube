@@ -92,7 +92,7 @@
 				</div>
 				<div class="register-buttons form-group">
 					<button class="btn btn-outline-success" type="Submit" [disabled]="!form.valid">Update</button>
-					<button class="btn btn-outline-default" type="button" (click)="editProfile()">Cancel</button>
+					<button class="btn btn-outline-default" type="button" (click)="editProfileClear(form)">Cancel</button>
 				</div>
 			</form>
 			<div class="alert alert-warning" *ngIf="errormsg">
@@ -128,7 +128,7 @@
 				<input type="search" class="form-control" name="search" ngModel required #search="ngModel">
 				<div class="register-buttons form-group">
 					<button class="btn btn-outline-success" type="Submit" [disabled]="!searchform.valid">Search</button>
-					<button class="btn btn-outline-default" type="button" (click)="searchProfileButton()">Cancel</button>
+					<button class="btn btn-outline-default" type="button" (click)="searchProfileclear(searchform)">Cancel</button>
 				</div>
 			</form>
 
@@ -150,7 +150,7 @@
 				<input type="email" class="form-control" name="emailInput" ngModel required email #emailInput="ngModel">
 				<div class="register-buttons form-group">
 					<button class="btn btn-outline-success" type="Submit" [disabled]="!emailform.valid">Update</button>
-					<button class="btn btn-outline-default" type="button" (click)="editEmail()">Cancel</button>
+					<button class="btn btn-outline-default" type="button" (click)="editEmailClear(emailform)">Cancel</button>
 				</div>
 			</form>
 

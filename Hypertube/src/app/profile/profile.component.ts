@@ -107,10 +107,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.editButton = false;
 			this.editEmailButton = false;
 			this.displayProfile = false;
+
 		}
 		this.userExist = '';
-	}
 
+	}
+	searchProfileclear(searchform: NgForm) {
+		searchform.reset();
+	}
 
 	editProfile() {
 		// if (this.tempUsername != this.username)
@@ -125,6 +129,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.editButton = false;
 		}
 		// console.log(this.editButton);
+		this.errormsg = '';
+		this.movieError = '';
+		this.userExist = '';
+		this.downloadURL = null;
+		this.percentage = null;
+		this.snapshot = null;
+	}
+	editProfileClear(form: NgForm) {
+		form.reset();
 		this.errormsg = '';
 		this.movieError = '';
 		this.userExist = '';
@@ -174,6 +187,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.userExist = '';
 	}
 
+	editEmailClear(emailform: NgForm) {
+		emailform.reset();
+	}
 
 	getUserInfo(username) {
 
