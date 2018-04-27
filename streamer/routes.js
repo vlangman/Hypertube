@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const torrent = require('./torrent.js');
-const seriesTorrent = require('./seriesTorrent.js')
-const files = require('./files.js')
-var moviesDir = '../Hypertube/src/downloads/'
+const seriesTorrent = require('./seriesTorrent.js');
+const files = require('./files.js');
+var moviesDir = '../Hypertube/src/downloads/';
+var admin = require('firebase-admin');
 fs = require('fs');
 
 
@@ -48,150 +49,172 @@ router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
 })
 
 //Download movie
-router.get('/api/movie/download/:hash/:imdb', (req, res) => {
+router.get('/api/movie/download/:hash/:imdb/:token', (req, res) => {
 	const downloadHash = req.params.hash;
 	const imdbid = req.params.imdb;
-	console.log('-----------------------------> STARTING DOWNLOAD : ' + '[ ' + downloadHash + ' ]');
+	const authToken = req.params.token;
+	console.log(authToken);
+	admin.auth().verifyIdToken(authToken).then(decoded => {
+		console.log('token for user ' + decoded.sub);
+		admin.auth().getUser(decoded.sub).then(user => {
+			console.log('-----------------------------> STARTING DOWNLOAD : ' + '[ ' + downloadHash + ' ]');
 
-	console.log('checking client for movie...');
-	//checking if client already contains a duplicate
-	//1
-	torrent.checkClient(downloadHash)
-		.then(
-			(resolve) => {
-				throw 100;
-			}, (reject) => {
-				console.log('beginning client download')
-				return (torrent.downloadTorrent(downloadHash))
-			})
-		//2
-		.then(
-			(resolve) => {
-				console.log('looking for video file to play');
-				return (torrent.movieFile(downloadHash));
-			})
-		.catch(
-			(err) => {
-				console.log('Movie Rejection Fallback 1')
-				console.log(err);
-				//cant get movie files... no seeders or slow download
-				if (err == 408) {
-					console.log('Download timed out no... bytes received');
-					throw err;
-				}
-				//file is allready downloading in the client
-				else if (err == 100) {
-					console.log('Download already exists in client');
-					return (torrent.movieFile(downloadHash))
-				}
-				else if (err == 204) {
-					console.log('No files yet')
-					throw err;
-				}
-				//sumting bad ;'( I do not no de whey
-				else {
-					console.log('not good...');
-					throw "EISH Boss...";
-				}
-			})
-		//playable file was found by movieFile
-		.then(
-			(resolve) => {
-				console.log('playable video file format found');
-				console.log(resolve);
-				console.log('Attemting subtitles download');
-				return (torrent.downloadSubtitles(downloadHash, imdbid));
-			}
-		)
-		//got subtitles
-		.then((resolve) => {
-			console.log('subtitles successfully downloaded');
-			const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
-			const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
-			res.json(obj);
-		})
-		//catching all errors rejection 1 cant handle as well as a subtitles failure
-		.catch((err) => {
-			const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
-			console.log('Movie Rejection Fallback 2')
-			console.log(err);
-			//no subs
-			if (err == 404) {
-				console.log('WARNING: Subtitles could not be found...');
-				const obj = { request: 206, data: { hash: downloadHash, link: checklink } }
-				res.json(obj);
-			}
-			//request timeout 
-			else if (err == 408) {
-				const obj = { request: 408, data: { hash: downloadHash, link: "404" } }
-				res.json(obj);
-			}
-			//no video file  
-			else if (err == 204) {
-				const obj = { request: 204, data: { hash: downloadHash, link: checklink } }
-				res.json(obj);
-				//internal error
-			} else {
-				const obj = { request: 500, data: { hash: downloadHash, link: "404" } }
-				console.log('Internal error...consult a dev');
-				res.json({ obj });
-			}
+			console.log('checking client for movie...');
+			//checking if client already contains a duplicate
+			//1
+			torrent.checkClient(downloadHash)
+				.then(
+					(resolve) => {
+						throw 100;
+					}, (reject) => {
+						console.log('beginning client download')
+						return (torrent.downloadTorrent(downloadHash))
+					})
+				//2
+				.then(
+					(resolve) => {
+						console.log('looking for video file to play');
+						return (torrent.movieFile(downloadHash));
+					})
+				.catch(
+					(err) => {
+						console.log('Movie Rejection Fallback 1')
+						console.log(err);
+						//cant get movie files... no seeders or slow download
+						if (err == 408) {
+							console.log('Download timed out no... bytes received');
+							throw err;
+						}
+						//file is allready downloading in the client
+						else if (err == 100) {
+							console.log('Download already exists in client');
+							return (torrent.movieFile(downloadHash))
+						}
+						else if (err == 204) {
+							console.log('No files yet')
+							throw err;
+						}
+						//sumting bad ;'( I do not no de whey
+						else {
+							console.log('not good...');
+							throw "EISH Boss...";
+						}
+					})
+				//playable file was found by movieFile
+				.then(
+					(resolve) => {
+						console.log('playable video file format found');
+						console.log(resolve);
+						console.log('Attemting subtitles download');
+						return (torrent.downloadSubtitles(downloadHash, imdbid));
+					}
+				)
+				//got subtitles
+				.then((resolve) => {
+					console.log('subtitles successfully downloaded');
+					const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
+					const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
+					res.json(obj);
+				})
+				//catching all errors rejection 1 cant handle as well as a subtitles failure
+				.catch((err) => {
+					const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
+					console.log('Movie Rejection Fallback 2')
+					console.log(err);
+					//no subs
+					if (err == 404) {
+						console.log('WARNING: Subtitles could not be found...');
+						const obj = { request: 206, data: { hash: downloadHash, link: checklink } }
+						res.json(obj);
+					}
+					//request timeout 
+					else if (err == 408) {
+						const obj = { request: 408, data: { hash: downloadHash, link: "404" } }
+						res.json(obj);
+					}
+					//no video file  
+					else if (err == 204) {
+						const obj = { request: 204, data: { hash: downloadHash, link: checklink } }
+						res.json(obj);
+						//internal error
+					} else {
+						const obj = { request: 500, data: { hash: downloadHash, link: "404" } }
+						console.log('Internal error...consult a dev');
+						res.json({ obj });
+					}
 
+				})
+		}).catch(err => {
+			res.json({ request: 407, data: err });
 		})
+	}).catch(err => {
+		console.log('test')
+		res.json({ request: 407, data: err });
+	})
 })
 //Check movie
-router.get('/api/movie/check/:hash', (req, res) => {
+router.get('/api/movie/check/:hash/:token', (req, res) => {
 	const hash = req.params.hash;
 	var path = null;
 	var dirpath = '../Hypertube/src/downloads/';
+	const authToken = req.params.token;
+	admin.auth().verifyIdToken(authToken).then(decoded => {
+		console.log('token for user ' + decoded.sub);
+		admin.auth().getUser(decoded.sub).then(user => {
+			console.log('-----------------------------> checking download progress of movie: ' + '[ ' + hash + ' ]');
 
-	console.log('-----------------------------> checking download progress of movie: ' + '[ ' + hash + ' ]');
-
-	files.watchMovieCheck(dirpath + hash)
-		.then(
-			(resolve) => {
-				return torrent.checkClient(hash);
-			}
-		)
-		//if client has torrent file it will return index of torrent be checked else files may not exist
-		.then(
-			(index) => {
-				console.log('client is currently downloading torrent')
-				return torrent.isPlayable(index);
-			},
-			(reject) => {
-				console.log('CLIENT NOT DOWNLOADING THROW 500');
-				throw 500;
-			})
-		//checking files for playable file
-		.then(
-			(resolve) => {
-				console.log('movie file is playable')
-				const watchLink = 'http://localhost:3000/api/movie/watch/' + hash;
-				const obj = { request: 200, data: { hash: hash, link: watchLink } }
-				res.json(obj);
-			}
-		)
-		.catch(
-			(err) => {
-				console.log(err);
-				if (err == 404) {
-					//restart download
-					console.log('ERROR: restart download');
-					console.log(err);
-					const obj = { request: 404, data: { hash: "404", link: "404" } }
-					res.json(obj);
-				} else if (err == 204) {
-					console.log('series file NOT playable')
-					const obj = { request: 204, data: { hash: hash, link: "204" } }
-					res.json(obj);
-				}
-				else if (err == 500) {
-					console.log('client not downloading file')
-					const obj = { request: 500, data: { hash: hash, link: "204" } }
-				}
-			}
-		)
+			files.watchMovieCheck(dirpath + hash)
+				.then(
+					(resolve) => {
+						return torrent.checkClient(hash);
+					}
+				)
+				//if client has torrent file it will return index of torrent be checked else files may not exist
+				.then(
+					(index) => {
+						console.log('client is currently downloading torrent')
+						return torrent.isPlayable(index);
+					},
+					(reject) => {
+						console.log('CLIENT NOT DOWNLOADING THROW 500');
+						throw 500;
+					})
+				//checking files for playable file
+				.then(
+					(resolve) => {
+						console.log('movie file is playable')
+						const watchLink = 'http://localhost:3000/api/movie/watch/' + hash;
+						const obj = { request: 200, data: { hash: hash, link: watchLink } }
+						res.json(obj);
+					}
+				)
+				.catch(
+					(err) => {
+						console.log(err);
+						if (err == 404) {
+							//restart download
+							console.log('ERROR: restart download');
+							console.log(err);
+							const obj = { request: 404, data: { hash: "404", link: "404" } }
+							res.json(obj);
+						} else if (err == 204) {
+							console.log('series file NOT playable')
+							const obj = { request: 204, data: { hash: hash, link: "204" } }
+							res.json(obj);
+						}
+						else if (err == 500) {
+							console.log('client not downloading file')
+							const obj = { request: 500, data: { hash: hash, link: "204" } }
+						}
+					}
+				)
+		}).catch(err => {
+			res.json({ request: 407, data: err });
+		})
+	}).catch(err => {
+		console.log('test')
+		res.json({ request: 407, data: err });
+	})
 })
 //Stream movie
 router.get('/api/movie/watch/:hash', (req, res) => {

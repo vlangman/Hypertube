@@ -55,9 +55,10 @@ export class MoviedetailsComponent implements OnInit {
 	subtitlesStreamfre: string;
 	imageref: string[] = [];
 	selectedCover: string = null;
-	currDownload:boolean = false;
-	checkDownload:boolean= false;
+	currDownload: boolean = false;
+	checkDownload: boolean = false;
 	dowloadMessage: string = null;
+	// authToken: string;
 
 	getCastSub: Subscription;
 
@@ -90,7 +91,7 @@ export class MoviedetailsComponent implements OnInit {
 						console.log(Error);
 					}
 				)
-				
+
 			})
 	}
 
@@ -173,54 +174,56 @@ export class MoviedetailsComponent implements OnInit {
 
 
 	//1
-	downloadMovie(data, count){
-		
+	downloadMovie(data, count) {
+
 		this.currDownload = true;
 		this.checkDownload = false;
 		this.watch = false;
 		//reset video player
 		this.source = [];
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+			this.dowloadMessage = "Downloading the file on server: " + this.Movie.title;
+			this.torrentService.downloadMovie(data, this.Movie.imdb_code, token).subscribe((data2: JSON) => {
+				this.prepareDownload = true;
+				console.log(data2);
 
-		this.dowloadMessage = "Downloading the file on server: "  + this.Movie.title;
-		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
-			this.prepareDownload = true;
-			console.log(data2);
-
-			if (data2['request'] == 204){
-				this.dowloadMessage = "Attempting new download...";
-				if (count < 3){
-					setTimeout(()=>{this.downloadMovie(data, ++count);},5000);
+				if (data2['request'] == 204) {
+					this.dowloadMessage = "Attempting new download...";
+					if (count < 3) {
+						setTimeout(() => { this.downloadMovie(data, ++count); }, 5000);
+					}
+					else {
+						this.dowloadMessage = "Download is taking some time to start... Please try again";
+						this.currDownload = false;
+					}
 				}
-				else{
-					this.dowloadMessage = "Download is taking some time to start... Please try again";
+				//500 internal error
+				else if (data2['request'] == 500) {
+					this.dowloadMessage = "Fatal download error occured please try again later";
 					this.currDownload = false;
 				}
-			}
-			//500 internal error
-			else if(data2['request'] == 500){
-				this.dowloadMessage = "Fatal download error occured please try again later";
-				this.currDownload = false;
-			}
-			//200 successful
-			else if (data2['request'] == 200){
-				this.dowloadMessage = "CHECKING FILE: " + name;
-				this.checkMovie(data2, 0);
-			}
-			//408 timeout
-			else if(data2['request'] == 408){
-				this.currDownload = false;
-				this.dowloadMessage = "CHECKING FILE: request timed out...";
-				console.log('timeout');
-			}
-			//206 partial content
-			else if (data2['request'] == 206){
-				this.currDownload = false;
-				console.log('subtitles could not be found');
-				this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
-				this.checkMovie(data2, 0);
-			}
+				//200 successful
+				else if (data2['request'] == 200) {
+					this.dowloadMessage = "CHECKING FILE: " + name;
+					this.checkMovie(data2, 0);
+				}
+				//408 timeout
+				else if (data2['request'] == 408) {
+					this.currDownload = false;
+					this.dowloadMessage = "CHECKING FILE: request timed out...";
+					console.log('timeout');
+				}
+				//206 partial content
+				else if (data2['request'] == 206) {
+					this.currDownload = false;
+					console.log('subtitles could not be found');
+					this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
+					this.checkMovie(data2, 0);
+				}
 
-		});
+			});
+		})
+
 
 	}
 
@@ -232,31 +235,32 @@ export class MoviedetailsComponent implements OnInit {
 		this.dowloadMessage = "Preparing your Movie";
 
 		this.subtitlesLink(data);
-		this.torrentService.checkMovie(data['data']['hash']).subscribe(
-			(response: JSON) => {
-				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-				this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
-				console.log(response);
-
-
-				if (response['request'] == 200){
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
+			this.torrentService.checkMovie(data['data']['hash'], token).subscribe(
+				(response: JSON) => {
+					this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
 					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
-					this.startStream(response['data']['link']);
-				} else if(response['request'] == 404){
-					this.dowloadMessage = "SERVER ERROR: Restart the download please!";
-					this.checkDownload = false;
-				}
-				else if (response['request'] == 204){
-					this.dowloadMessage = "STREAMING file " + data['data']['hash'];
-					console.log('file not ready');
-					if (count < 5)
-					{
-						setTimeout(()=>{this.checkMovie(data, ++count);},5000);
-					} else {
-						this.dowloadMessage = "Download is slow, try again some other time";
+					console.log(response);
+
+
+					if (response['request'] == 200) {
+						this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+						this.startStream(response['data']['link']);
+					} else if (response['request'] == 404) {
+						this.dowloadMessage = "SERVER ERROR: Restart the download please!";
 						this.checkDownload = false;
 					}
-				}
+					else if (response['request'] == 204) {
+						this.dowloadMessage = "STREAMING file " + data['data']['hash'];
+						console.log('file not ready');
+						if (count < 5) {
+							setTimeout(() => { this.checkMovie(data, ++count); }, 5000);
+						} else {
+							this.dowloadMessage = "Download is slow, try again some other time";
+							this.checkDownload = false;
+						}
+					}
+				})
 		})
 	}
 
@@ -280,8 +284,8 @@ export class MoviedetailsComponent implements OnInit {
 			console.log(this.subtitlesStreamfre)
 			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
 				console.log('heree')
-				console.log(data);
-				if (data == 404) {
+				console.log(data['request']);
+				if (data['request'] == 404) {
 					this.subtitlesStreamfre = '';
 				}
 			})
@@ -294,8 +298,8 @@ export class MoviedetailsComponent implements OnInit {
 			console.log(this.subtitlesStreameng)
 			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
 				console.log('work')
-				console.log(data);
-				if (data == 404) {
+				console.log(data['request']);
+				if (data['request'] == 404) {
 					this.subtitlesStreameng = '';
 				}
 			})
@@ -303,7 +307,7 @@ export class MoviedetailsComponent implements OnInit {
 		}
 	}
 
-	selectCover(cover){
+	selectCover(cover) {
 		this.selectedCover = cover;
 	}
 
@@ -380,17 +384,16 @@ export class MoviedetailsComponent implements OnInit {
 			cast = [];
 
 		//getting large cover images
-		if (data['large_screenshot_image1'])
-		{
+		if (data['large_screenshot_image1']) {
 			this.imageref.push(data['large_screenshot_image1'])
 			this.selectedCover = this.imageref[0];
 		}
 		if (data['large_screenshot_image2'])
 			this.imageref.push(data['large_screenshot_image2'])
-		if(data['large_screenshot_image3'])
+		if (data['large_screenshot_image3'])
 			this.imageref.push(data['large_screenshot_image3'])
 
-		
+
 
 		if (data['yt_trailer_code'])
 			youTubeTrailer = this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/" + data['yt_trailer_code']);

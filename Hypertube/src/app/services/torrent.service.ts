@@ -16,32 +16,31 @@ export class TorrentService {
 	constructor(
 		private http: HttpClient,
 	) {
-		
+
 	}
 
-	getCast(actor): Observable<any>{
-		if (actor['name'])
-		{
+	getCast(actor): Observable<any> {
+		if (actor['name']) {
 			return this.http.get(this.api + 'movie/get/cast/' + actor['name']).map(
-				(details) =>{
+				(details) => {
 					return (details);
 				}
 			)
 		}
-		else{
+		else {
 			throw new Error('no name');
 		}
 	}
 
-	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {
+	downloadMovie(data: TORRENT, imdb_code: string, token: string): Observable<any> {
 		console.log(data);
 		console.log('downloading new torrent....' + data.hash);
-		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code).map((data) => {
+		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code + '/' + token).map((data) => {
 			return data;
 		});
 	}
-	checkMovie(hash): Observable<any> {
-		return this.http.get(this.api + 'movie/check/' + hash).map((response) => {
+	checkMovie(hash, token): Observable<any> {
+		return this.http.get(this.api + 'movie/check/' + hash + '/' + token).map((response) => {
 			return response;
 		})
 	}
@@ -59,17 +58,17 @@ export class TorrentService {
 		})
 	}
 
-	downloadSeries(hash: string, filename: string,  imdb_id: string): Observable<any> {
-		return this.http.get(this.api + 'series/download/' + hash + '/' + filename +'/'+ imdb_id + '/-1/-1' ).map(
+	downloadSeries(hash: string, filename: string, imdb_id: string): Observable<any> {
+		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/' + imdb_id + '/-1/-1').map(
 			(Response) => {
 				return Response;
 			})
 	}
 
-	downloadShow(hash: string, filename: string,  imdb_id: string, season: string ,episode: string): Observable<any> {
-		console.log('downloading show: ' + filename + ' S '+ season+  'E' + episode)
-		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/'+ imdb_id  + '/' + season +'/' + episode).map(
-			(Response)=>{
+	downloadShow(hash: string, filename: string, imdb_id: string, season: string, episode: string): Observable<any> {
+		console.log('downloading show: ' + filename + ' S ' + season + 'E' + episode)
+		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/' + imdb_id + '/' + season + '/' + episode).map(
+			(Response) => {
 				return Response;
 			}
 		)
