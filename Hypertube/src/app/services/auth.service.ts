@@ -249,7 +249,7 @@ export class AuthService {
 				this.router.navigate(['/Profile']);
 			}).catch((err) => {
 				if (err.code === 'auth/user-not-found') {
-					window.alert('No user account found with the username and password entered')
+					window.alert('No user account found with the username and password entered.')
 				}
 				console.log(err);
 			});

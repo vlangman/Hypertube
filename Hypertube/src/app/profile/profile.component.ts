@@ -13,13 +13,13 @@ import { LoginComponent } from '../login/login.component';
 import { Router } from '@angular/router';
 
 export interface User {
-	username: string;
+  username: string;
 }
 
 @Component({
-	selector: 'app-profile',
-	templateUrl: './profile.component.html',
-	styleUrls: ['./profile.component.scss']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
