@@ -55,7 +55,6 @@ const checkClient = (hash) => {
 	return new Promise(
 		(resolve, reject) => {
 			var torrentId = movieHashLink + hash;
-			var i = 0;
 			var found = false;
 
 			async function check(){
@@ -68,7 +67,7 @@ const checkClient = (hash) => {
 						{
 							found = true;
 							console.log('Found in client')
-							resolve(i);
+							resolve(count);
 						} else if(count ==client.torrents.length)
 						{
 							console.log('cant find torrent1');
@@ -170,7 +169,7 @@ const downloadSubtitles = (hash, imdb) => {
 }
 
 const downloadSubtitlesSeries = (hash, imdb, S, E) => {
-	return new Promise((resolve) => {
+	return new Promise((resolve, reject) => {
 		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
 			OpenSubtitles.search({ imdbid: imdb, season: S, episode: E, sublanguageid: 'all' }).then((subtitles) => {
 				console.log(subtitles)
@@ -180,18 +179,24 @@ const downloadSubtitlesSeries = (hash, imdb, S, E) => {
 				if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
 					if (subtitles['en']) {
 						request(subtitles['en'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'eng' + '.vtt'));
-						console.log(subtitles['en'].url);
+						resolve(200);
 					}
 				}
 
 				if (!fs.existsSync(moviesDir + hash + '/fre.vtt')) {
 					if (subtitles['fr']) {
 						request(subtitles['fr'].url).pipe(srt2vtt()).pipe(fs.createWriteStream(moviesDir + hash + '/' + 'fre' + '.vtt'));
-						console.log(subtitles['fr'].url);
+						resolve(200);
 					}
 				}
 			}).catch(err => {
-				throw 500;
+				if (err == 404){
+					console.log('subtitles not found m8');
+					reject(err);
+				}
+				else{
+					console.log('EISH : ' + err)
+				}
 			});
 		}
 		resolve(moviesDir + hash);
@@ -234,10 +239,14 @@ const subtitlesFile = (hash, lang) => {
 //resolve with file location(path)
 //reject with 204
 const movieFile = (hash) => {
+	console.log(1);
 	const moviePath = moviesDir + hash;
 	return new Promise((resolve, reject)=>{
+		console.log(2);
 		files.getDirectory(moviePath).then(
 			(resolve)=>{
+				console.log(3);
+				console.log(resolve)
 				return files.findfile(moviePath + '/' + resolve);
 			}
 		).then(
@@ -279,6 +288,7 @@ const isPlayable = (index) => {
 			}
 		}
 		else{
+			console.log('throwing here2');
 			reject(500)
 		}
 	})

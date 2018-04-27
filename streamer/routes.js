@@ -333,7 +333,7 @@ router.get('/api/series/download/:series_hash/:filename/:imdbid/:season/:episode
 			console.log('playable video file format found');
 			console.log(resolve);
 			console.log('Attemting subtitles download');
-			return(torrent.downloadSubtitlesSeries(downloadHash, imdbid));
+			return(torrent.downloadSubtitlesSeries(downloadHash, imdbid, season, episode));
 		}
 	)
 	//downloading subtitles
@@ -425,6 +425,9 @@ router.get('/api/series/check/:hash', (req, res) => {
 			else if (err == 500){
 				console.log('client not downloading file')
 				const obj = { request: 500,check: true, data: { hash: hash, link: "204" } }
+			}
+			else {
+				console.log('UNKNOWN ERROR: ------------: ' + err);
 			}
 		}
 	)
