@@ -451,14 +451,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 						} else if (!value.photoInput && this.downloadURL) {
 							value.photo = this.downloadURL;
-							this.photo = value.photoInput;
-							this.authService.updateProfile_user(value.usernameInput, value.photoInput.value).then(() => {
+							this.photo = value.photo.value;
+							console.log(value.photo.value)
+							this.authService.updateProfile_user(value.usernameInput, value.photo.value).then(() => {
 								this.db.collection("Users").doc(value.usernameInput).set({
 									username: value.usernameInput,
 									Firstname: this.Firstname,
 									Lastname: this.Lastname,
 									email: this.email,
-									photo: value.photoInput,
+									photo: value.photo.value,
 									providerId: this.authService.providerId,
 									UserId: this.authService.userid
 								}).then((res) => {
@@ -466,6 +467,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
 								}).catch((err) => {
 									console.log(err);
 								});
+								this.downloadURL = null;
+								this.percentage = null;
+								this.snapshot = null;
 							});
 						} else if (value.photoInput && this.downloadURL) {
 							this.errormsg = "please choose one photo either the URL or the upload"

@@ -178,6 +178,17 @@ const downloadSubtitlesSeries = (hash, imdb) => {
 		resolve(moviesDir + hash)
 	})
 }
+// const authToken = req.params.token;
+// admin.auth().verifyIdToken(token).then(decoded => {
+// 	console.log('token for user ' + decoded.sub);
+// 	admin.auth().getUser(decoded.sub).then(user => {
+// 		resolve(200);
+// 	}).catch(err => {
+// 		reject(407);
+// 	})
+// }).catch(err => {
+// 	reject(407);
+// })
 
 const subtitlesFile = (hash, lang) => {
 	return new Promise((resolve) => {
