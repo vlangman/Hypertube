@@ -141,7 +141,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 					(data)=>{
 						if (data['tmdb'] && !data['err']){
 							this.Shows.push(data);
-							console.log(data);
 							console.log('pushed reply');
 						}
 						else{

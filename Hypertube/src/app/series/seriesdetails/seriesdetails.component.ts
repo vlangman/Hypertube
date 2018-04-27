@@ -13,7 +13,7 @@ import { VgBufferingModule } from 'videogular2/buffering';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { TMDB } from "../../models/tmdb.model";
 import { parseMagnet } from 'parse-magnet-uri';
-
+import { Subscription } from "rxjs/Rx";
 
 export interface SeriesComment {
 	userName: string;
@@ -28,7 +28,7 @@ export interface SeriesComment {
 	templateUrl: './seriesdetails.component.html',
 	styleUrls: ['./seriesdetails.component.css']
 })
-export class SeriesdetailsComponent implements OnInit {
+export class SeriesdetailsComponent implements OnInit, OnDestroy {
 
 	Series: SERIES;
 	seriesId: string;
@@ -51,6 +51,15 @@ export class SeriesdetailsComponent implements OnInit {
 	episodesList: string[] = [];
 	showdetails: boolean = false;
 	seasonToggle:number;
+	loadedShow : any;
+	seasonCount: string[] = [];
+	checkCount: number;
+	currDownload: boolean = false;
+	checkDownload: boolean = false;
+	dowloadMessage: string = null;
+
+	downloadSub: Subscription;
+	checkSub:Subscription;
 
 	constructor(
 		private seriesservice: SeriesService,
@@ -79,18 +88,33 @@ export class SeriesdetailsComponent implements OnInit {
 							if (data['tmdb'] && !data['err']){
 								this.showdetails = true;
 								console.log(data);
+								this.loadedShow = data;
 								console.log('pushed reply');
+							
+								this.seasonCount = [];
+								
+								var i = 0;
+								var newArr = [];
+								newArr[i] = Object.keys(data['episodes']).map(function(seasonsIndex){
+									i++;
+									return(seasonsIndex)
+								})
+								this.seasonCount = newArr[0];
 								
 								this.episodesList = Object.keys(data['episodes']).map(function(seasonsIndex){
 							    	data['episodes'][seasonsIndex] = Object.keys(data['episodes'][seasonsIndex]).map(
 							    	(episodeIndex)=>{
-							    		data['episodes'][seasonsIndex][episodeIndex] = Object.keys(data['episodes'][seasonsIndex][episodeIndex]).map(
+							    		data['episodes'][seasonsIndex][episodeIndex]['links'] = Object.keys(data['episodes'][seasonsIndex][episodeIndex]).map(
 							    		(qualityIndex) =>{
-							    			data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['quality'] = qualityIndex;
-							    			data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['torrent']  =  parseMagnet(data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['url'])
-							    			let quality = data['episodes'][seasonsIndex][episodeIndex][qualityIndex];
+							    			var retObj= {
+							    				quality :qualityIndex,
+							    				torrent: parseMagnet(data['episodes'][seasonsIndex][episodeIndex][qualityIndex]['url']),
+							    			};
+							    			
+							    			let quality = retObj;
 							    			return quality;
 							    		})
+							    		data['episodes'][seasonsIndex][episodeIndex]['episode'] = {index :episodeIndex};
 							    		let episodes = data['episodes'][seasonsIndex][episodeIndex];
 							    		return episodes;
 							    	})
@@ -226,45 +250,152 @@ export class SeriesdetailsComponent implements OnInit {
 
 	}
 
-	// 1
-	downloadSeries() {
+	//1
+	// used for no SUBS
+	downloadSeries(count) {
 		console.log(this.Series)
-		this.torrentService.downloadSeries(this.hash, this.filename, this.seriesId).subscribe((data2: JSON) => {
+		this.currDownload = true;
+		this.dowloadMessage = "Downloading the file on server";
+		this.checkDownload = false;
+		this.downloadSub = this.torrentService.downloadSeries(this.hash, this.filename, this.seriesId).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
-			this.watchSeries(data2);
+			//204 no files yet 
+			if (data2['request'] == 204){
+				console.log('SERIES DOWNLOADING TOO SLOW!');
+				if (count < 3)
+				{
+					setTimeout(()=>{this.downloadSeries(++count);},5000);
+				}
+				else{
+					this.dowloadMessage = "Download is taking some time to start... Please try again";
+					this.downloadSub.unsubscribe();
+					this.currDownload = false;
+				}
+			}
+			//500 internal error
+			else if(data2['request'] == 500){
+				console.log('something very bad happened ey... go watch something else ;)');
+				this.currDownload = false;
+				this.downloadSub.unsubscribe();
+				this.dowloadMessage = "Fatal download error occured please try again later";
+			}
+			//200 successful
+			else if (data2['request'] == 200){
+				this.currDownload = false;
+				this.downloadSub.unsubscribe();
+				this.checkSeries(data2, 0);
+			}
+			//408 timeout
+			else if(data2['request'] == 408){
+				this.currDownload = false;
+				this.dowloadMessage = "Download request timed out...";
+				this.downloadSub.unsubscribe();
+				console.log('timeout');
+
+			}
+			//206 partial content
+			else if (data2['request'] == 206){
+				this.currDownload = false;
+				console.log('subtitles could not be found');
+				this.downloadSub.unsubscribe();
+				this.checkSeries(data2, 0);
+			}
 		});
+	}
+	//used for subs
+	downloadShow(quality ,season, episode, count){
+		
+		this.currDownload = true;
+		this.checkDownload = false;
+		this.watch = false;
+		this.source = [];
+	
+
+
+		var name = quality.torrent['dn'];
+		var hash = quality.torrent['infoHash'];
+		this.dowloadMessage = "Downloading the file on server: "  +name;
+		this.downloadSub = this.torrentService.downloadShow(hash, name, this.loadedShow.imdb.slice(2,9), this.seasonCount[season], episode).subscribe((data2: JSON) => {
+			this.prepareDownload = true;
+			console.log(data2);
+			//204 no files yet 
+			if (data2['request'] == 204){
+				this.dowloadMessage = "Attempting new download...";
+				if (count < 3){
+					setTimeout(()=>{this.downloadShow(quality,season, episode, ++count);},5000);
+				}
+				else{
+					this.dowloadMessage = "Download is taking some time to start... Please try again";
+					this.currDownload = false;
+				}
+			}
+			//500 internal error
+			else if(data2['request'] == 500){
+				this.dowloadMessage = "Fatal download error occured please try again later";
+				this.currDownload = false;
+			}
+			//200 successful
+			else if (data2['request'] == 200){
+				this.dowloadMessage = "CHECKING FILE: " + name;
+				this.checkSeries(data2, 0);
+			}
+			//408 timeout
+			else if(data2['request'] == 408){
+				this.currDownload = false;
+				this.dowloadMessage = "CHECKING FILE: request timed out...";
+				console.log('timeout');
+			}
+			//206 partial content
+			else if (data2['request'] == 206){
+				this.currDownload = false;
+				console.log('subtitles could not be found');
+				this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
+				this.checkSeries(data2, 0);
+			}
+			
+		});
+
 	}
 
 	//2
-	watchSeries(data) {
+	checkSeries(data, count) {
 		console.log(data);
-		console.log('SERIES IS DOWLOADING')
-		this.torrentService.watchSeries(data['data']['hash']).subscribe(
+		this.checkDownload = true;
+		this.currDownload = false;
+		this.dowloadMessage = "Preparing your file";
+	 	this.checkSub = this.torrentService.checkSeries(data['data']['hash']).subscribe(
 			(response: JSON) => {
 				// this.authService.addSeriesToDb(this.Series.image, this.Series.title, this.Series.id, data['data']['hash']); waiting for merge to sort out
-				console.log('SERIES CHECKED AND IS READY TO STREAM')
-				console.log(response);
-				this.startStream(data['data']['link'], response['data']['format']);
-
+				if (response['request'] == 200){
+					console.log('streaming bitch');
+					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+					this.startStream(response['data']['link']);
+				} else if(response['request'] == 404){
+					this.dowloadMessage = "SERVER ERROR: Restart the download please!";
+					this.checkDownload = false;
+				}
+				else if (response['request'] == 204){
+					this.dowloadMessage = "Preparing file " + data['data']['hash'];
+					console.log('file not ready');
+					if (count < 5)
+					{
+						setTimeout(()=>{this.checkSeries(data, ++count);},5000);
+					} else {
+						this.dowloadMessage = "Download is slow, try again some other time";
+						this.checkDownload = false;
+					}	
+				}
 			})
 	}
 
 	//3
-	startStream(link, format) {
-
-		var headers = new HttpHeaders()
-			.set('Content-Type', 'video/mkv')
-
-		console.log('STARTING STREAM!!');
+	startStream(link) {
+		this.checkDownload = false;
+		this.currDownload = false;
 		console.log(link);
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;
-		// this.http.get(link, { headers: headers }).subscribe((video) => {
-		// 	console.log('GOT A RESPONSE');
-		// 	this.source = video;
-		// 	this.watch = true;
-		// })
 	}
 
 
@@ -316,5 +447,12 @@ export class SeriesdetailsComponent implements OnInit {
 			console.log(this.Details);
 	}
 
+	ngOnDestroy(){
+		console.log('DESTROYING SUBS')
+		if (this.downloadSub)
+			this.downloadSub.unsubscribe()
+		if (this.checkSub)
+			this.checkSub.unsubscribe()
+	}
 }
 

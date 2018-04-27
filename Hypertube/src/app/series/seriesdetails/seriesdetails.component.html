@@ -9,7 +9,7 @@
 			<div class="image-wrap">
 				<img class="series-image" src="{{ Details.tv_results[0].poster }}">
 				<div class=" btn-group watchbtn">
-					<button *ngIf=" !showdetails " class="btn btn-outline-primary" (click)="downloadSeries()">Download Episode</button>
+					<button *ngIf=" !showdetails " class="btn btn-outline-primary" [disabled]="currDownload" (click)="downloadSeries(0)">Download Episode</button>
 				</div>
 			</div>
 			
@@ -27,6 +27,7 @@
 				</div>
 				
 				<hr style="background: white; width: 100%;"/>
+				<h3 class="text-warning" *ngIf="dowloadMessage != null">{{ dowloadMessage }}</h3>
 			</div>
 
 
@@ -64,42 +65,24 @@
 			
 		</vg-player>
 
-	
-<!-- 
-	<div  *ngFor="let seasons of episodesList; index as seasonCount" class="card">
+	<div *ngIf="currDownload || checkDownload" class="bg-inverse loading-container">
+		<div class="loading"></div>
+	</div>
 
-		<div class="card-header">
-			<a class="card-link" data-toggle="collapse" href="#collapse{{seasonCount}}">Season: {{seasonCount}}</a>
-		</div>
-		<div id="#collapse{{seasonCount}}" class="collapse" data-parent="#accordion">
-			<div class="card-body">
-				<ul class="list-group">
-					<li style="color: black" *ngFor="let episodes of seasons; index as episodeCount" class="list-group-item ">
-						<button *ngFor="let quality of episodes">Episode: {{episodeCount}}</button>
-					</li>
-					<p>seasons here</p>
-				</ul>
-			</div>
-		</div>
-	</div> -->
+	<div class="episodes-container">
+		<li *ngFor="let seasons of episodesList; index as Count" class="list-group">
+			<a class="list-group-item season-toggle" (click)="toggleSeason(Count)"><h2 style="text-align: center; color: black" class="head">Season {{ seasonCount[Count] }} <i class="fas fa-caret-down"></i></h2></a>
+			
+			<ul [ngClass]=" seasonToggle == Count ? 'episode-row': 'submenu-closed'" class="list-group-item " *ngFor="let episodes of seasons; index as episodeCount">
+				<h6 class="episode-label lead text-muted">Episode {{episodes.episode.index}}</h6>
+				<div class="btn-group episode-buttons" role="group" aria-label="Basic example">
+				  <button  (click)="downloadShow(link,Count,episodes.episode.index,0)" [disabled]="currDownload "  *ngFor=" let link of episodes['links'] " type="button" class="btn btn-secondary">Load: {{link.quality}}</button>
+				</div>
+			</ul>
 
+		</li>
+	</div>
 
-
-
-
-<div class="episodes-container">
-	
-	<li *ngFor="let seasons of episodesList; index as seasonCount" class="list-group">
-		<a class="list-group-item season-toggle" (click)="toggleSeason(seasonCount)"><h2 style="text-align: center; color: black" class="head">Season {{seasonCount + 1}} <i class="fas fa-caret-down"></i></h2></a>
-		<ul [ngClass]=" seasonToggle == seasonCount ? '': 'submenu-closed'" class="episode-row" class="list-group-item" *ngFor="let episodes of seasons; index as episodeCount">
-			<h4 class="episode-label" style="color: black">Episode {{episodeCount + 1}}</h4>
-			<button class="btn-sm btn-primary" *ngFor=" let quality of episodes ">
-				Load: {{quality.quality}}
-			</button>
-		</ul>
-	</li>
-
-</div>
 
 </div>
 

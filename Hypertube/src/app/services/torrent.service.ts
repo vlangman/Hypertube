@@ -36,18 +36,18 @@ export class TorrentService {
 	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {
 		console.log(data);
 		console.log('downloading new torrent....' + data.hash);
-		return this.http.get(this.api + 'movie/get/' + data.hash + '/' + imdb_code).map((data) => {
+		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code).map((data) => {
 			return data;
 		});
 	}
-	watchMovie(hash): Observable<any> {
+	checkMovie(hash): Observable<any> {
 		return this.http.get(this.api + 'movie/check/' + hash).map((response) => {
 			return response;
 		})
 	}
 
 
-	watchSeries(hash): Observable<any> {
+	checkSeries(hash): Observable<any> {
 		return this.http.get(this.api + 'series/check/' + hash).map((response) => {
 			return response;
 		})
@@ -59,12 +59,20 @@ export class TorrentService {
 		})
 	}
 
-	downloadSeries(hash: string, filename: string, id: string): Observable<any> {
-		console.log(id)
-		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/' + id).map(
+	downloadSeries(hash: string, filename: string,  imdb_id: string): Observable<any> {
+		return this.http.get(this.api + 'series/download/' + hash + '/' + filename +'/'+ imdb_id + '/-1/-1' ).map(
 			(Response) => {
 				return Response;
 			})
+	}
+
+	downloadShow(hash: string, filename: string,  imdb_id: string, season: string ,episode: string): Observable<any> {
+		console.log('downloading show: ' + filename + ' S '+ season+  'E' + episode)
+		return this.http.get(this.api + 'series/download/' + hash + '/' + filename + '/'+ imdb_id  + '/' + season +'/' + episode).map(
+			(Response)=>{
+				return Response;
+			}
+		)
 	}
 
 

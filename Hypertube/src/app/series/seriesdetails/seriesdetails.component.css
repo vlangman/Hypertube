@@ -20,13 +20,30 @@
 	width: 100%;
 	background-color: orange;
 }
-
+.quality{
+	width: fit-content;
+	max-width: 100%;
+	border-radius: 4px;
+	margin-top: 5px;
+	margin-right: 10px;
+	display: inline-flex;
+}
 .episode-row{
 	display: flex;
 	flex-wrap: wrap;
 }
+
+.downloadShow{
+	flex-shrink: 1;
+}
 .episode-label{
+	flex-shrink: 1;
+	align-self: center;
 	width: fit-content;
+	padding: 5px;
+	height: 90%;
+	text-align: center;
+	word-wrap: break-word;
 }
 .season-toggle{
 	cursor: pointer;

@@ -104,6 +104,7 @@
 #page-content-wrapper {
   width: 100%;
   /*position: absolute;*/
+  z-index: 1;
   max-height: 100vh;
   padding: 15px;
 }
@@ -120,6 +121,7 @@
 /* Sidebar Styles */
 
 .sidebar-nav {
+  z-index: 10;
   background: #000;
   position: fixed;
   height: 100%;

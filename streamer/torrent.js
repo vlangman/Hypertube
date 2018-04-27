@@ -39,82 +39,103 @@ const seriesTrackers = [
 	"&tr=udp://tracker.leechers-paradise.org:6969",
 	"&tr=udp://tracker.opentrackr.org:1337/announce",
 	"&tr=udp://exodus.desync.com:6969",
+	"&tr=udp://tracker.openbittorrent.com:80/announce",
+	"&tr=udp://open.demonii.com:80"
 ];
 
 
-const report = () => {
+const report = (hash) => {
+	console.log('DOWNLOADING -------------------- '+hash+'-----------------------------')
 	console.log('Speed: ' + client.downloadSpeed / 1024 + 'Kbps');
 	console.log('Progress: ' + client.progress);
+	console.log('DOWNLOADING ----------------------------------------------------------')
 }
 
 const checkClient = (hash) => {
-
 	return new Promise(
-		(resolve) => {
+		(resolve, reject) => {
 			var torrentId = movieHashLink + hash;
-			console.log('Checking the client for an existing torrent: ' + hash);
 			var i = 0;
-			client.torrents.forEach(function (torrent) {
-				if (torrent.path = moviesDir + hash) {
-					console.log('TORRENT EXISTS IN CLIENT AT POSITION: ' + i);
-					resolve(i);
+			var found = false;
+
+			async function check(){
+				if (client.torrents[0])
+				{
+					for(var count = 0;  client.torrents[count] && !found; count++)
+					{
+						var files = await client.torrents[count].path;
+						if (files == moviesDir + hash)
+						{
+							found = true;
+							console.log('Found in client')
+							resolve(i);
+						} else if(count ==client.torrents.length)
+						{
+							console.log('cant find torrent1');
+							reject(-1);
+						}
+					}
+					if (!found)
+					{
+						console.log('cant find torrent2');
+						reject(-1);
+					}
+					
+				} else {
+					console.log('No current downloads...');
+					reject(-1)
 				}
-				i++;
-			})
-			//MOVIE DOESNT EXIST IN THE DOWNLOAD CLIENT CURRENT STATE
-			//nb** this doesnt mean the movie files dont exist just that it's not in the client current state
-			resolve(-1);
-		}
-	)//end of promise
+			}
+			check();
+		})
 }
 
 //downloads a new torrent and resolves with the download location for the file
 const downloadTorrent = (hash) => {
 	var torrentId = movieHashLink + hash;
-	//test magnet
-	// torrentId = 'magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2F&xs=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel.torrent';
 	const moviePath = moviesDir + hash;
-	return new Promise(
-		(resolve) => {
-
-			client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
-				torrent.on('download', function (bytes) {
-					report();
-					torrent.removeListener('download', () => {
-						resolve(moviesDir + hash);
-					});
-				})
-				torrent.on('done', () => {
-					console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
-				})
+	return new Promise((resolve,reject) => {
+		console.log('starting timeout function');
+		setTimeout(function(){reject(408)}, 15000);
+		client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
+			
+			torrent.on('download', function (bytes) {
 				resolve(moviesDir + hash);
 			})
-		}
-	)//end of promise
+			torrent.on('error', function (err) {
+				reject(500);
+			})
+			torrent.on('done', () => {
+				resolve(moviesDir + hash)
+				console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
+			})
+		})
+	})
 }
 
 const downloadSeries = (hash, filename) => {
-	console.log('TORRENT DOWNLOAD HASH');
-	console.log(hash);
-	var magnet = 'magnet:?xt=urn:btih:' + hash + '&dn=' + encodeURI(filename);
-	seriesTrackers.forEach((tracker) => {
-		magnet = magnet + tracker;
-	})
-	console.log('TORRENT DOWNLOAD MAGNET');
-	console.log(magnet);
-	return new Promise(
-		(resolve) => {
+	return new Promise((resolve, reject)=>{
+			var magnet = 'magnet:?xt=urn:btih:' + hash + '&dn=' + encodeURI(filename);
+			seriesTrackers.forEach((tracker) => {
+				magnet = magnet + tracker;
+			})
+			console.log('starting timeout function');
+			setTimeout(function(){reject(408)}, 15000);
 			client.add(magnet, { path: moviesDir + hash }, function (torrent) {
+				
+
 				torrent.on('download', function (bytes) {
-					report();
-					torrent.removeListener('download', () => {
-						resolve(moviesDir + hash);
-					});
+					// report();
+					console.log('Downloaded: ' + bytes +' for torrent: ' + hash);
+					resolve(moviesDir + hash);
+				})
+				torrent.on('error', function (err) {
+					reject(500);
 				})
 				torrent.on('done', () => {
 					console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
+					resolve(moviesDir + hash);
 				})
-				resolve(moviesDir + hash);
 			})
 		}
 	)//end of promise
@@ -122,11 +143,10 @@ const downloadSeries = (hash, filename) => {
 
 const downloadSubtitles = (hash, imdb) => {
 	return new Promise((resolve) => {
-		console.log('haosudhasofgaosgf');
 		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
 			OpenSubtitles.search({ imdbid: imdb, sublanguageid: 'fre, eng' }).then((subtitles) => {
 				if (!subtitles['fr'] && !subtitles['en']) {
-					throw 'no subtitles found';
+					throw '404';
 				}
 				if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
 					if (subtitles['en']) {
@@ -141,7 +161,7 @@ const downloadSubtitles = (hash, imdb) => {
 						console.log(subtitles['fr'].url);
 					}
 				}
-			}).catch(err => {
+			}).catch(err => { 
 				console.log(err)
 			});
 		}
@@ -149,14 +169,13 @@ const downloadSubtitles = (hash, imdb) => {
 	})
 }
 
-const downloadSubtitlesSeries = (hash, imdb) => {
+const downloadSubtitlesSeries = (hash, imdb, S, E) => {
 	return new Promise((resolve) => {
-		// console.log('haosudhasofgaosgf');
 		if (!fs.existsSync(moviesDir + hash + '/eng.vtt') || !fs.existsSync(moviesDir + hash + '/fre.vtt')) {
-			OpenSubtitles.search({ imdbid: imdb, season: '1', episode: '1', sublanguageid: 'all' }).then((subtitles) => {
+			OpenSubtitles.search({ imdbid: imdb, season: S, episode: E, sublanguageid: 'all' }).then((subtitles) => {
 				console.log(subtitles)
 				if (!subtitles['fr'] && !subtitles['en']) {
-					throw 'no subtitles found';
+					throw 404;
 				}
 				if (!fs.existsSync(moviesDir + hash + '/eng.vtt')) {
 					if (subtitles['en']) {
@@ -172,10 +191,10 @@ const downloadSubtitlesSeries = (hash, imdb) => {
 					}
 				}
 			}).catch(err => {
-				console.log(err)
+				throw 500;
 			});
 		}
-		resolve(moviesDir + hash)
+		resolve(moviesDir + hash);
 	})
 }
 // const authToken = req.params.token;
@@ -192,8 +211,6 @@ const downloadSubtitlesSeries = (hash, imdb) => {
 
 const subtitlesFile = (hash, lang) => {
 	return new Promise((resolve) => {
-		console.log('+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-		console.log(lang)
 		if (lang == 'eng') {
 			if (fs.existsSync(moviesDir + hash + '/eng.vtt')) {
 				files.getfile(moviesDir + hash, lang + '.vtt').then((file) => {
@@ -221,87 +238,61 @@ const subtitlesFile = (hash, lang) => {
 		else {
 			resolve(false);
 		}
-
-
 	})
 }
 
+//looks in a hash folder for a playable video file
+//resolve with file location(path)
+//reject with 204
 const movieFile = (hash) => {
 	const moviePath = moviesDir + hash;
-
-	return new Promise(
-		(resolve) => {
-			files.getDirectory(moviePath)
-				.then((folder) => {
-					console.log('THE FOLDER IS : ' + folder);
-					files.getMovieFile(10, folder).then(
-						(file) => {
-							resolve(file);
-						}).catch((err) => {
-							console.log('MAIN DIRECTORY file not created yet');
-							resolve(false);
-						})
-				}).catch((err) => {
-					console.log('MAIN DIRECTORY file not created yet');
-					resolve(false);
-				})
-		}
-	)//end of promise
+	return new Promise((resolve, reject)=>{
+		files.getDirectory(moviePath).then(
+			(resolve)=>{
+				return files.findfile(moviePath + '/' + resolve);
+			}
+		).then(
+			(file) => {
+				resolve(file);
+			}
+		).catch((err)=>{
+			reject(err);
+		})
+	})//end of promise
 }
 
-const seriesFile = (repeat, hash) => {
+//looks in a hash folder for a playable video file
+//resolve with file location(path)
+//reject with 204
+const seriesFile = (hash) => {
 	const seriesPath = moviesDir + hash;
-
-	return new Promise(function cb(resolve, reject) {
-		console.log(repeat - 1 + ' Attempts remaining');
-		if (--repeat > 0) {
+	return new Promise((resolve, reject)=>{
 			files.findfile(seriesPath).then(
 				(file) => {
-					if (file != false) {
-						console.log('FOUND MOVIE FILE');
 						resolve(file);
-						return;
-					}
-					else {
-						setTimeout(function () {
-							cb(resolve, reject);
-						}, 2000)
-					}
-				}
-			)
-		} else {
-			reject('NO VIDEO FILE CREATED');
-		}
+					}	
+			).catch((err)=>{
+				reject(err);
+			})
 	})//end of promise
 }
 
-const isPlayable = (repeat, hash) => {
-	torrentPath = moviesDir + hash;
+const isPlayable = (index) => {
 	return new Promise(function cb(resolve, reject) {
-
-		console.log(repeat - 1 + ' Attempts remaining.... PROGRESS ============================= ');
-		if (--repeat > 0) {
-			checkClient(torrentPath).then(
-				(index) => {
-					if (index != -1) {
-						var progress = client.torrents[index].progress;
-						if (progress > 0.035) {
-							resolve('READY TO PLAY')
-						} else {
-							setTimeout(function () {
-								cb(resolve, reject);
-							}, 2000)
-						}
-					}
-					else {
-						resolve(false);
-					}
-				}
-			)
-		} else {
-			reject('THAT VIDEO IS DOWNLOADING POES SLOW, RECOMMEND YOU GO HAVE A SMOKE AN SORT YOUR BRAIN OUT BEFORE YOU FIGURE THIS ONE OUT CAUSE FUCK ME THIS IS SAD :)');
+		if (client.torrents[index])
+		{
+			var progress = client.torrents[index].progress;
+			console.log('DOWNLOAD Progress: ' + progress)
+			if (progress > 0.035) {
+				resolve(true)
+			} else {
+				reject(204)
+			}
 		}
-	})//end of promise
+		else{
+			reject(500)
+		}
+	})
 }
 
 
