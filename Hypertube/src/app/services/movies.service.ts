@@ -160,11 +160,11 @@ export class MovieService {
 				})
 	}
 
-	// getMovieComments(id): Observable<any> {
-	// 	return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
-	// 		return res
-	// 	})
-	// }
+	getMovieComments(id): Observable<any> {
+		return this.http.get<YTS>(this.apiComments + '?movie_id=' + id).map((res) => {
+			return res
+		})
+	}
 
 	findMovieId(id: number): Observable<MOVIES> {
 		return this.http.get<YTS>(this.apiDetail + '?movie_id=' + id + '&with_images=true&with_cast=true').map(

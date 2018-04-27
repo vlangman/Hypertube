@@ -55,6 +55,9 @@ export class MoviedetailsComponent implements OnInit {
 	subtitlesStreamfre: string;
 	imageref: string[] = [];
 	selectedCover: string = null;
+	currDownload:boolean = false;
+	checkDownload:boolean= false;
+	dowloadMessage: string = null;
 
 	getCastSub: Subscription;
 
@@ -167,47 +170,138 @@ export class MoviedetailsComponent implements OnInit {
 		this.api = api;
 		console.log(this.api);
 	}
+
+
 	//1
-	downloadMovie(data) {
-		// this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
+	downloadMovie(data, count){
+		
+		this.currDownload = true;
+		this.checkDownload = false;
+		this.watch = false;
+		//reset video player
+		this.source = [];
+
+		this.dowloadMessage = "Downloading the file on server: "  + this.Movie.title;
 		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
 			this.prepareDownload = true;
 			console.log(data2);
-			this.watchMovie(data2);
 
+			if (data2['request'] == 204){
+				this.dowloadMessage = "Attempting new download...";
+				if (count < 3){
+					setTimeout(()=>{this.downloadMovie(data, ++count);},5000);
+				}
+				else{
+					this.dowloadMessage = "Download is taking some time to start... Please try again";
+					this.currDownload = false;
+				}
+			}
+			//500 internal error
+			else if(data2['request'] == 500){
+				this.dowloadMessage = "Fatal download error occured please try again later";
+				this.currDownload = false;
+			}
+			//200 successful
+			else if (data2['request'] == 200){
+				this.dowloadMessage = "CHECKING FILE: " + name;
+				this.checkMovie(data2, 0);
+			}
+			//408 timeout
+			else if(data2['request'] == 408){
+				this.currDownload = false;
+				this.dowloadMessage = "CHECKING FILE: request timed out...";
+				console.log('timeout');
+			}
+			//206 partial content
+			else if (data2['request'] == 206){
+				this.currDownload = false;
+				console.log('subtitles could not be found');
+				this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
+				this.checkMovie(data2, 0);
+			}
 
 		});
+
 	}
+
 	//2
-	watchMovie(data) {
+	checkMovie(data, count) {
 		console.log(data);
-		console.log('MOVIE IS DOWLOADING')
-		this.torrentService.watchMovie(data['data']['hash']).subscribe(
+		this.checkDownload = true;
+		this.currDownload = false;
+		this.dowloadMessage = "Preparing your Movie";
+
+
+		this.torrentService.checkMovie(data['data']['hash']).subscribe(
 			(response: JSON) => {
 				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-				console.log('MOVIE CHECKED AND IS READY TO STREAM')
+				this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
 				console.log(response);
 
-				this.subtitlesLink(data);
-				this.startStream(data['data']['link'], response['data']['format']);
 
-			})
+				if (response['request'] == 200){
+					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+					this.startStream(response['data']['link']);
+				} else if(response['request'] == 404){
+					this.dowloadMessage = "SERVER ERROR: Restart the download please!";
+					this.checkDownload = false;
+				}
+				else if (response['request'] == 204){
+					this.dowloadMessage = "STREAMING file " + data['data']['hash'];
+					console.log('file not ready');
+					if (count < 5)
+					{
+						setTimeout(()=>{this.checkMovie(data, ++count);},5000);
+					} else {
+						this.dowloadMessage = "Download is slow, try again some other time";
+						this.checkDownload = false;
+					}
+				}
+		})
 	}
-	//3
-	startStream(link, format) {
 
-		var headers = new HttpHeaders()
-			.set('Content-Type', 'video/mp4')
+	// //3
+	startStream(link) {
+		this.checkDownload = false;
+		this.currDownload = false;
 		console.log('STARTING STREAM!!');
 		console.log(link);
+		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;
-		this.source = link;
-		// this.http.get(link, { headers: headers }).subscribe((video) => {
-		// 	console.log('GOT A RESPONSE');
-		// 	this.source = video;
-
-		// })
 	}
+
+
+
+	// //2
+	// watchMovie(data) {
+	// 	console.log(data);
+	// 	console.log('MOVIE IS DOWLOADING')
+	// 	this.torrentService.watchMovie(data['data']['hash']).subscribe(
+	// 		(response: JSON) => {
+	// 			this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
+	// 			console.log('MOVIE CHECKED AND IS READY TO STREAM')
+	// 			console.log(response);
+
+	// 			this.subtitlesLink(data);
+	// 			this.startStream(data['data']['link'], response['data']['format']);
+
+	// 		})
+	// }
+	// //3
+	// startStream(link, format) {
+
+	// 	var headers = new HttpHeaders()
+	// 		.set('Content-Type', 'video/mp4')
+	// 	console.log('STARTING STREAM!!');
+	// 	console.log(link);
+	// 	this.watch = true;
+	// 	this.source = link;
+	// 	// this.http.get(link, { headers: headers }).subscribe((video) => {
+	// 	// 	console.log('GOT A RESPONSE');
+	// 	// 	this.source = video;
+
+	// 	// })
+	// }
 
 	subtitlesLink(hash) {
 		this.subtitlesStreameng = '';

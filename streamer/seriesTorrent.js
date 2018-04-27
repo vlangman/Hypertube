@@ -114,7 +114,7 @@ const getShowData = (show) =>{
 				resolve(showArr);
 			}
 		)
-		.catch((err) => reject({err: err}));
+		.catch((err) => reject(500));
 	})
 }
 

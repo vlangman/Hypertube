@@ -36,11 +36,11 @@ export class TorrentService {
 	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {
 		console.log(data);
 		console.log('downloading new torrent....' + data.hash);
-		return this.http.get(this.api + 'movie/get/' + data.hash + '/' + imdb_code).map((data) => {
+		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code).map((data) => {
 			return data;
 		});
 	}
-	watchMovie(hash): Observable<any> {
+	checkMovie(hash): Observable<any> {
 		return this.http.get(this.api + 'movie/check/' + hash).map((response) => {
 			return response;
 		})

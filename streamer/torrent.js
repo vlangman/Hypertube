@@ -75,8 +75,12 @@ const checkClient = (hash) => {
 							reject(-1);
 						}
 					}
-					console.log('cant find torrent2');
-					reject(-1);
+					if (!found)
+					{
+						console.log('cant find torrent2');
+						reject(-1);
+					}
+					
 				} else {
 					console.log('No current downloads...');
 					reject(-1)
@@ -86,30 +90,27 @@ const checkClient = (hash) => {
 		})
 }
 
-
 //downloads a new torrent and resolves with the download location for the file
 const downloadTorrent = (hash) => {
 	var torrentId = movieHashLink + hash;
-	//test magnet
-	// torrentId = 'magnet:?xt=urn:btih:08ada5a7a6183aae1e09d831df6748d566095a10&dn=Sintel&tr=udp%3A%2F%2Fexplodie.org%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.empire-js.us%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&ws=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2F&xs=https%3A%2F%2Fwebtorrent.io%2Ftorrents%2Fsintel.torrent';
 	const moviePath = moviesDir + hash;
-	return new Promise(
-		(resolve) => {
-
-			client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
-				torrent.on('download', function (bytes) {
-
-					torrent.removeListener('download', () => {
-						resolve(moviesDir + hash);
-					});
-				})
-				torrent.on('done', () => {
-					console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
-				})
+	return new Promise((resolve,reject) => {
+		console.log('starting timeout function');
+		setTimeout(function(){reject(408)}, 15000);
+		client.add(torrentId, { path: moviesDir + hash }, function (torrent) {
+			
+			torrent.on('download', function (bytes) {
 				resolve(moviesDir + hash);
 			})
-		}
-	)//end of promise
+			torrent.on('error', function (err) {
+				reject(500);
+			})
+			torrent.on('done', () => {
+				resolve(moviesDir + hash)
+				console.log('FINISHED DOWNLOADING THE TORRENT HEEECTIC');
+			})
+		})
+	})
 }
 
 const downloadSeries = (hash, filename) => {
@@ -118,14 +119,14 @@ const downloadSeries = (hash, filename) => {
 			seriesTrackers.forEach((tracker) => {
 				magnet = magnet + tracker;
 			})
-			
+			console.log('starting timeout function');
+			setTimeout(function(){reject(408)}, 15000);
 			client.add(magnet, { path: moviesDir + hash }, function (torrent) {
-				console.log('starting timeout function');
-				setTimeout(function(){reject(408)}, 15000);
+				
 
 				torrent.on('download', function (bytes) {
 					// report();
-					console.log('GOT SOME FUCKEN DATA FOR TORRENT ' + hash);
+					console.log('Downloaded: ' + bytes +' for torrent: ' + hash);
 					resolve(moviesDir + hash);
 				})
 				torrent.on('error', function (err) {
@@ -136,10 +137,8 @@ const downloadSeries = (hash, filename) => {
 					resolve(moviesDir + hash);
 				})
 			})
-
 		}
 	)//end of promise
-
 }
 
 const downloadSubtitles = (hash, imdb) => {
@@ -231,31 +230,29 @@ const subtitlesFile = (hash, lang) => {
 	})
 }
 
+//looks in a hash folder for a playable video file
+//resolve with file location(path)
+//reject with 204
 const movieFile = (hash) => {
 	const moviePath = moviesDir + hash;
-
-	return new Promise(
-		(resolve) => {
-			files.getDirectory(moviePath)
-				.then((folder) => {
-					console.log('THE FOLDER IS : ' + folder);
-					files.getMovieFile(10, folder).then(
-						(file) => {
-							resolve(file);
-						}).catch((err) => {
-							console.log('MAIN DIRECTORY file not created yet');
-							resolve(false);
-						})
-				}).catch((err) => {
-					console.log('MAIN DIRECTORY file not created yet');
-					resolve(false);
-				})
-		}
-	)//end of promise
+	return new Promise((resolve, reject)=>{
+		files.getDirectory(moviePath).then(
+			(resolve)=>{
+				return files.findfile(moviePath + '/' + resolve);
+			}
+		).then(
+			(file) => {
+				resolve(file);
+			}
+		).catch((err)=>{
+			reject(err);
+		})
+	})//end of promise
 }
 
 //looks in a hash folder for a playable video file
-//will check for this file (repeat) times before rejecting
+//resolve with file location(path)
+//reject with 204
 const seriesFile = (hash) => {
 	const seriesPath = moviesDir + hash;
 	return new Promise((resolve, reject)=>{
