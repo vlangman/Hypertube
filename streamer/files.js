@@ -30,30 +30,31 @@ const findfile = (dir) => {
 	console.log('looking in dir ' + dir);
 	return new Promise((resolve, reject) => {
 		fs.readdir(dir, (err, files) => {
-			console.log('reading dir');
 			if (err) {
 				console.log(err);
-				resolve(false);
+				reject(204);
 			}
-			if (files.length) {
-				var found = 0;
-				files.forEach((video) => {
-					console.log(video);
-					console.log(video.split('.').pop())
-					extentions.forEach((type) => {
-						if (video.split('.').pop() == type) {
-							resolve(dir + '/' + video);
-							found = 1;
-						}
+			else{
+				if (files.length) {
+					var found = 0;
+					var count = 0;
+					files.forEach((video) => {
+						extentions.forEach((type) => {
+							if (video.split('.').pop() == type) {
+								resolve(dir + '/' + video);
+								found = 1;
+							}
+						})
+						count++;
 					})
-				})
-				if (!found) {
-					console.log('VIDEO FILE NOT FOUND YET!!')
-					resolve(false);
+					if (!found && count == files.length) {
+						console.log('............loading video file');
+						resolve(204);
+					}
+				} else {
+					console.log('............loading folders');
+					reject(204);
 				}
-			} else {
-				console.log('NO FILES YET')
-				resolve(false);
 			}
 		})
 	})//end of promise
@@ -113,20 +114,17 @@ const watchSeriesCheck = (hashDir) => {
 	return new Promise((resolve, reject) => {
 		fs.stat(hashDir, function (err, stats) {
 			if (err) {
-				console.log("NO FILE TO ACCESS!!")
-				resolve(false)
+				throw (404);
 			}
 			else {
 				findfile(hashDir).then((video) => {
 					if (video != false) {
-						console.log('FOUND THE MOVIE FILE' + video)
 						resolve(video);
 					}
-					if (stats.isDirectory()) {
-						resolve(dir + '/' + file);
-					}
+					// if (stats.isDirectory()) {
+					// 	resolve(dir + '/' + file);
+					// }
 				}).catch((err) => {
-					console.log('video dir cant be found');
 					reject(err);
 				})
 			}

@@ -3,7 +3,7 @@ const rp = require('request-promise');
 
 const eztv = new EztvApi();
 const api = 'https://api.themoviedb.org/3/find/';
-const apiCast = 'https://api/themoviedb.org/3/person/';
+const apiCast = 'https://api/themoviedb.org/3/search/person';
 const apiKey = '20fbc3dc89216b6a0e00f0108887c4f5';
 
 var cachedDetails = [];
@@ -149,41 +149,41 @@ const getShows = (index) =>{
 }
 
 
-const getCast = (name) =>{
-	return new Promise((resolve, reject) =>{
-	var i = 0;
+// const getCast = (name) =>{
+// 	return new Promise((resolve, reject) =>{
+// 	var i = 0;
 	
-	var options = {
-		uri: apiCast + name + imdb_id,
-		qs: {
-			api_key: apiKey, // -> uri + '?access_token=xxxxx%20xxxxx'
-			language: 'en-US',
-			append_to_response: 'imdb_id'
-		},
-		headers: {
-			'User-Agent': 'Request-Promise'
-		},
-		json: true, // Automatically parses the JSON string in the response
-	};
-	rp(options)
-	.then(function (response) {
-		if (response['tv_results'] != "")
-		{
-			var obj = {
-				imdb_id: imdb_id,
-				response: response,
-			};
-			cachedDetails.push(obj);
-		}
-		resolve(response)
-	})
-	.catch(function (err) {
-		// API call failed...
-		console.log(err);
-		reject(err);
-		});	
-})
-}
+// 	var options = {
+// 		uri: apiCast + name + imdb_id,
+// 		qs: {
+// 			api_key: apiKey, // -> uri + '?access_token=xxxxx%20xxxxx'
+// 			language: 'en-US',
+// 			append_to_response: 'imdb_id'
+// 		},
+// 		headers: {
+// 			'User-Agent': 'Request-Promise'
+// 		},
+// 		json: true, // Automatically parses the JSON string in the response
+// 	};
+// 	rp(options)
+// 	.then(function (response) {
+// 		if (response[''] != "")
+// 		{
+// 			var obj = {
+// 				imdb_id: imdb_id,
+// 				response: response,
+// 			};
+// 			cachedDetails.push(obj);
+// 		}
+// 		resolve(response)
+// 	})
+// 	.catch(function (err) {
+// 		// API call failed...
+// 		console.log(err);
+// 		reject(err);
+// 		});	
+// })
+// }
 
 
 module.exports = {

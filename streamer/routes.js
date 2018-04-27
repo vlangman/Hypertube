@@ -11,6 +11,7 @@ var watchLink = 'unknown';
 var apiRequest = 'FAILED';
 
 
+
 router.get('/', (req, res) => {
 	res.json('We workign baby!');
 })
@@ -248,123 +249,165 @@ router.get('/api/series/get/detail/:imdb_code', (req, res) => {
 	)
 })
 
-router.get('/api/series/download/:series_hash/:filename/:imdbid', (req, res) => {
+router.get('/api/series/download/:series_hash/:filename/:imdbid/:season/:episode', (req, res) => {
 	const filename = req.params.filename;
 	const downloadHash = req.params.series_hash;
 	const imdbid = req.params.imdbid;
-	console.log('************************************************************************* ');
+	const season = req.params.season;
+	const episode = req.params.episode;
 	console.log(imdbid);
 	// const hash = req.params.hash;
 	console.log(filename);
 	console.log(downloadHash);
 
-
-	console.log('checking client');
-	torrent.checkClient(downloadHash).then(
-		(resolve) => {
-			//if -1 torrent needs to be downloaded
-			if (resolve != -1) {
-				return (false);
-			}
-			else {
-				console.log('STARTING DOWNLOAD');
-				return (torrent.downloadSeries(downloadHash, filename));
-			}
+	console.log('-----------------------------> STARTING DOWNLOAD : ' + '['+downloadHash+']');
+	
+	torrent.checkClient(downloadHash)
+	.then(
+	(resolve)=>{
+		throw 100 ;
+	},(reject)=>{
+		console.log('beginning client download')
+		return(torrent.downloadSeries(downloadHash, filename))
+	})
+	.then(
+	(resolve)=>{
+		console.log('looking for video file to play');
+		return(torrent.seriesFile(downloadHash));
+	})
+	.catch(
+	(err)=>{
+		console.log('Rejection Fallback 1')
+		console.log(err);
+		//cant get movie files... no seeders or slow download
+		if (err == 408){
+			console.log('Download timed out no... bytes received');
+			throw err;
+		}
+		//file is allready downloading in the client
+		else if (err == 100){
+			console.log('Download already exists in client');
+			return(torrent.seriesFile(downloadHash))
+		}
+		else if (err == 204)
+		{
+			console.log('No files yet')
+			throw err;
+		}
+		//sumting bad ;'( I do not no de whey
+		else{
+			console.log('not good...');
+			throw "EISH Boss..."; 
+		}
+	})
+	//playable file was found by seriesFile
+	.then(
+		(resolve)=>{
+			console.log('playable video file format found');
+			console.log(resolve);
+			console.log('Attemting subtitles download');
+			return(torrent.downloadSubtitlesSeries(downloadHash, imdbid));
 		}
 	)
-		//checking if the download starts and returns the folder where torrent will be
-		.then(
-			(resolve) => {
-				if (resolve) {
-					console.log('Downloading at : ' + resolve);
-					return (torrent.seriesFile(20, downloadHash));
-				}
-				else {
-					console.log('CLIENT ALREADY DOWNLOADING THE FILE');
-					return (torrent.seriesFile(20, downloadHash));
-				}
-			})
-		//downloading subtitles
-		.then(
-			(resolve) => {
-				console.log('Downloading subtitles =================================================================================================')
-				console.log(resolve);
-				torrent.downloadSubtitlesSeries(downloadHash, imdbid);
+	//downloading subtitles
+	.then((resolve)=>{
+		console.log('subtitles successfully downloaded');
+		const checklink = 'http://localhost:3000/api/series/check/' + downloadHash;
+		const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
+		res.json(obj);
+	})
+	//catching all errors rejection 1 cant handle as well as a subtitles failure
+	.catch((err)=>{
+		const checklink = 'http://localhost:3000/api/series/check/' + downloadHash;
+		console.log('Rejection Fallback 2')
+		console.log(err);
+		//no subs
+		if (err == 404){
+			console.log('WARNING: Subtitles could not be found...');
+			const obj = { request: 206, data: { hash: downloadHash, link: checklink } }
+			res.json(obj);
+		}
+		//request timeout 
+		else if (err == 408){
+			const obj = { request: 408 , data: { hash: downloadHash, link: "404" } }
+			res.json(obj);
+		}
+		//no video file  
+		else if(err == 204) {
+			const obj = { request: 204 , data: { hash: downloadHash, link: checklink } }
+			res.json(obj);
+		//internal error
+		} else {
+			const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+			console.log('Internal error...consult a dev');
+			res.json({obj});
+		}
 
+	})
 
-			})
-		//looking for the video file to appear in the torrent folder (.mp4 webm ...etc)
-		//returning a watch link for the client based on whether or not the files where created;
-		.then(
-			(resolve) => {
-				console.log('SeriesFILE RESOLVE!')
-				console.log(resolve);
-				apiRequest = 'OK'
-				watchLink = 'http://localhost:3000/api/series/watch/' + downloadHash;
-
-				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
-				res.json(obj);
-			}
-		).catch(
-			(err) => {
-				console.log('SERIESFILE REJECT!')
-				console.log(err);
-				const obj = { request: apiRequest, data: { hash: downloadHash, link: watchLink } }
-				res.json(obj);
-			})
 })
 
 router.get('/api/series/check/:hash', (req, res) => {
-	console.log('==========================================================================CHECK SERIES===================================================================================');
 	const hash = req.params.hash;
 	var path = null;
-	// checking if the files exist before downloading them
-	// all downloads must come from within the client side
-	files.watchSeriesCheck('../Hypertube/src/downloads/' + hash).then(
-		(resolve) => {
-			if (resolve != false) {
-				path = resolve;
-				return (torrent.checkClient(hash));
+	var dirpath = '../Hypertube/src/downloads/';
+
+	console.log('-----------------------------> checking download progress of series: ' + '['+hash+']');
+	
+	// checking if the files exist all downloads must come from within the client side
+	files.watchSeriesCheck(dirpath + hash)
+	.then(
+		(resolve)=>{
+			return torrent.checkClient(hash);
+		}
+	)
+	//if client has torrent file it will return index of torrent be checked else files may not exist
+	.then(
+	(index)=>{
+		console.log('client is currently downloading torrent')
+		return torrent.isPlayable(index);
+	},
+	(reject)=>{
+		console.log('CLIENT NOT DOWNLOADING THROW 500');
+		throw 500;
+	})
+	//checking files for playable file
+	.then(
+		(resolve)=>{
+			console.log('series file is playable')
+			const watchLink = 'http://localhost:3000/api/series/watch/' + hash;
+			const obj = { request: 200, data: { hash: hash, link: watchLink } }
+			res.json(obj);
+		}
+	)
+	.catch(
+		(err)=>{
+			console.log(err);
+			if (err == 404)
+			{
+				//restart download
+				console.log('ERROR: restart download');
+				console.log(err);
+				const obj = { request: 404, data: { hash: "404", link: "404" } }
+				res.json(obj);
+			} else if (err == 204){
+				console.log('series file NOT playable')
+				const obj = { request: 204, data: { hash: hash, link: "204" } }
+				res.json(obj);
 			}
-			else {
-				//if files are not downloading cannot get a progress report from isPlayable
-				//throw error since downloads can only be initialted from series/download
-				throw "Files not downloading";
+			else if (err == 500){
+				console.log('client not downloading file')
+				const obj = { request: 500, data: { hash: hash, link: "204" } }
 			}
 		}
 	)
-		//checking if the file in the client has downloaded enough to stream
-		.then(
-			(resolve) => {
-				if (resolve != -1) {
-					return (torrent.isPlayable(40, hash));
-				}
-				else {
-					console.log('ADDING TORRENT TO CLIENT');
-					torrent.downloadTorrent(hash).then((resolve) => {
-						//20 attempts means +-40 seconds of download time before returning
-						return (torrent.isPlayable(40, hash));
-					})
-				}
-			}
-
-		)
-		.then(
-			(resolve) => {
-				res.json({ request: "READY", data: { hash: hash, format: "mp4" } })
-			}
-		)
-		.catch((err) => {
-			console.log(err)
-			res.json({ request: "FAILED", data: { hash: hash, link: "404", format: "" } })
-		})
 })
 
 router.get('/api/series/watch/:hash', (req, res) => {
 	console.log('========================================================================== WATCH SERIES ==========================================================================')
 	const hash = req.params.hash;
 	// 5 attemps to check for file Should already exist;
-	torrent.seriesFile(5, hash).then(
+	torrent.seriesFile(hash).then(
 		(path) => {
 			console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
 			const filetype = path.split('.').pop();
@@ -418,7 +461,7 @@ router.get('/api/series/watch/:hash', (req, res) => {
 
 		}
 	).catch((err) => {
-		res.json({ request: "FAILED", data: { hash: hash, link: err } })
+		res.json({ request: 500, data: { hash: hash, link: err } })
 	})
 })
 
@@ -483,15 +526,12 @@ router.get('/api/show/get/details/:id/:show/:slug', (req, res)=>{
 		res.json({error: err})
 })
 
-
 router.get('/api/show/get/list', (req, res)=>{
 	console.log('Fetching show list');
 	seriesTorrent.getAllShows().then((list)=>{
 		res.json({"index":list});
 	})
 })
-
-
 
 router.get('/api/series/search/:query', (req, res) => {
 	console.log('Searching for a Series')

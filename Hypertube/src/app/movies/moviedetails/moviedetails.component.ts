@@ -159,7 +159,6 @@ export class MoviedetailsComponent implements OnInit {
 			window.alert("Please enter a valid comment");
 			this.isValid = !this.isValid;
 		}
-
 	}
 
 
@@ -168,7 +167,7 @@ export class MoviedetailsComponent implements OnInit {
 		this.api = api;
 		console.log(this.api);
 	}
-
+	//1
 	downloadMovie(data) {
 		// this.authService.addMovieToDb(this.moviePic, this.movieTitle, this.movieId, data.hash);
 		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
@@ -179,7 +178,7 @@ export class MoviedetailsComponent implements OnInit {
 
 		});
 	}
-
+	//2
 	watchMovie(data) {
 		console.log(data);
 		console.log('MOVIE IS DOWLOADING')
@@ -194,7 +193,7 @@ export class MoviedetailsComponent implements OnInit {
 
 			})
 	}
-
+	//3
 	startStream(link, format) {
 
 		var headers = new HttpHeaders()
@@ -241,12 +240,12 @@ export class MoviedetailsComponent implements OnInit {
 			})
 			console.log(this.subtitlesStreameng)
 		}
-
 	}
 
 	selectCover(cover){
 		this.selectedCover = cover;
 	}
+
 	loadMovie(data) {
 		var id: number;
 		var title: string;
