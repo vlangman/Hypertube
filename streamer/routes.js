@@ -13,6 +13,7 @@ var apiRequest = 'FAILED';
 
 
 router.get('/', (req, res) => {
+	console.log('hhhm')
 	res.json('We workign baby!');
 })
 
@@ -107,13 +108,13 @@ router.get('/api/movie/download/:hash/:imdb', (req, res) => {
 	//got subtitles
 	.then((resolve)=>{
 		console.log('subtitles successfully downloaded');
-		const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
+		const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
 		const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
 		res.json(obj);
 	})
 	//catching all errors rejection 1 cant handle as well as a subtitles failure
 	.catch((err)=>{
-		const checklink = 'http://localhost:3000/api/movie/check/' + downloadHash;
+		const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
 		console.log('Movie Rejection Fallback 2')
 		console.log(err);
 		//no subs
@@ -168,7 +169,7 @@ router.get('/api/movie/check/:hash', (req, res) => {
 	.then(
 		(resolve)=>{
 			console.log('movie file is playable')
-			const watchLink = 'http://localhost:3000/api/movie/watch/' + hash;
+			const watchLink = 'http://192.168.88.216:3000/api/movie/watch/' + hash;
 			const obj = { request: 200, data: { hash: hash, link: watchLink } }
 			res.json(obj);
 		}
@@ -339,13 +340,13 @@ router.get('/api/series/download/:series_hash/:filename/:imdbid/:season/:episode
 	//downloading subtitles
 	.then((resolve)=>{
 		console.log('subtitles successfully downloaded');
-		const checklink = 'http://localhost:3000/api/series/check/' + downloadHash;
+		const checklink = 'http://192.168.88.216:3000/api/series/check/' + downloadHash;
 		const obj = { request: 200, download: true, data: { hash: downloadHash, link: checklink } }
 		res.json(obj);
 	})
 	//catching all errors rejection 1 cant handle as well as a subtitles failure
 	.catch((err)=>{
-		const checklink = 'http://localhost:3000/api/series/check/' + downloadHash;
+		const checklink = 'http://192.168.88.216:3000/api/series/check/' + downloadHash;
 		console.log('Rejection Fallback 2')
 		console.log(err);
 		//no subs
@@ -402,7 +403,7 @@ router.get('/api/series/check/:hash', (req, res) => {
 	.then(
 		(resolve)=>{
 			console.log('series file is playable')
-			const watchLink = 'http://localhost:3000/api/series/watch/' + hash;
+			const watchLink = 'http://192.168.88.216:3000/api/series/watch/' + hash;
 			const obj = { request: 200,check: true, data: { hash: hash, link: watchLink } }
 			res.json(obj);
 		}
@@ -443,7 +444,7 @@ router.get('/api/series/watch/:hash', (req, res) => {
 			var filetype = path.split('.').pop();
 			console.log('THE FILE TYPE IS: ' + filetype);
 			if (filetype == "mkv"){
-				filetype = "x-matroska";
+				filetype = "webm";
 			}
 
 			const stat = fs.statSync(path);
@@ -461,7 +462,7 @@ router.get('/api/series/watch/:hash', (req, res) => {
 					'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 					'Accept-Ranges': 'bytes',
 					'Content-Length': chunksize,
-					'Content-Type': 'video/mp4',
+					'Content-Type': 'video/'+filetype,
 				}
 
 				let stream_position = {
@@ -478,10 +479,10 @@ router.get('/api/series/watch/:hash', (req, res) => {
 			} else {
 				const head = {
 					'Content-Length': fileSize,
-					'Content-Type': 'video/mp4',
+					'Content-Type': 'video/'+ filetype,
 				}
 				res.writeHead(200, head)
-				var stream = fs.createReadStream(path).on("open", function () {
+				var stream = fs.createReadStream(path).on("readable", function () {
 					stream.pipe(res);
 				}).on("error", function (err) {
 					res.end(err);
