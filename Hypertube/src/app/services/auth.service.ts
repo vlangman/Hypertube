@@ -333,7 +333,7 @@ export class AuthService {
 
 	}
 
-	addSeriesToDb(seriespic, seriesTitle, seriesId, seriesHash) {
+	addSeriesToDb(seriespic, seriesTitle) {
 		var date = new Date();
 		const day = date.getDate();
 		const month = date.getMonth() + 1;
@@ -350,10 +350,8 @@ export class AuthService {
 					userId: this.userid,
 					seriesTitle: seriesTitle,
 					seriespic: seriespic,
-					seriesId: seriesId,
 					lastWatched: todaydate,
 					uniqueID: uuid,
-					seriesHash: seriesHash,
 				})
 			}
 			console.log(series.length)
