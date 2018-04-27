@@ -95,22 +95,24 @@ function getfile(startPath, filter) {
 				console.log('-- found: ', filename);
 				resolve(filename);
 			}
-
-			// else if (filename.indexOf(filter) === -1) {
-			// 	resolve(false)
-			// };
 		};
 	});
 }
 
 const getDirectory = (dir) => {
 	return new Promise((resolve, reject) => {
-		fs.readdir(dir, function (err, folder) {
+		fs.readdir(dir, function (err, folders) {
 			if (err) {
 				reject(500);
 			}
-			if(folder[0]){
-				resolve(folder[0])
+			if(folders[0]){
+				folders.forEach((file)=>{
+					fs.lstat(dir+'/'+file, (err, stats)=>{
+						if (stats.isDirectory()){
+							resolve(file);
+						}
+					})
+				})
 			}
 		})
 	})

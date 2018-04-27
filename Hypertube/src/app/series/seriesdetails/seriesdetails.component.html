@@ -39,8 +39,10 @@
 			<vg-buffering [vgFor]=" videoPlayer " ></vg-buffering>
 
 
-			<video [vgMedia]="media" #media id="videoPlayer" preload="auto" >
+			<video [vgMedia]="media" #media id="videoPlayer" preload="auto" crossorigin>
 				<source [src]="source" type="video/mp4">
+				<track kind="subtitles" label="English"  *ngIf="subtitlesStreameng" [src]="subtitlesStreameng" srclang="en" default='true'>
+				<track kind="subtitles" *ngIf="subtitlesStreamfre" label="French" [src]="subtitlesStreamfre" srclang="fr" default='false'>
 			</video>
 	
 			<vg-controls>

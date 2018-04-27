@@ -231,7 +231,7 @@ export class MoviedetailsComponent implements OnInit {
 		this.currDownload = false;
 		this.dowloadMessage = "Preparing your Movie";
 
-
+		this.subtitlesLink(data);
 		this.torrentService.checkMovie(data['data']['hash']).subscribe(
 			(response: JSON) => {
 				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
@@ -269,39 +269,6 @@ export class MoviedetailsComponent implements OnInit {
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;
 	}
-
-
-
-	// //2
-	// watchMovie(data) {
-	// 	console.log(data);
-	// 	console.log('MOVIE IS DOWLOADING')
-	// 	this.torrentService.watchMovie(data['data']['hash']).subscribe(
-	// 		(response: JSON) => {
-	// 			this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-	// 			console.log('MOVIE CHECKED AND IS READY TO STREAM')
-	// 			console.log(response);
-
-	// 			this.subtitlesLink(data);
-	// 			this.startStream(data['data']['link'], response['data']['format']);
-
-	// 		})
-	// }
-	// //3
-	// startStream(link, format) {
-
-	// 	var headers = new HttpHeaders()
-	// 		.set('Content-Type', 'video/mp4')
-	// 	console.log('STARTING STREAM!!');
-	// 	console.log(link);
-	// 	this.watch = true;
-	// 	this.source = link;
-	// 	// this.http.get(link, { headers: headers }).subscribe((video) => {
-	// 	// 	console.log('GOT A RESPONSE');
-	// 	// 	this.source = video;
-
-	// 	// })
-	// }
 
 	subtitlesLink(hash) {
 		this.subtitlesStreameng = '';

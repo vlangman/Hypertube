@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SeriesService } from "../../services/series.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { SERIES } from "../../models/series.model";
@@ -57,6 +57,8 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 	currDownload: boolean = false;
 	checkDownload: boolean = false;
 	dowloadMessage: string = null;
+	subtitlesStreameng: string;
+	subtitlesStreamfre: string;
 
 	downloadSub: Subscription;
 	checkSub:Subscription;
@@ -157,6 +159,13 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 
 	}
 
+	ngOnDestroy(){
+		console.log('DESTROYING SUBS')
+		if (this.downloadSub)
+			this.downloadSub.unsubscribe()
+		if (this.checkSub)
+			this.checkSub.unsubscribe()
+	}
 
 	toggleSeason(season){
 		console.log('open season ' + season);
@@ -312,7 +321,6 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 		this.source = [];
 	
 
-
 		var name = quality.torrent['dn'];
 		var hash = quality.torrent['infoHash'];
 		this.dowloadMessage = "Downloading the file on server: "  +name;
@@ -364,9 +372,10 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 		this.checkDownload = true;
 		this.currDownload = false;
 		this.dowloadMessage = "Preparing your file";
+		this.subtitlesLink(data);
 	 	this.checkSub = this.torrentService.checkSeries(data['data']['hash']).subscribe(
 			(response: JSON) => {
-				this.authService.addSeriesToDb(this.Series.image, this.Series.title);
+				this.authService.addSeriesToDb( this.Details.tv_results[0]['poster'], this.Details.tv_results[0]['name']);
 				if (response['request'] == 200){
 					console.log('streaming bitch');
 					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
@@ -398,7 +407,38 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 		this.watch = true;
 	}
 
-
+	subtitlesLink(hash) {
+		this.subtitlesStreameng = '';
+		this.subtitlesStreamfre = '';
+		if (this.subtitlesStreamfre == '') {
+			console.log('oh hello fre');
+			console.log(hash['data']['hash']);
+			this.subtitlesStreamfre = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre';
+			console.log(this.subtitlesStreamfre)
+			this.torrentService.getSubtitles(hash['data']['hash'], 'fre').subscribe((data) => {
+				console.log('heree')
+				console.log(data);
+				if (data == 404) {
+					this.subtitlesStreamfre = '';
+				}
+			})
+			console.log(this.subtitlesStreamfre)
+		}
+		if (this.subtitlesStreameng == '') {
+			console.log('oh hello eng');
+			console.log(hash['data']['hash']);
+			this.subtitlesStreameng = 'http://localhost:3000/api/subtitles/check/' + hash['data']['hash'] + '/' + 'eng';
+			console.log(this.subtitlesStreameng)
+			this.torrentService.getSubtitles(hash['data']['hash'], 'eng').subscribe((data) => {
+				console.log('work')
+				console.log(data);
+				if (data == 404) {
+					this.subtitlesStreameng = '';
+				}
+			})
+			console.log(this.subtitlesStreameng)
+		}
+	}
 	
 	loadDetailsSeries(tv_res){
 		console.log('LOADING DATA')
@@ -447,12 +487,6 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			console.log(this.Details);
 	}
 
-	ngOnDestroy(){
-		console.log('DESTROYING SUBS')
-		if (this.downloadSub)
-			this.downloadSub.unsubscribe()
-		if (this.checkSub)
-			this.checkSub.unsubscribe()
-	}
+	
 }
 
