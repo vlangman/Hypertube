@@ -69,7 +69,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	movieTitle: string;
 	userExist: string;
 	displayProfile: boolean = true;
-	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	usernameInputPattern = "^[a-zA-Z0-9_-\\s]{6,}$";
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;

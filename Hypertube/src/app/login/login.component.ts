@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	pass42: string;
 	sub42post: Subscription;
 	sub42get: Subscription;
-	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	usernameInputPattern = "^[a-zA-Z0-9_-\\s]{6,}$";
 	passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}";
 	// checkExist: number;
 	// loading = false;
