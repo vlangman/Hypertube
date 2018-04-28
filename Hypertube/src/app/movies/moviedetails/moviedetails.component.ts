@@ -261,7 +261,7 @@ export class MoviedetailsComponent implements OnInit {
 						}
 					}
 			})
-		}
+		})
 	}
 
 	// //3

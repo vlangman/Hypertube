@@ -20,8 +20,9 @@ export class SeriesService {
 		
 		) { }
 
-	getSeries(): Observable<SERIES[]> {
-		return this.http.get(this.api + 'series/get/1/20').map(
+	getSeries(token): Observable<SERIES[]> {
+		console.log('getting series')
+		return this.http.get(this.api + 'series/get/1/20/'+ token).map(
 			(res) => {
 				this.Series = [];
 				this.loadSeries(res);
@@ -30,8 +31,8 @@ export class SeriesService {
 		)
 	}
 
-	getNextPage(page: number): Observable<any> {
-		return this.http.get(this.api + 'series/get/' + page + '/40').map(
+	getNextPage(page: number, token): Observable<any> {
+		return this.http.get(this.api + 'series/get/' + page + '/40/'+token).map(
 			(res) => {
 				this.loadSeries(res);
 				return this.Series;
@@ -49,27 +50,26 @@ export class SeriesService {
 		)
 	}
 
-	getShowList():Observable<any>{
-		return this.http.get(this.api + 'show/get/list').map(
+	getShowList(token):Observable<any>{
+		return this.http.get(this.api + 'show/get/list/'+ token).map(
 			(res)=>{
 				return (res);
 			}
 		)
 	}
 
-	getShow(Show):Observable<any>
+	getShow(Show, token):Observable<any>
 	{
-		return this.http.get(this.api + 'show/get/details/' + Show.id + '/' + Show.show +'/'+Show.slug).map(
+		return this.http.get(this.api + 'show/get/details/' + Show.id + '/' + Show.show +'/'+Show.slug+'/'+token).map(
 			(res)=>{
 				return(res);
 			}
 		);
 	}
 
-	findSeriesimdb(imdb: number): Observable<any>{
-			return this.http.get(this.api + 'series/get/detail/' + imdb).map(
+	findSeriesimdb(imdb: number, token): Observable<any>{
+			return this.http.get(this.api + 'series/get/detail/' + imdb + '/' + token).map(
 				(res)=>{
-					console.log('FINDSERIESIMDB returns ====================================');
 					console.log(res);
 					return(res)
 			})	

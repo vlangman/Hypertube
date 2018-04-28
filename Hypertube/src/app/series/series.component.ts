@@ -39,6 +39,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 	detailsSub: Subscription;
 	routerUrlSub: Subscription;
 	getShowListSub: Subscription;
+	private token : string;
 
 	constructor(
 		private seriesService: SeriesService,
@@ -54,7 +55,9 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		window.scrollTo(0, 0);
 		this.imbdSearch = false;
 		//pulls the latest featured series when it is initialised and stores the series in a [Series object] array. 
-		
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((ret)=>{
+			this.token = ret;
+		})
 		this.routerUrlSub = this.route.url.subscribe((url)=>{
 			console.log(url);
 			if (url[1])
@@ -67,21 +70,23 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						this.detailsSub.unsubscribe();
 					this.detailsSub = new Subscription;
 					if (!this.loadedShows[0]){
-						this.seriesService.getShowList().subscribe(
-							(shows)=>{
-								this.loadedShows = shows['index'];
-								console.log('SUCCESS: loaded full show list');
-							},(err)=>{
-								console.log('ERROR: Cannot fetch show List');
-							},()=>{
-								this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
-								this.Shows = [];
-								this.loadShowDetails();
-								this.displayLoad = false;
-								this.detailsIndex = this.detailsIndex + 20;
-							}
-						)
-						
+						this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+							this.seriesService.getShowList(token).subscribe(
+								(shows)=>{
+									this.loadedShows = shows['index'];
+									console.log('SUCCESS: loaded full show list');
+								},(err)=>{
+									console.log('ERROR: Cannot fetch show List');
+								},()=>{
+									this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
+									this.Shows = [];
+									this.loadShowDetails(this.token);
+									this.displayLoad = false;
+									this.detailsIndex = this.detailsIndex + 20;
+								}
+							)
+						})
+	
 					}
 					else{
 						if (this.detailsSub)
@@ -89,7 +94,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						this.detailsSub = new Subscription;
 						this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
 						this.Shows = [];
-						this.loadShowDetails();
+						this.loadShowDetails(this.token);
 						this.detailsIndex = this.detailsIndex + 20;
 						this.displayLoad = false;
 					}
@@ -100,46 +105,55 @@ export class SeriesComponent implements OnInit, OnDestroy {
 					if (this.detailsSub)
 						this.detailsSub.unsubscribe();
 					this.detailsSub = new Subscription;
-					this.getShowListSub = this.seriesService.getShowList().subscribe(
-						(shows)=>{
-							this.loadedShows = shows['index'];
-							console.log(this.loadedShows);
-						},(err)=>{
-							console.log('cant get show list');
-						}, ()=>{
-							console.log('complete');
-							this.loadShowDetails();
-							this.detailsIndex = this.detailsIndex + 20;
-							this.viewShows = true;
-							this.displayLoad = false;
+					this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+						this.getShowListSub = this.seriesService.getShowList(token).subscribe(
+							(shows)=>{
+								this.loadedShows = shows['index'];
+								console.log(this.loadedShows);
+							},(err)=>{
+								console.log('cant get show list');
+							}, ()=>{
+								console.log('complete');
+								
+								this.loadShowDetails(this.token);
+							
+								this.detailsIndex = this.detailsIndex + 20;
+								this.viewShows = true;
+								this.displayLoad = false;
 
-						}
-					)
+							}
+						)
+					})
+					
 				}
 
 			}
 			else{
 				this.viewShows = false;
-				this.getSeriesSub = this.seriesService.getSeries().subscribe(
-					(data) => {
-						this.Series = [];
-						this.Series = data;
-						this.displayLoad = false;
-					}
-				)
+				this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+					this.getSeriesSub = this.seriesService.getSeries(token).subscribe(
+						(data) => {
+							this.Series = [];
+							this.Series = data;
+							this.displayLoad = false;
+						}
+					)
+				})		
 			}
 		})
 	}
 
 	//increment index by 20 where u call it
-	loadShowDetails(){
+	loadShowDetails(token){
 		console.log('getting list')
 		var limit = this.detailsIndex + 20;
 		var added = 0;
+
 		for (var i = this.detailsIndex; this.loadedShows[i] && i < limit; i++) {
+			console.log('hmm22')
 			if (this.loadedShows[i]['show'][0] == this.indexChar || this.indexChar == "")
 			{
-				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i]).subscribe(
+				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i], token).subscribe(
 					(data)=>{
 						if (data['tmdb'] && !data['err']){
 							this.Shows.push(data);
@@ -220,11 +234,14 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		{
 			if (!this.imbdSearch && !this.viewShows) {
 				this.loadMore = true;
-				this.NextPageSub = this.seriesService.getNextPage(this.page += 1).subscribe(
-					(data) => {
-						this.Series = data;
-						this.loadMore = false;
+				
+				this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+					this.NextPageSub = this.seriesService.getNextPage(this.page += 1, token).subscribe(
+						(data) => {
+							this.Series = data;
+							this.loadMore = false;
 					})
+				})
 			}
 			if (this.viewShows && !this.imbdSearch && !this.loadMore && !this.displayLoad)
 			{
