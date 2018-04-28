@@ -184,7 +184,7 @@ export class MoviedetailsComponent implements OnInit {
 		this.dowloadMessage = "Downloading the file on server"
 
 		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
-				console.log('GOT THE TOKEN');
+			console.log('GOT THE TOKEN');
 			this.torrentService.downloadMovie(data, this.Movie.imdb_code, token).subscribe((data2: JSON) => {
 				this.prepareDownload = true;
 				console.log(data2);
@@ -234,32 +234,34 @@ export class MoviedetailsComponent implements OnInit {
 		this.currDownload = false;
 		this.dowloadMessage = "Preparing your movie file";
 
-		this.subtitlesLink(data);
-		this.torrentService.checkMovie(data['data']['hash']).subscribe(
-			(response: JSON) => {
-				this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-				this.dowloadMessage = "Preparing your movie file";
-				console.log(response);
-
-
-				if (response['request'] == 200){
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+			this.subtitlesLink(data);
+			this.torrentService.checkMovie(data['data']['hash'], token).subscribe(
+				(response: JSON) => {
+					this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
 					this.dowloadMessage = "Preparing your movie file";
-					this.startStream(response['data']['link']);
-				} else if(response['request'] == 404){
-					this.dowloadMessage = "SERVER ERROR: Restart the download";
-					this.checkDownload = false;
-				}
-				else if (response['request'] == 204){
-					console.log('file not ready');
-					if (count < 5)
-					{
-						setTimeout(()=>{this.checkMovie(data, ++count);},5000);
-					} else {
-						this.dowloadMessage = "Download is slow, come back some other time";
+					console.log(response);
+
+
+					if (response['request'] == 200){
+						this.dowloadMessage = "Preparing your movie file";
+						this.startStream(response['data']['link']+'/' +token);
+					} else if(response['request'] == 404){
+						this.dowloadMessage = "SERVER ERROR: Restart the download";
 						this.checkDownload = false;
 					}
-				}
-		})
+					else if (response['request'] == 204){
+						console.log('file not ready');
+						if (count < 5)
+						{
+							setTimeout(()=>{this.checkMovie(data, ++count);},5000);
+						} else {
+							this.dowloadMessage = "Download is slow, come back some other time";
+							this.checkDownload = false;
+						}
+					}
+			})
+		}
 	}
 
 	// //3

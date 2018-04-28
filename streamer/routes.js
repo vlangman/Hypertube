@@ -91,7 +91,6 @@ router.get('/api/movie/download/:hash/:imdb/:token', (req, res) => {
 
 	checkLogin(token)
 	.then((user)=>{
-		console.log('lekker user')
 		torrent.checkClient(downloadHash).then(
 		(resolve)=>{
 			throw 100 ;
@@ -192,144 +191,200 @@ router.get('/api/movie/download/:hash/:imdb/:token', (req, res) => {
 	
 })
 //Check movie
-router.get('/api/movie/check/:hash', (req, res) => {
+router.get('/api/movie/check/:hash/:token', (req, res) => {
 	const hash = req.params.hash;
 	var path = null;
 	var dirpath = '../Hypertube/src/downloads/';
+	const token =  req.params.token;
 
-	console.log('-----------------------------> checking download progress of movie: ' + '[ '+ hash +' ]');
-
-	files.watchMovieCheck(dirpath + hash)
-	.then(
-		(resolve)=>{
-			return torrent.checkClient(hash);
-		}
-	)
-	//if client has torrent file it will return index of torrent be checked else files may not exist
-	.then(
-	(index)=>{
-		console.log('client is currently downloading torrent')
-		return torrent.isPlayable(index);
-	},
-	(reject)=>{
-		console.log('CLIENT NOT DOWNLOADING THROW 500');
-		throw 500;
+	checkLogin(token)
+	.then((user)=>{
+		console.log('-----------------------------> checking download progress of movie: ' + '[ '+ hash +' ]');
+		files.watchMovieCheck(dirpath + hash)
+		.then(
+			(resolve)=>{
+				return torrent.checkClient(hash);
+			}
+		)
+		//if client has torrent file it will return index of torrent be checked else files may not exist
+		.then(
+		(index)=>{
+			console.log('client is currently downloading torrent')
+			return torrent.isPlayable(index);
+		},
+		(reject)=>{
+			console.log('CLIENT NOT DOWNLOADING THROW 500');
+			throw 500;
+		})
+		//checking files for playable file
+		.then(
+			(resolve)=>{
+				console.log('movie file is playable')
+				const watchLink = 'http://192.168.88.216:3000/api/movie/watch/' + hash;
+				const obj = { request: 200, data: { hash: hash, link: watchLink } }
+				res.json(obj);
+			}
+		)
+		.catch(
+			(err)=>{
+				console.log(err);
+				if (err == 404)
+				{
+					//restart download
+					console.log('ERROR: restart download');
+					console.log(err);
+					const obj = { request: 404, data: { hash: "404", link: "404" } }
+					res.json(obj);
+				} else if (err == 204){
+					console.log('movie file NOT playable')
+					const obj = { request: 204, data: { hash: hash, link: "204" } }
+					res.json(obj);
+				}
+				else if (err == 500){
+					console.log('client not downloading file')
+					const obj = { request: 500, data: { hash: hash, link: "204" } }
+				}
+			}
+		)
 	})
-	//checking files for playable file
-	.then(
-		(resolve)=>{
-			console.log('movie file is playable')
-			const watchLink = 'http://192.168.88.216:3000/api/movie/watch/' + hash;
-			const obj = { request: 200, data: { hash: hash, link: watchLink } }
-			res.json(obj);
-		}
-	)
 	.catch(
 		(err)=>{
 			console.log(err);
-			if (err == 404)
-			{
-				//restart download
-				console.log('ERROR: restart download');
-				console.log(err);
-				const obj = { request: 404, data: { hash: "404", link: "404" } }
+			if(err == 407) {
+				const obj = {request: 407}
 				res.json(obj);
-			} else if (err == 204){
-				console.log('movie file NOT playable')
-				const obj = { request: 204, data: { hash: hash, link: "204" } }
-				res.json(obj);
+			//internal error
+			} else {
+				const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+				console.log('Internal error...consult a dev');
+				res.json({obj});
 			}
-			else if (err == 500){
-				console.log('client not downloading file')
-				const obj = { request: 500, data: { hash: hash, link: "204" } }
+		}
+	)
+
+	
+
+	
+})
+//Stream movie
+router.get('/api/movie/watch/:hash/:token', (req, res) => {
+	
+	const hash = req.params.hash;
+	const token = req.params.token;
+	console.log('WATCH MOVIE: ---------------  New movie: ' + hash +'------------------------');
+
+	checkLogin(token)
+	.then((user)=>{
+		torrent.movieFile(hash).then(
+			(path) => {
+				console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
+				var filetype = path.split('.').pop();
+				console.log('THE FILE TYPE IS: ' + filetype);
+				if (filetype == "mkv"){
+					filetype = "x-matroska";
+				}
+				console.log('STARTING STREAMING' + filetype)
+
+
+				const stat = fs.statSync(path);
+				const fileSize = stat.size;
+				const range = req.headers.range;
+				console.log(range);
+
+				if (range) {
+					const parts = range.replace(/bytes=/, "").split("-")
+					const start = parseInt(parts[0], 10);
+					const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+					const chunksize = (end - start) + 1
+
+					const head = {
+						'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+						'Accept-Ranges': 'bytes',
+						'Content-Length': chunksize,
+						'Content-Type': 'video/mp4',
+					}
+
+					let stream_position = {
+						start: start,
+						end: end
+					}
+					var stream = fs.createReadStream(path, stream_position)
+					res.writeHead(206, head);
+					stream.on('open', function () {
+						stream.pipe(res);
+					}).on("error", function (err) {
+						res.end(err);
+					}).on("close", function (err) {
+						stream.unpipe(res);
+						res.end(err);
+					});
+
+				} else {
+					const head = {
+						'Content-Length': fileSize,
+						'Content-Type': 'video/mp4',
+					}
+					res.writeHead(200, head)
+					var stream = fs.createReadStream(path).on("readable", function () {
+						stream.pipe(res);
+					}).on("error", function (err) {
+						stream.unpipe(res);
+						res.end(err);
+					}).on("close", function (err) {
+						stream.unpipe(res);
+						res.end(err);
+					});
+
+				}
+			}).catch(
+				(err) => {
+					res.json({ request: 500, data: { hash: hash, link: err } })
+			})
+	})
+	.catch(
+		(err)=>{
+			console.log(err);
+			if(err == 407) {
+				const obj = {request: 407}
+				res.json(obj);
+			//internal error
+			} else {
+				const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+				console.log('Internal error...consult a dev');
+				res.json({obj});
 			}
 		}
 	)
 })
-//Stream movie
-router.get('/api/movie/watch/:hash', (req, res) => {
-	
-	const hash = req.params.hash;
-	console.log('WATCH MOVIE: ---------------  New movie: ' + hash +'------------------------');
-	torrent.movieFile(hash).then(
-		(path) => {
-			console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
-			var filetype = path.split('.').pop();
-			console.log('THE FILE TYPE IS: ' + filetype);
-			if (filetype == "mkv"){
-				filetype = "x-matroska";
-			}
-			console.log('STARTING STREAMING' + filetype)
 
-
-			const stat = fs.statSync(path);
-			const fileSize = stat.size;
-			const range = req.headers.range;
-			console.log(range);
-
-			if (range) {
-				const parts = range.replace(/bytes=/, "").split("-")
-				const start = parseInt(parts[0], 10);
-				const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-				const chunksize = (end - start) + 1
-
-				const head = {
-					'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-					'Accept-Ranges': 'bytes',
-					'Content-Length': chunksize,
-					'Content-Type': 'video/mp4',
-				}
-
-				let stream_position = {
-					start: start,
-					end: end
-				}
-				var stream = fs.createReadStream(path, stream_position)
-				res.writeHead(206, head);
-				stream.on('open', function () {
-					stream.pipe(res);
-				}).on("error", function (err) {
-					res.end(err);
-				}).on("close", function (err) {
-					stream.unpipe(res);
-					res.end(err);
-				});
-
-			} else {
-				const head = {
-					'Content-Length': fileSize,
-					'Content-Type': 'video/mp4',
-				}
-				res.writeHead(200, head)
-				var stream = fs.createReadStream(path).on("readable", function () {
-					stream.pipe(res);
-				}).on("error", function (err) {
-					stream.unpipe(res);
-					res.end(err);
-				}).on("close", function (err) {
-					stream.unpipe(res);
-					res.end(err);
-				});
-
-			}
-		}).catch(
-			(err) => {
-				res.json({ request: "FAILED", data: { hash: hash, link: err } })
-			})
-})
-
-router.get('/api/series/get/imdb/:imdb_code', (req, res) => {
+router.get('/api/series/get/imdb/:imdb_code/:token', (req, res) => {
 	var imdb = req.params.imdb_code;
 
-	console.log('getting IMDB REFERENCES: ' + imdb);
-	seriesTorrent.getImdb(imdb).then(
-		(resolve) => {
-			res.send(resolve);
-		}
-	).catch(
-		(err) => {
-			console.log('IT FAILED TO GET IMDB REJECTED!!!')
-			res.json({ FAILURE: "err" })
+	checkLogin(token)
+	.then((user)=>{
+		console.log('getting IMDB REFERENCES: ' + imdb);
+		seriesTorrent.getImdb(imdb).then(
+			(resolve) => {
+				res.send(resolve);
+			}
+		).catch(
+			(err) => {
+				console.log('IT FAILED TO GET IMDB REJECTED!!!')
+				res.json({ FAILURE: "err" })
+			}
+		)
+	}).catch(
+		(err)=>{
+			console.log(err);
+			if(err == 407) {
+				const obj = {request: 407, err: "Invalid Auth token Please register or login"}
+				res.json(obj);
+			//internal error
+			} else {
+				const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+				console.log('Internal error...consult a dev');
+				res.json({obj});
+			}
 		}
 	)
 })

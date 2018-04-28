@@ -5,7 +5,7 @@ import 'rxjs/add/observable/fromPromise';
 import { TORRENT } from '../models/torrent.model';
 import { HttpClient } from '@angular/common/http';
 import { MOVIES } from "../models/movies.model";
-import { AuthService } from '../services/auth.service';
+
 
 
 @Injectable()
@@ -20,7 +20,6 @@ export class TorrentService {
 
 	constructor(
 		private http: HttpClient,
-		private authService: AuthService,
 	) {
 		
 	}
@@ -50,8 +49,8 @@ export class TorrentService {
 	}
 
 
-	checkMovie(hash): Observable<any> {
-		return this.http.get(this.api + 'movie/check/' + hash).map((response) => {
+	checkMovie(hash, token): Observable<any> {
+		return this.http.get(this.api + 'movie/check/' + hash+'/'+ token).map((response) => {
 			return response;
 		})
 	}

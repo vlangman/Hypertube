@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs/Rx";
 import { SERIES } from '../models/series.model';
 import { TMDB } from '../models/tmdb.model';
+import { AuthService } from './auth.service';
 
 import 'rxjs/add/operator/map';
 import "rxjs/Rx";
@@ -14,7 +15,10 @@ export class SeriesService {
 	Series: SERIES[] = [];
 	api = 'http://192.168.88.216:3000/api/';
 
-	constructor(private http: HttpClient) { }
+	constructor(
+		private http: HttpClient,
+		
+		) { }
 
 	getSeries(): Observable<SERIES[]> {
 		return this.http.get(this.api + 'series/get/1/20').map(
@@ -35,8 +39,8 @@ export class SeriesService {
 		)
 	}
 
-	getImdb(imdb: number) {
-		return this.http.get(this.api + 'series/get/imdb/' + imdb).map(
+	getImdb(imdb: number, token) {
+		return this.http.get(this.api + 'series/get/imdb/' + imdb+ '/' + token).map(
 			(res) => {
 				this.Series = [];
 				this.loadSeries(res);
@@ -45,12 +49,6 @@ export class SeriesService {
 		)
 	}
 
-	// getIndex(index){
-	// 	return this.http.get(this.api + 'show/get/index/' + index).map(
-	// 		(res)=>{
-	// 			return(res['index']);
-	// 	})
-	// }
 	getShowList():Observable<any>{
 		return this.http.get(this.api + 'show/get/list').map(
 			(res)=>{

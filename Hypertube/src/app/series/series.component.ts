@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SERIES } from "../models/series.model";
 import { SHOWS } from "../models/shows.model";
-
+import { AuthService } from '../services/auth.service';
 import { SeriesService } from "../services/series.service";
 import { Subscription } from "rxjs/Subscription";
 import { Router,ActivatedRoute } from "@angular/router";
@@ -44,6 +44,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		private seriesService: SeriesService,
 		private router: Router,
 		private route: ActivatedRoute,
+		private authService: AuthService,
 	) {
 	}
 
@@ -193,16 +194,19 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		this.hoverSeries = hoverId;
 	}
 
-	//getting the movie ratings
+	//getting the movie based on imdb
 	getRating(code: number) {
 		this.imbdSearch = true;
 		this.displayLoad = true;
-		this.getImdbSub = this.seriesService.getImdb(code).subscribe(
-			(data) => {
-				this.Series = [];
-				this.Series = data;
-				this.displayLoad = false
-			})
+
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+			this.getImdbSub = this.seriesService.getImdb(code, token).subscribe(
+				(data) => {
+					this.Series = [];
+					this.Series = data;
+					this.displayLoad = false
+				})
+		})
 	}
 
 	viewSeries(id: number, hash: string, filename: string){
