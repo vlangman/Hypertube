@@ -246,7 +246,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			if (this.viewShows && !this.imbdSearch && !this.loadMore && !this.displayLoad)
 			{
 				this.loadMore = true;
-				this.loadShowDetails();
+				this.loadShowDetails(this.token);
 				this.detailsIndex = this.detailsIndex + 20;
 				
 				this.loadMore = false;
