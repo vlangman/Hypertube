@@ -124,8 +124,6 @@ const downloadSeries = (hash, filename) => {
 				
 
 				torrent.on('download', function (bytes) {
-					// report();
-					console.log('Downloaded: ' + bytes +' for torrent: ' + hash);
 					resolve(moviesDir + hash);
 				})
 				torrent.on('error', function (err) {

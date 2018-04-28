@@ -8,6 +8,10 @@ import { Observable } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
 import "rxjs/Rx";
 
+
+import { AuthService } from '../services/auth.service';
+
+
 @Injectable()
 export class MovieService {
 
@@ -57,6 +61,7 @@ export class MovieService {
 	constructor(
 		private http: HttpClient,
 		private router: Router,
+		private authService: AuthService,
 	) {
 
 	}

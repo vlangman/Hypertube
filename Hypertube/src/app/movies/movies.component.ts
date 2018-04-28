@@ -121,7 +121,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 					console.log(this.movieError);
 					this.displayLoad = false;
 				}, () => {
-					console.log('test');
 					this.displayLoad = false;
 				}
 			)

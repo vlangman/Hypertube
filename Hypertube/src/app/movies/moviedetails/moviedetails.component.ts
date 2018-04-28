@@ -182,46 +182,49 @@ export class MoviedetailsComponent implements OnInit {
 		this.source = [];
 
 		this.dowloadMessage = "Downloading the file on server"
-		this.torrentService.downloadMovie(data, this.Movie.imdb_code).subscribe((data2: JSON) => {
-			this.prepareDownload = true;
-			console.log(data2);
 
-			if (data2['request'] == 204){
-				this.dowloadMessage = "Attempting new download...";
-				if (count < 3){
-					setTimeout(()=>{this.downloadMovie(data, ++count);},5000);
+		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token)=>{
+				console.log('GOT THE TOKEN');
+			this.torrentService.downloadMovie(data, this.Movie.imdb_code, token).subscribe((data2: JSON) => {
+				this.prepareDownload = true;
+				console.log(data2);
+
+				if (data2['request'] == 204){
+					this.dowloadMessage = "Attempting new download...";
+					if (count < 3){
+						setTimeout(()=>{this.downloadMovie(data, ++count);},5000);
+					}
+					else{
+						this.dowloadMessage = "Download is taking some time to start... Please try again";
+						this.currDownload = false;
+					}
 				}
-				else{
-					this.dowloadMessage = "Download is taking some time to start... Please try again";
+				//500 internal error
+				else if(data2['request'] == 500){
+					this.dowloadMessage = "Fatal download error occured please try again later";
 					this.currDownload = false;
 				}
-			}
-			//500 internal error
-			else if(data2['request'] == 500){
-				this.dowloadMessage = "Fatal download error occured please try again later";
-				this.currDownload = false;
-			}
-			//200 successful
-			else if (data2['request'] == 200){
-				this.dowloadMessage = "CHECKING FILE: " + name;
-				this.checkMovie(data2, 0);
-			}
-			//408 timeout
-			else if(data2['request'] == 408){
-				this.currDownload = false;
-				this.dowloadMessage = "CHECKING FILE: request timed out...try again later";
-				console.log('timeout');
-			}
-			//206 partial content
-			else if (data2['request'] == 206){
-				this.currDownload = false;
-				console.log('subtitles could not be found');
-				this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
-				this.checkMovie(data2, 0);
-			}
+				//200 successful
+				else if (data2['request'] == 200){
+					this.dowloadMessage = "CHECKING FILE: " + name;
+					this.checkMovie(data2, 0);
+				}
+				//408 timeout
+				else if(data2['request'] == 408){
+					this.currDownload = false;
+					this.dowloadMessage = "CHECKING FILE: request timed out...try again later";
+					console.log('timeout');
+				}
+				//206 partial content
+				else if (data2['request'] == 206){
+					this.currDownload = false;
+					console.log('subtitles could not be found');
+					this.dowloadMessage = "CHECKING FILE NO SUBS: " + name;
+					this.checkMovie(data2, 0);
+				}
 
-		});
-
+			});
+		})
 	}
 
 	//2

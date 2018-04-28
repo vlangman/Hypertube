@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable} from 'rxjs/Observable';
+import { Subscription } from "rxjs/Subscription";
+import 'rxjs/add/observable/fromPromise';
 import { TORRENT } from '../models/torrent.model';
 import { HttpClient } from '@angular/common/http';
 import { MOVIES } from "../models/movies.model";
+import { AuthService } from '../services/auth.service';
+
 
 @Injectable()
 export class TorrentService {
 
+	authSub: Subscription;
 	video: any;
 	torrent: any;
 	download: boolean = false;
@@ -15,9 +20,12 @@ export class TorrentService {
 
 	constructor(
 		private http: HttpClient,
+		private authService: AuthService,
 	) {
 		
 	}
+
+	
 
 	getCast(actor): Observable<any>{
 		if (actor['name'])
@@ -33,13 +41,15 @@ export class TorrentService {
 		}
 	}
 
-	downloadMovie(data: TORRENT, imdb_code: string): Observable<any> {
+	downloadMovie(data: TORRENT, imdb_code: string, token): Observable<any> {
 		console.log(data);
 		console.log('downloading new torrent....' + data.hash);
-		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code).map((data) => {
+		return this.http.get(this.api + 'movie/download/' + data.hash + '/' + imdb_code+'/'+ token).map((data) => {
 			return data;
-		});
+		});	
 	}
+
+
 	checkMovie(hash): Observable<any> {
 		return this.http.get(this.api + 'movie/check/' + hash).map((response) => {
 			return response;

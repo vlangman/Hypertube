@@ -43,6 +43,7 @@ export class AppComponent implements OnInit {
 	}
 
 
+
 	toggleGenreDropdown() {
 		if (this.genreToggle) {
 			this.genreToggle = false;

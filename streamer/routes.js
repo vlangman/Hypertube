@@ -4,6 +4,7 @@ const torrent = require('./torrent.js');
 const seriesTorrent = require('./seriesTorrent.js')
 const files = require('./files.js')
 var moviesDir = '../Hypertube/src/downloads/'
+var admin = require('firebase-admin');
 fs = require('fs');
 
 
@@ -11,18 +12,47 @@ var watchLink = 'unknown';
 var apiRequest = 'FAILED';
 
 
+router.get('/:token', (req, res) => {
+	var token = req.params.token;
+	console.log('got token');
+	console.log(token)
 
-router.get('/', (req, res) => {
-	console.log('hhhhhhhhhhmmmmm')
-	res.json('We workign baby!');
+	checkLogin(token).then((user)=>{
+		res.json({test: user})
+	}
+	).catch((err)=>{
+		res.json({test: err})
+	});
 })
+
+
+//actual login check wraped in check user
+function checkLogin(token){
+	return new Promise((resolve, reject)=>{
+		admin.auth().verifyIdToken(token).then(
+			(decoded)=>{
+				console.log('decode');
+				return (admin.auth().getUser(decoded.sub));
+			}).then(
+			(user)=>{
+				if (user){
+					resolve(200);
+				}
+				else{
+					reject(407)
+				}
+			}
+		).catch((err)=>{
+			reject(407);
+		})
+	})
+}
+
 
 //takes in a hash for the movie it will download,
 //downloads the torrent file from yts to check against current files
 //looks for current files, if found resumes torrent
 //starts the download and waits for the video file to appear before returning json link back to client
-
-
 router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
 	console.log('Looking for Subtitles');
 	const movieHash = req.params.hash;
@@ -49,97 +79,117 @@ router.get('/api/subtitles/check/:hash/:lang', (req, res) => {
 })
 
 //Download movie
-router.get('/api/movie/download/:hash/:imdb', (req, res) => {
+router.get('/api/movie/download/:hash/:imdb/:token', (req, res) => {
 	const downloadHash = req.params.hash;
 	const imdbid = req.params.imdb;
+	var token = req.params.token;
 	console.log('-----------------------------> STARTING DOWNLOAD : ' + '[ ' + downloadHash + ' ]');
 	
 	console.log('checking client for movie...');
 	//checking if client already contains a duplicate
 	//1
-	torrent.checkClient(downloadHash)
-	.then(
-	(resolve)=>{
-		throw 100 ;
-	},(reject)=>{
-		console.log('beginning client download')
-		return(torrent.downloadTorrent(downloadHash))
-	})
-	//2
-	.then(
-	(resolve)=>{
-		console.log('looking for video file to play');
-		return(torrent.movieFile(downloadHash));
+
+	checkLogin(token)
+	.then((user)=>{
+		console.log('lekker user')
+		torrent.checkClient(downloadHash).then(
+		(resolve)=>{
+			throw 100 ;
+		},(reject)=>{
+			console.log('beginning client download')
+			return(torrent.downloadTorrent(downloadHash))
+		})
+		//2
+		.then(
+		(resolve)=>{
+			console.log('looking for video file to play');
+			return(torrent.movieFile(downloadHash));
+		})
+		.catch(
+		(err)=>{
+			console.log('Movie Rejection Fallback 1')
+			console.log(err);
+			//cant get movie files... no seeders or slow download
+			if (err == 408){
+				console.log('Download timed out no... bytes received');
+				throw err;
+			}
+			//file is allready downloading in the client
+			else if (err == 100){
+				console.log('Download already exists in client');
+				return(torrent.movieFile(downloadHash))
+			}
+			else if (err == 204)
+			{
+				console.log('No files yet')
+				throw err;
+			}
+			//sumting bad ;'( I do not no de whey
+			else{
+				console.log('not good...');
+				throw "EISH Boss..."; 
+			}
+		})
+		//playable file was found by movieFile
+		.then(
+			(resolve)=>{
+				console.log('playable video file format found');
+				console.log(resolve);
+				console.log('Attemting subtitles download');
+				return(torrent.downloadSubtitles(downloadHash, imdbid));
+			}
+		)
+		//got subtitles
+		.then((resolve)=>{
+			console.log('subtitles successfully downloaded');
+			const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
+			const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
+			res.json(obj);
+		})
+		//catching all errors rejection 1 cant handle as well as a subtitles failure
+		.catch((err)=>{
+			const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
+			console.log('Movie Rejection Fallback 2')
+			console.log(err);
+			//no subs
+			if (err == 404){
+				console.log('WARNING: Subtitles could not be found...');
+				const obj = { request: 206, data: { hash: downloadHash, link: checklink } }
+				res.json(obj);
+			}
+			//request timeout 
+			else if (err == 408){
+				const obj = { request: 408 , data: { hash: downloadHash, link: "404" } }
+				res.json(obj);
+			}
+			//no video file  
+			else if(err == 204) {
+				const obj = { request: 204 , data: { hash: downloadHash, link: checklink } }
+				res.json(obj);
+			//internal error
+			} else {
+				const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+				console.log('Internal error...consult a dev');
+				res.json({obj});
+			}
+
+		})
 	})
 	.catch(
-	(err)=>{
-		console.log('Movie Rejection Fallback 1')
-		console.log(err);
-		//cant get movie files... no seeders or slow download
-		if (err == 408){
-			console.log('Download timed out no... bytes received');
-			throw err;
-		}
-		//file is allready downloading in the client
-		else if (err == 100){
-			console.log('Download already exists in client');
-			return(torrent.movieFile(downloadHash))
-		}
-		else if (err == 204)
-		{
-			console.log('No files yet')
-			throw err;
-		}
-		//sumting bad ;'( I do not no de whey
-		else{
-			console.log('not good...');
-			throw "EISH Boss..."; 
-		}
-	})
-	//playable file was found by movieFile
-	.then(
-		(resolve)=>{
-			console.log('playable video file format found');
-			console.log(resolve);
-			console.log('Attemting subtitles download');
-			return(torrent.downloadSubtitles(downloadHash, imdbid));
+		(err)=>{
+			console.log(err);
+			if(err == 407) {
+				const obj = {request: 407}
+				res.json(obj);
+			//internal error
+			} else {
+				const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
+				console.log('Internal error...consult a dev');
+				res.json({obj});
+			}
 		}
 	)
-	//got subtitles
-	.then((resolve)=>{
-		console.log('subtitles successfully downloaded');
-		const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
-		const obj = { request: 200, data: { hash: downloadHash, link: checklink } }
-		res.json(obj);
-	})
-	//catching all errors rejection 1 cant handle as well as a subtitles failure
-	.catch((err)=>{
-		const checklink = 'http://192.168.88.216:3000/api/movie/check/' + downloadHash;
-		console.log('Movie Rejection Fallback 2')
-		console.log(err);
-		//no subs
-		if (err == 404){
-			console.log('WARNING: Subtitles could not be found...');
-			const obj = { request: 206, data: { hash: downloadHash, link: checklink } }
-			res.json(obj);
-		}
-		//request timeout 
-		else if (err == 408){
-			const obj = { request: 408 , data: { hash: downloadHash, link: "404" } }
-			res.json(obj);
-		}
-		//no video file  
-		else if(err == 204) {
-			const obj = { request: 204 , data: { hash: downloadHash, link: checklink } }
-			res.json(obj);
-		//internal error
-		} else {
-			const obj = { request: 500 , data: { hash: downloadHash, link: "404" } }
-			console.log('Internal error...consult a dev');
-			res.json({obj});
-		}
-
-	})
+	
 })
 //Check movie
 router.get('/api/movie/check/:hash', (req, res) => {
@@ -234,9 +284,16 @@ router.get('/api/movie/watch/:hash', (req, res) => {
 					start: start,
 					end: end
 				}
-				const file = fs.createReadStream(path, stream_position)
+				var stream = fs.createReadStream(path, stream_position)
 				res.writeHead(206, head);
-				file.pipe(res);
+				stream.on('open', function () {
+					stream.pipe(res);
+				}).on("error", function (err) {
+					res.end(err);
+				}).on("close", function (err) {
+					stream.unpipe(res);
+					res.end(err);
+				});
 
 			} else {
 				const head = {
@@ -244,7 +301,16 @@ router.get('/api/movie/watch/:hash', (req, res) => {
 					'Content-Type': 'video/mp4',
 				}
 				res.writeHead(200, head)
-				fs.createReadStream(path).pipe(res)
+				var stream = fs.createReadStream(path).on("readable", function () {
+					stream.pipe(res);
+				}).on("error", function (err) {
+					stream.unpipe(res);
+					res.end(err);
+				}).on("close", function (err) {
+					stream.unpipe(res);
+					res.end(err);
+				});
+
 			}
 		}).catch(
 			(err) => {
@@ -464,7 +530,7 @@ router.get('/api/series/watch/:hash', (req, res) => {
 					'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 					'Accept-Ranges': 'bytes',
 					'Content-Length': chunksize,
-					'Content-Type': 'video/'+filetype,
+					'Content-Type': 'video/mp4',
 				}
 
 				let stream_position = {
@@ -477,20 +543,31 @@ router.get('/api/series/watch/:hash', (req, res) => {
 					stream.pipe(res);
 				}).on("error", function (err) {
 					res.end(err);
+				}).on('finish', function(){
+					stream.unpipe(res);
 				})
+				.on("close", function (err) {
+					stream.unpipe(res);
+					res.end(err);
+				});
 			} else {
 				const head = {
 					'Content-Length': fileSize,
-					'Content-Type': 'video/'+ filetype,
+					'Content-Type': 'video/mp4',
 				}
 				res.writeHead(200, head)
 				var stream = fs.createReadStream(path).on("readable", function () {
 					stream.pipe(res);
 				}).on("error", function (err) {
+					stream.unpipe(res);
+					res.end(err);
+				}).on('finish', function(){
+					stream.unpipe(res);
+				}).on("close", function (err) {
+					stream.unpipe(res);
 					res.end(err);
 				});
 			}
-
 		}
 	).catch((err) => {
 		console.log('STREAMING ERROR: ' + err);
