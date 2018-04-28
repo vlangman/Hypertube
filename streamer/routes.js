@@ -14,7 +14,7 @@ var apiRequest = 'FAILED';
 
 
 router.get('/', (req, res) => {
-	console.log('hhhm')
+	console.log('hhhhhhhhhhmmmmm')
 	res.json('We workign baby!');
 })
 
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 
 
 router.get('/api/subtitles/check/:hash/:lang/:token', (req, res) => {
-	console.log('==========================================================================CHECK Subtitles===================================================================================');
+	console.log('Looking for Subtitles');
 	const movieHash = req.params.hash;
 	var path = null;
 	console.log(movieHash);
@@ -193,7 +193,7 @@ router.get('/api/movie/check/:hash/:token', (req, res) => {
 				.then(
 					(resolve) => {
 						console.log('movie file is playable')
-						const watchLink = 'http://localhost:3000/api/movie/watch/' + hash + '/' + token;
+						const watchLink = 'http://localhost:3000/api/movie/watch/' + hash + '/' + authToken;
 						const obj = { request: 200, data: { hash: hash, link: watchLink } }
 						res.json(obj);
 					}
@@ -258,7 +258,6 @@ router.get('/api/movie/check/:hash/:token', (req, res) => {
 })
 //Stream movie
 router.get('/api/movie/watch/:hash/:token', (req, res) => {
-	console.log('==========================================================================WATCH MOVIE===================================================================================');
 	const hash = req.params.hash;
 	const authToken = req.params.token;
 	admin.auth().verifyIdToken(authToken).then(decoded => {
@@ -600,8 +599,8 @@ router.get('/api/series/check/:hash/:token', (req, res) => {
 })
 //Stream Series
 router.get('/api/series/watch/:hash/:token', (req, res) => {
-	console.log('========================================================================== WATCH SERIES ==========================================================================')
 	const hash = req.params.hash;
+	console.log('WATCH SERIES: ---------------  New series: ' + hash + '------------------------');
 	const authToken = req.params.token;
 	admin.auth().verifyIdToken(authToken).then(decoded => {
 		console.log('token for user ' + decoded.sub);

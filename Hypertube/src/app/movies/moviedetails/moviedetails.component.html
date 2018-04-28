@@ -9,7 +9,7 @@
 			<div class="image-wrap">
 				<img class="movie-image" src="{{ Movie.image }}">
 				<div class=" btn-group watchbtn">
-					<button *ngFor="let torrent of Movie.torrents" class="btn btn-outline-primary" (click)="downloadMovie(torrent)">{{torrent.quality}}</button>
+					<button *ngFor="let torrent of Movie.torrents" class="btn btn-outline-primary" (click)="downloadMovie(torrent, 0)">{{torrent.quality}}</button>
 				</div>
 			</div>
 
@@ -45,18 +45,14 @@
 							</div>
 						</div>
 					</div>
-					<h3 class="text-warning" *ngIf="dowloadMessage != null">{{ dowloadMessage }}</h3>
+
 				</div>
-
-
-
-
-
+				<p class="text-warning" *ngIf="dowloadMessage != null">{{ dowloadMessage }}</p>
 			</div>
 
 		</div>
 
-		<div *ngIf="currDownload || checkDownload" class="bg-inverse loading-container">
+		<div *ngIf="currDownload || checkDownload" class="bg-dark loading-container">
 			<div class="loading"></div>
 		</div>
 

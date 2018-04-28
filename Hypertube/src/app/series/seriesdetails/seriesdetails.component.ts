@@ -59,6 +59,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 	dowloadMessage: string = null;
 	subtitlesStreameng: string;
 	subtitlesStreamfre: string;
+	downloadButton: number = 0;
 
 	downloadSub: Subscription;
 	checkSub: Subscription;
@@ -294,12 +295,14 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 				else if (data2['request'] == 200) {
 					this.currDownload = false;
 					this.downloadSub.unsubscribe();
+					this.downloadButton = 2;
 					this.checkSeries(data2, 0);
 				}
 				//408 timeout
 				else if (data2['request'] == 408) {
 					this.currDownload = false;
 					this.dowloadMessage = "Download request timed out...";
+					this.downloadButton = 0;
 					this.downloadSub.unsubscribe();
 					console.log('timeout');
 
@@ -308,6 +311,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 				else if (data2['request'] == 206) {
 					this.currDownload = false;
 					console.log('subtitles could not be found');
+					this.downloadButton = 2;
 					this.downloadSub.unsubscribe();
 					this.checkSeries(data2, 0);
 				}
@@ -419,7 +423,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			if (this.subtitlesStreamfre == '') {
 				console.log('oh hello fre');
 				console.log(hash['data']['hash']);
-				this.subtitlesStreamfre = 'http://192.168.88.216/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre' + '/' + token;
+				this.subtitlesStreamfre = 'http://loclahost/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre' + '/' + token;
 				console.log(this.subtitlesStreamfre)
 				this.torrentService.getSubtitles(hash['data']['hash'], 'fre', token).subscribe((data) => {
 					console.log('heree')

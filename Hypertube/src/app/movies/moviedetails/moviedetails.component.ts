@@ -182,7 +182,7 @@ export class MoviedetailsComponent implements OnInit {
 		//reset video player
 		this.source = [];
 		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
-			this.dowloadMessage = "Downloading the file on server: " + this.Movie.title;
+			this.dowloadMessage = "Downloading the file on server"
 			this.torrentService.downloadMovie(data, this.Movie.imdb_code, token).subscribe((data2: JSON) => {
 				this.prepareDownload = true;
 				console.log(data2);
@@ -210,7 +210,7 @@ export class MoviedetailsComponent implements OnInit {
 				//408 timeout
 				else if (data2['request'] == 408) {
 					this.currDownload = false;
-					this.dowloadMessage = "CHECKING FILE: request timed out...";
+					this.dowloadMessage = "CHECKING FILE: request timed out...try again later";
 					console.log('timeout');
 				}
 				//206 partial content
@@ -232,26 +232,25 @@ export class MoviedetailsComponent implements OnInit {
 		console.log(data);
 		this.checkDownload = true;
 		this.currDownload = false;
-		this.dowloadMessage = "Preparing your Movie";
+		this.dowloadMessage = "Preparing your movie file";
 
 		this.subtitlesLink(data);
 		this.authService._firebaseAuth.auth.currentUser.getIdToken().then((token) => {
 			this.torrentService.checkMovie(data['data']['hash'], token).subscribe(
 				(response: JSON) => {
 					this.authService.addMovieToDb(this.Movie.image, this.Movie.title, this.Movie.id, data['data']['hash']);
-					this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+					this.dowloadMessage = "Preparing your movie file";
 					console.log(response);
 
 
 					if (response['request'] == 200) {
-						this.dowloadMessage = "Streaming your file: " + data['data']['hash'];
+						this.dowloadMessage = "Preparing your movie file";
 						this.startStream(response['data']['link']);
 					} else if (response['request'] == 404) {
 						this.dowloadMessage = "SERVER ERROR: Restart the download please!";
 						this.checkDownload = false;
 					}
 					else if (response['request'] == 204) {
-						this.dowloadMessage = "STREAMING file " + data['data']['hash'];
 						console.log('file not ready');
 						if (count < 5) {
 							setTimeout(() => { this.checkMovie(data, ++count); }, 5000);
@@ -268,7 +267,7 @@ export class MoviedetailsComponent implements OnInit {
 	startStream(link) {
 		this.checkDownload = false;
 		this.currDownload = false;
-		console.log('STARTING STREAM!!');
+		this.dowloadMessage = "Starting stream";
 		console.log(link);
 		this.source = this.sanitizer.bypassSecurityTrustResourceUrl(link);
 		this.watch = true;
