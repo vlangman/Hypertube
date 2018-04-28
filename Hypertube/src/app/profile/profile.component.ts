@@ -13,13 +13,13 @@ import { LoginComponent } from '../login/login.component';
 import { Router } from '@angular/router';
 
 export interface User {
-  username: string;
+	username: string;
 }
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+	selector: 'app-profile',
+	templateUrl: './profile.component.html',
+	styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
@@ -159,8 +159,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 	seriesWatched() {
-		// if (this.tempUsername != this.username)
-		// 	this.getUserInfo(this.tempUsername)
 		if (!this.displayProfile) {
 			this.searchButton = false;
 			this.editEmailButton = false;
@@ -241,7 +239,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			} else {
 				users.forEach((series) => {
 					console.log(series)
-					this.watchedMovies.push(series);
+					this.watchedSeries.push(series);
 				})
 			}
 

@@ -24,7 +24,7 @@
 		 aria-selected="false" (click)="moviesWatched()">Movies Watched</a>
 	</li>
 	<li class="nav-item">
-		<a href="#Swatched" class="nav-link" id="watched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="swatched"
+		<a href="#Swatched" class="nav-link" id="Swatched-tab" data-toggle="tab" style="cursor: pointer;" role="tab" aria-controls="Swatched"
 		 aria-selected="false" (click)="seriesWatched()">Series Watched</a>
 	</li>
 </ul>
@@ -193,14 +193,14 @@
 			</div>
 		</div>
 
-		<div class="tab-pane animate-zoom" id="Swatched" role="tabpanel" aria-labelledby="watched-tab">
-			<!-- new movies watched -->
+		<div class="tab-pane animate-zoom" id="Swatched" role="tabpanel" aria-labelledby="Swatched-tab">
+			<!-- new series watched -->
 			<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
 				<div *ngIf="seriesError">{{seriesError}}</div>
 				<div *ngFor="let series of watchedSeries">
 					<a (click)="viewMovie(series.movieId)" style="cursor: pointer;">
-						<img src="{{series.moviepic}}" class="items">
-						<h3>{{series.movieTitle | ellipsis: 15}}</h3>
+						<img src="{{series.seriespic}}" class="items">
+						<h3>{{series.seriesTitle | ellipsis: 15}}</h3>
 					</a>
 				</div>
 			</div>
