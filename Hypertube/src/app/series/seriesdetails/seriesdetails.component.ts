@@ -423,7 +423,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			if (this.subtitlesStreamfre == '') {
 				console.log('oh hello fre');
 				console.log(hash['data']['hash']);
-				this.subtitlesStreamfre = 'http://loclahost/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre' + '/' + token;
+				this.subtitlesStreamfre = 'http://localhost/api/subtitles/check/' + hash['data']['hash'] + '/' + 'fre' + '/' + token;
 				console.log(this.subtitlesStreamfre)
 				this.torrentService.getSubtitles(hash['data']['hash'], 'fre', token).subscribe((data) => {
 					console.log('heree')
