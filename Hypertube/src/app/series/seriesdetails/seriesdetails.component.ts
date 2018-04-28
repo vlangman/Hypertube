@@ -60,6 +60,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 	subtitlesStreameng: string;
 	subtitlesStreamfre: string;
 	downloadButton: number = 0;
+	showId: number = null;
 
 	downloadSub: Subscription;
 	checkSub:Subscription;
@@ -86,6 +87,7 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 						show: params['show'],
 						slug: params['slug'],
 					}
+					this.showId = params['id'];
 					this.seriesservice.getShow(show).subscribe(
 						(data)=>{
 							if (data['tmdb'] && !data['err']){
@@ -181,16 +183,19 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 
 
 	loadComments() {
-		// , ref => ref.where('SeriesID', '==', this.seriesId)
 		this.loadedComments = this.db.collection('SeriesComments', ref => {
-			return ref.where('SeriesID', '==', this.seriesId).orderBy('Dateadded', 'desc')
+			if (this.showId != null){
+				return ref.where('SeriesID', '==', this.showId).orderBy('Dateadded', 'desc')
+			}
+			else
+				return ref.where('SeriesID', '==', this.seriesId).orderBy('Dateadded', 'desc')
 		})
 		this.loadedCommentsdb = this.loadedComments.snapshotChanges().map(actions => {
 			if (!actions || !actions.length) {
 				this.commentsFound = false;
 			} else {
 				return actions.map(action => {
-					console.log("tetststs");
+
 					console.log(action)
 					const data = action.payload.doc.data() as SeriesComment;
 					console.log(data);
@@ -199,8 +204,6 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 						userName: data.userName,
 						Dateadded: data.Dateadded,
 						Photo: data.Photo
-
-						// SeriesId: data.SeriesId
 					}
 				});
 			}
@@ -230,10 +233,16 @@ export class SeriesdetailsComponent implements OnInit, OnDestroy {
 			const year = date.getFullYear();
 			const todaydate = day + '/' + month + '/' + year;
 			console.log(todaydate)
+			var id;
+			if(this.showId != null){
+				id = this.showId;
+			}else
+				id = this.seriesId;
+
 			this.db.collection("SeriesComments").add({
 				userName: user.displayName,
 				Comments: value.comment,
-				SeriesID: this.seriesId,
+				SeriesID: id,
 				Dateadded: todaydate,
 				Photo: user.photoURL
 			}).then((res) => {
