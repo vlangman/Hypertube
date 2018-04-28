@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit, OnDestroy {
 	editButton: boolean = false;
 	errormsg: string;
+	errorResetmsg: string;
 	msg: string;
 	returnUrl: string;
 	email42: string;
@@ -23,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	pass42: string;
 	sub42post: Subscription;
 	sub42get: Subscription;
-	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	usernameInputPattern = "^[a-zA-Z0-9_-\\s]{6,}$";
 	passwordPattern = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}";
 	// checkExist: number;
 	// loading = false;
@@ -70,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 					this.authService._firebaseAuth.auth.fetchProvidersForEmail(this.email42).then((providers) => {
 						if (providers.length > 0) {
-							this.authService.signInWithEmailAndPassword(this.email42, this.pass42)
+							this.authService.signInWithEmailAndPassword(this.username42, this.pass42)
 						} else {
 							this.authService.login42(this.email42, this.pass42, data, this.username42, this.photo42)
 						}
@@ -121,7 +122,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 			this.msg = 'Password email sent please check your email';
 			this.router.navigate(['/Login']);
 		}).catch((err) => {
-			this.errormsg = err;
+			this.errorResetmsg = err;
 		});
 	}
 

@@ -69,7 +69,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	movieTitle: string;
 	userExist: string;
 	displayProfile: boolean = true;
-	usernameInputPattern = "^[a-z0-9_-]{6,}$";
+	fileSize: string;
+	usernameInputPattern = "^[a-zA-Z0-9_-\\s]{6,}$";
 
 	Users: Observable<User[]>;
 	userCol: AngularFirestoreCollection<User>;
@@ -95,7 +96,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.userid = this.authService.userid;
 		this.getUserInfo(this.username);
 		// this.getMoviesWatched(this.userid);
-
 		// this.tempUsername = this.username;
 		console.log(this.authService.userid);
 	}
@@ -107,10 +107,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.editButton = false;
 			this.editEmailButton = false;
 			this.displayProfile = false;
+
 		}
 		this.userExist = '';
-	}
 
+	}
+	searchProfileclear(searchform: NgForm) {
+		searchform.reset();
+	}
 
 	editProfile() {
 		// if (this.tempUsername != this.username)
@@ -132,6 +136,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.percentage = null;
 		this.snapshot = null;
 	}
+	editProfileClear(form: NgForm) {
+		form.reset();
+		this.errormsg = '';
+		this.movieError = '';
+		this.userExist = '';
+		this.downloadURL = null;
+		this.percentage = null;
+		this.snapshot = null;
+	}
 
 	moviesWatched() {
 		// if (this.tempUsername != this.username)
@@ -146,8 +159,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 	seriesWatched() {
-		// if (this.tempUsername != this.username)
-		// 	this.getUserInfo(this.tempUsername)
 		if (!this.displayProfile) {
 			this.searchButton = false;
 			this.editEmailButton = false;
@@ -164,7 +175,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.editEmailButton = true;
 			this.editButton = false;
 			this.searchButton = false;
-			this.displayProfile = true;
+			this.displayProfile = false;
 		} else {
 			this.editEmailButton = false;
 		}
@@ -172,8 +183,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.errormsg = '';
 		this.movieError = '';
 		this.userExist = '';
+		this.fileSize = '';
 	}
 
+	editEmailClear(emailform: NgForm) {
+		emailform.reset();
+	}
 
 	getUserInfo(username) {
 
@@ -220,12 +235,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.usersdb = this.usersCollection.valueChanges();
 		this.usersdbsub = this.usersdb.subscribe((users) => {
 			if (users.length == 0) {
-				this.movieError = 'You have no watched series yet';
-				console.log(this.movieError)
+				this.seriesError = 'You have no watched series yet';
+				console.log(this.seriesError)
 			} else {
-				users.forEach((movies) => {
-					console.log(movies)
-					this.watchedMovies.push(movies);
+				users.forEach((series) => {
+					console.log(series)
+					this.watchedSeries.push(series);
 				})
 			}
 
@@ -262,8 +277,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 		this.searchVerify = false;
 		this.watchedMovies = [];
 		this.movieError = '';
+		this.fileSize = '';
 		// this.userExist = '';
-
 	}
 
 	viewMovie(id: number) {
@@ -451,21 +466,25 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 						} else if (!value.photoInput && this.downloadURL) {
 							value.photo = this.downloadURL;
-							this.photo = value.photoInput;
-							this.authService.updateProfile_user(value.usernameInput, value.photoInput.value).then(() => {
+							this.photo = value.photo.value;
+							console.log(value.photo.value)
+							this.authService.updateProfile_user(value.usernameInput, value.photo.value).then(() => {
 								this.db.collection("Users").doc(value.usernameInput).set({
 									username: value.usernameInput,
 									Firstname: this.Firstname,
 									Lastname: this.Lastname,
 									email: this.email,
-									photo: value.photoInput,
+									photo: value.photo.value,
 									providerId: this.authService.providerId,
-									UserId: this.authService.userid
+									userId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
 									console.log(err);
 								});
+								this.downloadURL = null;
+								this.percentage = null;
+								this.snapshot = null;
 							});
 						} else if (value.photoInput && this.downloadURL) {
 							this.errormsg = "please choose one photo either the URL or the upload"
@@ -479,7 +498,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 									email: this.email,
 									photo: value.photoInput,
 									providerId: this.authService.providerId,
-									UserId: this.authService.userid
+									userId: this.authService.userid
 								}).then((res) => {
 									console.log("added");
 								}).catch((err) => {
@@ -495,6 +514,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 		})
 		this.userExist = '';
+		this.fileSize = '';
 	}
 
 	toggleHover(event: boolean) {
@@ -514,37 +534,46 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
 		// The storage path
 		const path = `Profile/${new Date().getTime()}_${file.name}`;
+		const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		function niceBytes(x) {
 
+			let l = 0, n = parseInt(x, 10) || 0;
+
+			while (n >= 1024 && ++l)
+				n = n / 1024;
+
+			return (n.toFixed(n >= 10 || l < 1 ? 0 : 1) + ' ' + units[l]);
+		}
 		// Totally optional metadata
 		// const customMetadata = { app: 'My AngularFire-powered PWA!' };
-
 		// The main task
-		this.task = this.storage.upload(path, file)
+		if (niceBytes(file.size) <= niceBytes(2000)) {
+			this.task = this.storage.upload(path, file)
 
-		// Progress monitoring
-		this.percentage = this.task.percentageChanges();
-		this.snapshot = this.task.snapshotChanges().pipe(
-			tap(snap => {
+			// Progress monitoring
+			this.percentage = this.task.percentageChanges();
+			this.snapshot = this.task.snapshotChanges().pipe(
+				tap(snap => {
+					if (snap.bytesTransferred === snap.totalBytes) {
+						this.db.collection('photos').add({ path, size: snap.totalBytes })
+					}
 
-				if (snap.bytesTransferred === snap.totalBytes) {
-					this.db.collection('photos').add({ path, size: snap.totalBytes })
+				})
+			)
+			// The file's download URL
+			this.downloadURL = this.task.downloadURL();
+			this.downloadURL.subscribe(
+				(data) => {
+					if (data) {
+						this.downloadLink = data;
+					}
+					// console.log(this.downloadLink);
 				}
-			})
-		)
 
-		// The file's download URL
-
-		this.downloadURL = this.task.downloadURL();
-		this.downloadURL.subscribe(
-			(data) => {
-				console.log(this.downloadLink);
-				if (data) {
-					this.downloadLink = data;
-				}
-				// console.log(this.downloadLink);
-			}
-
-		);
+			);
+		} else {
+			this.fileSize = 'This file is to big';
+		}
 
 	}
 

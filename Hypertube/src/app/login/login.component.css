@@ -3,15 +3,16 @@
 	height: 100%;
 	/*background-color: red;*/
 	display: flex;
-	align-content: center;
-	justify-content: center;
-	flex-wrap: wrap;
+  flex-direction: column;
 }
-.login-form{
-	margin-top: 50px;
-	width: 100%;
-	max-width: 600px;
-	/*background-color: orange;*/
+
+.login-form {
+  margin-top: 50px;
+  width: 100%;
+  flex-grow: 1;
+  max-width: 600px;
+  margin: auto auto;
+  /*background-color: orange;*/
 }
 .api-login{
 	display: flex;
@@ -30,4 +31,60 @@
 }
 .login-buttons{
 	margin-top: 30px;
+}
+
+.column-buttons
+{
+  display:flex;
+  flex-direction: row;
+  max-width: 500px;
+}
+
+.alternative-login-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  margin: auto auto;
+}
+
+#special-hr {
+  border-top: 1px solid #d1d1d1
+}
+
+.alternative-login-header{
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.info-message {
+  background-color: #8e8e8e;
+  border-color: #8e8e8e;
+  color: #515151;
+  box-shadow: none;
+}
+
+#button-facebook {
+  background-color: #415070;
+  border-color: white;
+  color: white;
+}
+
+#button-42 {
+  background-color: #2C4853;
+  border-color: white;
+  color: white;
+}
+
+#button-google {
+  background-color: white;
+  border-color: grey;
+  color: #7F7F7F;
+  text-align: left;
+}
+
+#google-logo{
+  max-width:22px;
+  max-height: 22px;
+  padding:0px;
+  margin-right: 20px;
 }

@@ -114,7 +114,7 @@ export class AuthService {
 				console.log('completed')
 				if (this.userExist > 0) {
 					// this.errormsg = 'this username is already in use'
-					// this.router.navigate(['/Profile']);
+					this.router.navigate(['/Profile']);
 				} else {
 					this.updateProfile(username, photo)
 					console.log(res);
@@ -151,7 +151,7 @@ export class AuthService {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.FacebookAuthProvider()
 		).then((res) => {
-			this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', res['additionalUserInfo']['profile']['name']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
+			this.usersCollection = this.db.collection('Users', ref => ref.where('email', '==', res['additionalUserInfo']['profile']['email']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
 			this.usersdb = this.usersCollection.valueChanges().first();
 			this.usersdb.subscribe((users) => {
 				console.log('user found')
@@ -193,7 +193,7 @@ export class AuthService {
 		return this._firebaseAuth.auth.signInWithPopup(
 			new firebase.auth.GoogleAuthProvider()
 		).then((res) => {
-			this.usersCollection = this.db.collection('Users', ref => ref.where('username', '==', res['additionalUserInfo']['profile']['name']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
+			this.usersCollection = this.db.collection('Users', ref => ref.where('email', '==', res['additionalUserInfo']['profile']['email']).orderBy('providerId').startAt(res['additionalUserInfo']['providerId']));
 			this.usersdb = this.usersCollection.valueChanges().first();
 			this.usersdb.subscribe((users) => {
 				console.log('user found')
