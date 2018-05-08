@@ -45,7 +45,7 @@
 				<p [ngClass]=" (hoverMovie == movie.id) ? 'summary-show': 'summary-hide'" class="movie-summary">{{ movie.summary | ellipsis:350 }}</p>
 			</div>
 			<div class="movie-footer">
-				<button class="btn btn-outline-primary" (click)="viewMovie(movie.id)">Watch Now!</button>
+				<a [routerLink]="['/Movies/Details/' + movie.id]" class="btn btn-outline-primary">Watch Now!</a>
 			</div>
 		</div>
 	</div>

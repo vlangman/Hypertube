@@ -82,7 +82,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 									this.Shows = [];
 									this.loadShowDetails(this.token);
 									this.displayLoad = false;
-									this.detailsIndex = this.detailsIndex + 20;
 								}
 							)
 						})
@@ -95,7 +94,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						this.detailsIndex = this.loadIndex(url[1]['parameters']['index']);
 						this.Shows = [];
 						this.loadShowDetails(this.token);
-						this.detailsIndex = this.detailsIndex + 20;
 						this.displayLoad = false;
 					}
 						
@@ -116,8 +114,6 @@ export class SeriesComponent implements OnInit, OnDestroy {
 								console.log('complete');
 								
 								this.loadShowDetails(this.token);
-							
-								this.detailsIndex = this.detailsIndex + 20;
 								this.viewShows = true;
 								this.displayLoad = false;
 
@@ -143,14 +139,14 @@ export class SeriesComponent implements OnInit, OnDestroy {
 		})
 	}
 
-	//increment index by 20 where u call it
+	//call api for 5 more shows
 	loadShowDetails(token){
 		console.log('getting list')
-		var limit = this.detailsIndex + 20;
+		var limit = this.detailsIndex + 5;
 		var added = 0;
 
 		for (var i = this.detailsIndex; this.loadedShows[i] && i < limit; i++) {
-			console.log('hmm22')
+			console.log('Adding shows');
 			if (this.loadedShows[i]['show'][0] == this.indexChar || this.indexChar == "")
 			{
 				this.detailsSub.add(this.seriesService.getShow(this.loadedShows[i], token).subscribe(
@@ -158,6 +154,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
 						if (data['tmdb'] && !data['err']){
 							this.Shows.push(data);
 							console.log('pushed reply');
+							this.loadMore = false;
 						}
 						else{
 							console.log('Bad Reply');
@@ -167,6 +164,8 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			}
 
 		}
+		this.detailsIndex = this.detailsIndex + 5;
+
 	}
 
 	loadIndex(char){
@@ -246,10 +245,10 @@ export class SeriesComponent implements OnInit, OnDestroy {
 			if (this.viewShows && !this.imbdSearch && !this.loadMore && !this.displayLoad)
 			{
 				this.loadMore = true;
+				var lengthCheck = this.Shows.length;
 				this.loadShowDetails(this.token);
-				this.detailsIndex = this.detailsIndex + 20;
 				
-				this.loadMore = false;
+				
 			}
 		}		
 	}

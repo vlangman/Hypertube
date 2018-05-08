@@ -6,36 +6,22 @@ const api = 'https://api.themoviedb.org/3/find/';
 const apiCast = 'https://api/themoviedb.org/3/search/person';
 const apiKey = '20fbc3dc89216b6a0e00f0108887c4f5';
 
-var cachedDetails = [];
 var allShows = [];
+var ShowList = [];
 //https://api.themoviedb.org/3/find/tt5327970
 
-function checkCache(){
-	if (allShows[0])
-		return true;
-	else
-		return false;
-}
-
-const cacheShows = () =>{
-	getAllShows().then(
-		(data)=>{
-			console.log('List ready fetching IMDB');
-
-			async function loadshows(shows){
-				for (var i = 0; shows[i]; i++)
-				{
-					await getShowData(shows[i])
-					.then((data)=>{
-						console.log('Cached: ' +i + " of " + shows.length);
-						AllShows.push(data);
-					});
-				}
-			}
-
-			loadshows(data);
+function checkCache(imdb_id){
+	return new Promise((resolve, reject)=>{
+		console.log('looking for shows in cache...');
+		if (allShows[imdb_id]){
+			resolve(allShows[imdb_id]);
+		} else {
+			console.log('not cached ...');
+			//no content;
+			reject(204)
 		}
-	)
+	})
+	
 }
 
 const getTorrents = (page, limit) =>{
@@ -65,38 +51,49 @@ const getImdb = (imdb) =>{
 
 const getDetails = (imdb_id) =>{
 	return new Promise((resolve, reject) =>{
-		var i = 0;
 		
-		console.log('FETCHING DETAILS FOR : ' + imdb_id)
-		var options = {
-			uri: api + 'tt' + imdb_id,
-			qs: {
-				api_key: apiKey, // -> uri + '?access_token=xxxxx%20xxxxx'
-				language: 'en-US',
-				external_source: 'imdb_id'
-			},
-			headers: {
-				'User-Agent': 'Request-Promise'
-			},
-			json: true, // Automatically parses the JSON string in the response
-		};
-		rp(options)
-		.then(function (response) {
-			if (response['tv_results'] != "")
-			{
-				var obj = {
-					imdb_id: imdb_id,
-					response: response,
-				};
-				cachedDetails.push(obj);
-			}
-			resolve(response)
+		var i = 0;
+		checkCache(imdb_id)
+		.then((show)=>{
+			console.log('FOUND IN CACHE: ' + imdb_id);
+			resolve(show);
 		})
-		.catch(function (err) {
-			// API call failed...
-			console.log(err);
-			reject(err);
-			});	
+		.catch((err)=>{
+			if (err == 204){
+				console.log('FETCHING DETAILS FOR : ' + imdb_id)
+					var options = {
+						uri: api + 'tt' + imdb_id,
+						qs: {
+							api_key: apiKey,
+							language: 'en-US',
+							external_source: 'imdb_id'
+						},
+						headers: {
+							'User-Agent': 'Request-Promise'
+						},
+						json: true,
+					};
+					rp(options)
+					.then(function (response) {
+						if (response['tv_results'] != "")
+						{
+							allShows[imdb_id] = response;
+							console.log('Caching show...: ' + imdb_id);
+						}
+					
+						resolve(response)
+					})
+					.catch(function (err) {
+						// API call failed...
+						console.log(err);
+						reject(err);
+					});	
+			} else {
+				console.log(err);
+				reject(500);
+			}
+		})
+
 	})
 }
 
@@ -126,12 +123,20 @@ const search = (query) =>{
 
 const getAllShows = () => {
 	return new Promise((resolve, reject) =>{
-		eztv.getAllShows()
-		.then((res)=>{
-			AllShows = res
-			resolve(res)
-		})
-		.catch(err => reject(res))
+
+		if (ShowList[0]){
+			console.log('Show list cached');
+			resolve(ShowList);
+		}
+		else{
+			console.log('Fetching show list');
+			eztv.getAllShows()
+			.then((res)=>{
+				ShowList = res
+				resolve(res)
+			})
+			.catch(err => reject(res))
+		}
 	})
 }
 
@@ -148,51 +153,12 @@ const getShows = (index) =>{
 	})
 }
 
-
-// const getCast = (name) =>{
-// 	return new Promise((resolve, reject) =>{
-// 	var i = 0;
-	
-// 	var options = {
-// 		uri: apiCast + name + imdb_id,
-// 		qs: {
-// 			api_key: apiKey, // -> uri + '?access_token=xxxxx%20xxxxx'
-// 			language: 'en-US',
-// 			append_to_response: 'imdb_id'
-// 		},
-// 		headers: {
-// 			'User-Agent': 'Request-Promise'
-// 		},
-// 		json: true, // Automatically parses the JSON string in the response
-// 	};
-// 	rp(options)
-// 	.then(function (response) {
-// 		if (response[''] != "")
-// 		{
-// 			var obj = {
-// 				imdb_id: imdb_id,
-// 				response: response,
-// 			};
-// 			cachedDetails.push(obj);
-// 		}
-// 		resolve(response)
-// 	})
-// 	.catch(function (err) {
-// 		// API call failed...
-// 		console.log(err);
-// 		reject(err);
-// 		});	
-// })
-// }
-
-
 module.exports = {
 	getShowData,
 	getTorrents,
 	getAllShows,
 	getImdb,
 	getDetails,
-	cacheShows,
 	getShows,
 	checkCache,
 }

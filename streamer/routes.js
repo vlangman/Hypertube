@@ -14,9 +14,6 @@ var apiRequest = 'FAILED';
 
 router.get('/:token', (req, res) => {
 	var token = req.params.token;
-	console.log('got token');
-	console.log(token)
-
 	checkLogin(token).then((user)=>{
 		res.json({test: user})
 	}
@@ -629,10 +626,6 @@ router.get('/api/series/watch/:hash/:token', (req, res) => {
 				console.log('RESOLVE FOR WATCH READY FILES ARE PLAYABLE FROM DIR: ' + path);
 				var filetype = path.split('.').pop();
 				console.log('THE FILE TYPE IS: ' + filetype);
-				if (filetype == "mkv"){
-					filetype = "webm";
-				}
-
 				const stat = fs.statSync(path);
 				const fileSize = stat.size;
 				const range = req.headers.range;
@@ -644,12 +637,21 @@ router.get('/api/series/watch/:hash/:token', (req, res) => {
 					const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 					const chunksize = (end - start) + 1
 
-					const head = {
+					var contentType;
+					if (filetype == 'mkv'){
+						console.log('changing format')
+						contentType = 'video/x-matroska'
+					}
+					else{
+						contentType = 'video/mp4'
+					}
+					var head = {
 						'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 						'Accept-Ranges': 'bytes',
 						'Content-Length': chunksize,
-						'Content-Type': 'video/mp4',
+						'Content-Type': contentType,
 					}
+				
 
 					let stream_position = {
 						start: start,
@@ -737,6 +739,7 @@ router.get('/api/series/get/:page/:limit/:token', (req, res) => {
 	)
 })
 
+//Get Series Details (watch now) button
 router.get('/api/show/get/details/:id/:show/:slug/:token', (req, res)=>{
 
 	const token = req.params.token;
@@ -766,6 +769,7 @@ router.get('/api/show/get/details/:id/:show/:slug/:token', (req, res)=>{
 			var ret;
 			seriesTorrent.getShowData(arr).then(
 				(resolve) =>{
+					console.log('got show data')
 					if (resolve['imdb']){
 						ret = resolve;
 						return (seriesTorrent.getDetails(resolve['imdb'].slice(2, 9)))
@@ -811,7 +815,6 @@ router.get('/api/show/get/list/:token', (req, res)=>{
 	const token = req.params.token;
 	checkLogin(token)
 	.then((user)=>{
-		console.log('Fetching show list');
 		seriesTorrent.getAllShows().then((list)=>{
 			res.json({"index":list});
 		})

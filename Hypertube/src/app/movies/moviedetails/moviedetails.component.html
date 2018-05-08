@@ -67,7 +67,7 @@
 				<track kind="subtitles" *ngIf="subtitlesStreamfre" label="French" [src]="subtitlesStreamfre" srclang="fr" default='false'>
 			</video>
 			<!-- video player controls -->
-			<vg-controls>
+			<vg-controls  [vgAutohide]="true" [vgAutohideTime]="1.5">
 				<vg-play-pause [vgFor]=" videoPlayer "></vg-play-pause>
 				<vg-playback-button [vgFor]=" videoPlayer "></vg-playback-button>
 

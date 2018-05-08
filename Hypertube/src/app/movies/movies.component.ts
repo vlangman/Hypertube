@@ -164,9 +164,6 @@ export class MoviesComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	viewMovie(id: number) {
-		this.router.navigate(["Movies/Details", id]);
-	}
 
 	showContent(hoverId: number) {
 		this.hoverMovie = hoverId;

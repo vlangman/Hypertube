@@ -41,11 +41,11 @@
 
 			<video [vgMedia]="media" #media id="videoPlayer" preload="auto" crossorigin>
 				<source [src]="source" type="video/mp4">
-				<track kind="subtitles" label="English"  *ngIf="subtitlesStreameng" [src]="subtitlesStreameng" srclang="en" default='true'>
-				<track kind="subtitles" *ngIf="subtitlesStreamfre" label="French" [src]="subtitlesStreamfre" srclang="fr" default='false'>
+				<track style="color: black" kind="subtitles" label="English"  *ngIf="subtitlesStreameng" [src]="subtitlesStreameng" srclang="en" default='true'>
+				<track style="color: black" kind="subtitles" *ngIf="subtitlesStreamfre" label="French" [src]="subtitlesStreamfre" srclang="fr" default='false'>
 			</video>
 	
-			<vg-controls>
+			<vg-controls [vgAutohide]="true" [vgAutohideTime]="1.5">
 				<vg-play-pause [vgFor]=" videoPlayer "></vg-play-pause>
 				<vg-playback-button [vgFor]=" videoPlayer "></vg-playback-button>
 
@@ -56,7 +56,6 @@
 					<vg-scrub-bar-buffering-time [vgFor]=" videoPlayer "></vg-scrub-bar-buffering-time>
 				</vg-scrub-bar>
 
-				<vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
 				<vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
 
 				<vg-track-selector></vg-track-selector>

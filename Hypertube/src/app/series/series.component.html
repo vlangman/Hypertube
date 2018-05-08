@@ -31,14 +31,14 @@
 				</p>
 			</div>
 			<div class="series-footer">
-				<button class="btn btn-outline-primary" (click)="viewSeries( series.imdb, series.hash, series.filename )">Watch Now</button>
+				<a class="btn btn-outline-primary" [routerLink]="['Details/Show/' + series.imdb + '/' + series.hash + '/' + series.filename]">Watch Now</a>
 				<button *ngIf="series.imdb" (click)="getRating(series.imdb)" class="btn btn-success">More</button>
 			</div>
 		</div>
 	</div>
 </div>
  
-<div *ngIf="!displayLoad && viewShows " class="show-mainForm">
+<div *ngIf="!displayLoad && viewShows " class="show-mainForm" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500" (scrolled)="onScrollDown()" [scrollWindow]="false">
 	<div *ngFor="let show of Shows" class="show-card" id="{{show.id}}" (mouseover)="showContent(show.id)" (mouseleave)="showContent()">
 		<div>
 			<img *ngIf=" show.tmdb['poster_path'] != null " class="show-image" src="{{ 'https://image.tmdb.org/t/p/w400_and_h600_bestv2' + show.tmdb['poster_path'] }}">
@@ -63,11 +63,8 @@
 			</div>
 		</div>
 	</div>
+	<div *ngIf="loadMore" class="loading-container">
+		<div class="loading"></div>
+	</div>
 </div>
 
-<div *ngIf="loadMore" class="loading-container">
-	<div class="loading"></div>
-</div>
-<div class="search-results" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollUpDistance]="1.5" [infiniteScrollThrottle]="500"
- (scrolled)="onScrollDown()">
-</div>
